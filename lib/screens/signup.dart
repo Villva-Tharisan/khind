@@ -19,6 +19,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController confirmPasswordCT = new TextEditingController();
   bool isLoading = false;
   bool showPassword = false;
+  bool showConfirmPassword = false;
 
   @override
   void initState() {
@@ -180,7 +181,7 @@ class _SignUpState extends State<SignUp> {
           Stack(children: [
             TextFormField(
               keyboardType: TextInputType.text,
-              obscureText: !showPassword,
+              obscureText: !showConfirmPassword,
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Please enter confirm password';
@@ -204,10 +205,10 @@ class _SignUpState extends State<SignUp> {
                 child: InkWell(
                     onTap: () {
                       setState(() {
-                        showPassword = !showPassword;
+                        showConfirmPassword = !showConfirmPassword;
                       });
                     },
-                    child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
+                    child: Icon(showConfirmPassword ? Icons.visibility : Icons.visibility_off)))
           ]),
           SizedBox(height: 30),
           GradientButton(
