@@ -15,7 +15,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<Widget> _tabs = [
-    const News(), 
+    const News(),
     const MyPurchases(),
     const Mall(),
     const ServiceTracker(),
@@ -25,7 +25,8 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(middle: Text('Khind'),
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Khind'),
       ),
       child: CupertinoTabScaffold(
           tabBar: CupertinoTabBar(

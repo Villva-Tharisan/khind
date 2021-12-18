@@ -8,7 +8,12 @@
             "name": "khind",
             "request": "launch",
             "type": "dart"
-            // "flutterMode": "release"
+        },
+        {
+            "name": "khind (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
         }
     ]
 }
