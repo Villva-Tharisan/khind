@@ -31,11 +31,16 @@ class _HomeState extends State<Home> {
       child: CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
             items: const [
-              BottomNavigationBarItem(icon: Icon(CupertinoIcons.list_bullet), label: 'News'),
-              BottomNavigationBarItem(icon: Icon(CupertinoIcons.purchased), label: 'My Purchases'),
-              BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Mall'),
-              BottomNavigationBarItem(icon: Icon(CupertinoIcons.time), label: 'Service Tracker'),
-              BottomNavigationBarItem(icon: Icon(CupertinoIcons.map), label: 'eWaranty'),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.list_bullet), label: 'News'),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.purchased), label: 'My Purchases'),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.home), label: 'Mall'),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.time), label: 'Service Tracker'),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.map), label: 'eWaranty'),
             ],
           ),
           tabBuilder: (BuildContext context, index) {

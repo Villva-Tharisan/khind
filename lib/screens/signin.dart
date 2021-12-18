@@ -53,7 +53,8 @@ class _SignInState extends State<SignIn> {
             },
             decoration: InputDecoration(
                 hintText: 'eg: khind@gmail.com',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                     borderRadius: BorderRadius.circular(5))),
@@ -75,7 +76,8 @@ class _SignInState extends State<SignIn> {
               },
               decoration: InputDecoration(
                   hintText: '******',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.circular(5))),
@@ -89,13 +91,16 @@ class _SignInState extends State<SignIn> {
                         showPassword = !showPassword;
                       });
                     },
-                    child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
+                    child: Icon(showPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off)))
           ]),
           SizedBox(height: 5),
           Container(
               alignment: Alignment.centerLeft,
               child: InkWell(
-                  child: Text("Forgot Password?", textAlign: TextAlign.left), onTap: () {})),
+                  child: Text("Forgot Password?", textAlign: TextAlign.left),
+                  onTap: () {})),
           SizedBox(height: 30),
           GradientButton(
               height: 40,
@@ -115,7 +120,9 @@ class _SignInState extends State<SignIn> {
                   colors: <Color>[Colors.white, Colors.grey[400]!],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter),
-              onPressed: () {}),
+              onPressed: () {
+                Navigator.of(context).pushNamed('ewarranty');
+              }),
           SizedBox(height: 15),
           Text("or"),
           SizedBox(height: 15),
@@ -137,7 +144,8 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
-          padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
+          padding:
+              const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
           child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
             _renderHeader(),
             SizedBox(height: 50),
