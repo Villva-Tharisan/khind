@@ -15,6 +15,8 @@ class SplashScreenState extends State<SplashScreen> {
   void initState() {
     Timer(Duration(seconds: 2), () {
       Navigator.pushNamed(context, 'signin');
+      // Navigator.pushNamed(context, 'home');
+
       // Navigator.of(context).push(new SignInPageRoute());
     });
     super.initState();
@@ -33,7 +35,8 @@ class SignInPageRoute extends CupertinoPageRoute {
 
   // OPTIONAL IF YOU WISH TO HAVE SOME EXTRA ANIMATION WHILE ROUTING
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
     return new ScaleTransition(scale: animation, child: new SignIn());
     // return new FadeTransition(opacity: animation, child: new SignIn());
   }
