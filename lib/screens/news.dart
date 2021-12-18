@@ -14,7 +14,7 @@ class News extends StatelessWidget {
         child: ListView.builder(
           itemCount: 5,
           itemBuilder: (BuildContext context, int index) {
-            return Card();
+            return NewsCard();
           },
           // padding: EdgeInsets.only(bottom: 10),
         ),
@@ -23,8 +23,8 @@ class News extends StatelessWidget {
   }
 }
 
-class Card extends StatelessWidget {
-  const Card({
+class NewsCard extends StatelessWidget {
+  const NewsCard({
     Key? key,
   }) : super(key: key);
 
@@ -53,10 +53,10 @@ class Card extends StatelessWidget {
           Container(
             // color: Colors.red,
             width: width * 0.4,
-            height: MediaQuery.of(context).size.width * 0.3,
+            // height: MediaQuery.of(context).size.width * 0.3,
             // alignment: Alignment.topLeft,
             child: Image.network(
-              'https://www.kitchen-arena.com.my/media/catalog/product/cache/926507dc7f93631a094422215b778fe0/o/t/ot50.png',
+              'https://tworedbowls.com/wp-content/uploads/2019/08/collard-wontons-1-e1617855856563.jpg',
               height: MediaQuery.of(context).size.width * 0.2,
             ),
           ),
@@ -64,17 +64,22 @@ class Card extends StatelessWidget {
             width: 5,
           ),
           Container(
+            width: width * 0.45,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Khind Freezer Series',
-                  style: TextStyle(
-                    height: 2,
-                    fontSize: 14,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400,
+                SizedBox(height: 5),
+                Flexible(
+                  child: Text(
+                    'Floral Snow Mooncakes Recipe',
+                    overflow: TextOverflow.visible,
+                    style: TextStyle(
+                      // height: 2,
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
                 SizedBox(
