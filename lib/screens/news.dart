@@ -1,7 +1,49 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class News extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:khind/models/new.dart';
+import 'package:intl/intl.dart';
+
+class News extends StatefulWidget {
   const News({Key? key}) : super(key: key);
+
+  @override
+  _NewsState createState() => _NewsState();
+}
+
+class _NewsState extends State<News> {
+  List<New> _news = [];
+  var _refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    this.fetchNews();
+  }
+
+  Future<void> fetchNews() async {
+    var url = Uri.parse('http://cm.khind.com.my/api/posts');
+    Map<String, String> authHeader = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic a2hpbmRhcGk6S2hpbmQxcWF6MndzeDNlZGM=',
+    };
+    final response = await http.post(
+      url,
+      headers: authHeader,
+    );
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      var news = jsonResponse.map((data) => new New.fromJson(data)).toList();
+      setState(() {
+        _news = news;
+      });
+      // var x = parsed.map<New>((json) => New.fromJson(json)).toList();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,13 +53,30 @@ class News extends StatelessWidget {
           vertical: 20,
           horizontal: 15,
         ),
-        child: ListView.builder(
-          itemCount: 5,
-          itemBuilder: (BuildContext context, int index) {
-            return NewsCard();
-          },
-          // padding: EdgeInsets.only(bottom: 10),
-        ),
+        // height: double.infinity,
+        child: _news.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text("No more data to show, tap to refresh",
+                      style: TextStyle(color: Colors.black)),
+                ),
+              )
+            : RefreshIndicator(
+                key: _refreshKey,
+                onRefresh: fetchNews,
+                child: ListView.builder(
+                  itemCount: _news.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return NewsCard(
+                      key: new Key('$index${_news[index].id}'),
+                      news: _news[index],
+                    );
+                  },
+
+                  // padding: EdgeInsets.only(bottom: 10),
+                ),
+              ),
       ),
     );
   }
@@ -26,7 +85,10 @@ class News extends StatelessWidget {
 class NewsCard extends StatelessWidget {
   const NewsCard({
     Key? key,
+    required this.news,
   }) : super(key: key);
+
+  final New? news;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +96,6 @@ class NewsCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 75,
-      padding: EdgeInsets.all(5),
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -52,19 +113,23 @@ class NewsCard extends StatelessWidget {
         children: [
           Container(
             // color: Colors.red,
-            width: width * 0.4,
+            width: width * 0.3,
             // height: MediaQuery.of(context).size.width * 0.3,
             // alignment: Alignment.topLeft,
-            child: Image.network(
-              'https://tworedbowls.com/wp-content/uploads/2019/08/collard-wontons-1-e1617855856563.jpg',
-              height: MediaQuery.of(context).size.width * 0.2,
+            child: FittedBox(
+              child: Image.network(
+                'http://cm.khind.com.my/${news?.thumbnail}',
+                // height: 75,
+              ),
+              fit: BoxFit.fill,
             ),
           ),
           SizedBox(
-            width: 5,
+            width: 10,
           ),
           Container(
-            width: width * 0.45,
+            padding: EdgeInsets.all(5),
+            width: width * 0.55,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +137,7 @@ class NewsCard extends StatelessWidget {
                 SizedBox(height: 5),
                 Flexible(
                   child: Text(
-                    'Floral Snow Mooncakes Recipe',
+                    news!.title!,
                     overflow: TextOverflow.visible,
                     style: TextStyle(
                       // height: 2,
@@ -86,7 +151,10 @@ class NewsCard extends StatelessWidget {
                   height: 12,
                 ),
                 Text(
-                  '19 Sept 2021 | Announcement',
+                  DateFormat('dd/MM/yyyy').format(
+                          DateFormat('yyyy-MM-dd hh:mm:ss')
+                              .parse(news!.createdAt!.toString())) +
+                      " | ${news!.category?.name}",
                   style:
                       TextStyle(height: 2, fontSize: 12, color: Colors.black),
                 ),
