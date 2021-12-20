@@ -1,14 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-class Mall extends StatelessWidget {
+class Mall extends StatefulWidget {
   const Mall({Key? key}) : super(key: key);
 
   @override
+  _MallState createState() => _MallState();
+}
+
+class _MallState extends State<Mall> {
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        child: Text('Mall Here'),
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                child: InAppWebView(
+                  androidOnPermissionRequest:
+                      (controller, origin, resources) async {
+                    return PermissionRequestResponse(
+                      resources: resources,
+                      action: PermissionRequestResponseAction.GRANT,
+                    );
+                  },
+                  initialUrlRequest: URLRequest(
+                    url: Uri.parse('https://www.khind.com.my/'),
+                  ),
+                  initialOptions: InAppWebViewGroupOptions(
+                    crossPlatform: InAppWebViewOptions(
+                      useShouldOverrideUrlLoading: false,
+                      mediaPlaybackRequiresUserGesture: false,
+                      useOnDownloadStart: true,
+                    ),
+                    android: AndroidInAppWebViewOptions(
+                      hardwareAcceleration: true,
+                    ),
+                    ios: IOSInAppWebViewOptions(
+                      allowsInlineMediaPlayback: true,
+                    ),
+                  ),
+                  onConsoleMessage: (controller, consoleMessage) {
+                    // print(consoleMessage);
+                  },
+                  onLoadStop: (controller, url) async {
+                    print('current url is $url');
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
