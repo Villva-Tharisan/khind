@@ -72,6 +72,10 @@ class _NewsState extends State<News> {
                       key: new Key('$index${_news[index].id}'),
                       news: _news[index],
                     );
+                    // var category = _news[index].thumbnail == null
+                    //     ? "aa"
+                    //     : _news[index].thumbnail;
+                    // return Text(category!);
                   },
 
                   // padding: EdgeInsets.only(bottom: 10),
@@ -92,6 +96,8 @@ class NewsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final category = news?.category?.name == null ? "" : news?.category?.name;
+    final thumbnail = news?.thumbnail == null ? "" : news?.thumbnail;
     double width = MediaQuery.of(context).size.width;
     return Container(
       width: double.infinity,
@@ -114,11 +120,11 @@ class NewsCard extends StatelessWidget {
           Container(
             // color: Colors.red,
             width: width * 0.3,
-            // height: MediaQuery.of(context).size.width * 0.3,
-            // alignment: Alignment.topLeft,
+            height: MediaQuery.of(context).size.width * 0.3,
+            alignment: Alignment.topLeft,
             child: FittedBox(
               child: Image.network(
-                'http://cm.khind.com.my/${news?.thumbnail}',
+                'http://cm.khind.com.my/${thumbnail!}',
                 // height: 75,
               ),
               fit: BoxFit.fill,
@@ -154,7 +160,7 @@ class NewsCard extends StatelessWidget {
                   DateFormat('dd/MM/yyyy').format(
                           DateFormat('yyyy-MM-dd hh:mm:ss')
                               .parse(news!.createdAt!.toString())) +
-                      " | ${news!.category?.name}",
+                      " | ${category!}",
                   style:
                       TextStyle(height: 2, fontSize: 12, color: Colors.black),
                 ),
