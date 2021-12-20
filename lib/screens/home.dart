@@ -4,6 +4,7 @@ import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/mall.dart';
 import 'package:khind/screens/mypurchases.dart';
 import 'package:khind/screens/news.dart';
+import 'package:khind/screens/servicelocator.dart';
 import 'package:khind/screens/servicetracker.dart';
 
 class Home extends StatefulWidget {
@@ -15,7 +16,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<Widget> _tabs = [
-    const News(),
+    // const News(),
+    const ServiceLocator(),
     const MyPurchases(),
     const Mall(),
     const ServiceTracker(),

@@ -121,7 +121,7 @@ class NewsCard extends StatelessWidget {
             // color: Colors.red,
             width: width * 0.3,
             height: MediaQuery.of(context).size.width * 0.3,
-            alignment: Alignment.topLeft,
+            // alignment: Alignment.topLeft,
             child: FittedBox(
               child: Image.network(
                 'http://cm.khind.com.my/${thumbnail!}',
