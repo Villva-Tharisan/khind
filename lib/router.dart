@@ -10,7 +10,7 @@ import 'package:khind/screens/signup.dart';
 import 'package:khind/screens/home.dart';
 
 class AppRouter {
-  static const String initialRoute = "home";
+  static const String initialRoute = "/";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -48,9 +48,8 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-            builder: (_) => Scaffold(
-                body: Center(
-                    child: Text('No route defined for ${settings.name}'))));
+            builder: (_) =>
+                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
     }
   }
 
