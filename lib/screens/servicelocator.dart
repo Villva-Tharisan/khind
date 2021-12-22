@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/models/ServiceCenter.dart';
+import 'package:khind/models/city.dart';
 import 'package:khind/models/states.dart';
 import 'dart:convert';
 
@@ -21,21 +23,30 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
   List<States> _states = [];
 
-  List<String> cities = [
-    'Kuala Lumpur',
-    'Shah Alam',
-    'Ipoh',
-  ];
+  List<City> _cities = [];
 
-  late String state;
-  late String city;
+  List<ServiceCenter> _serviceCenters = [];
+
+  late States state;
+  late City city;
 
   @override
   void initState() {
-    state = states[0];
-    city = cities[0];
+    state = new States(
+        countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    city = new City(
+      stateId: "",
+      city: "--Select--",
+      cityId: "",
+      postcodeId: "",
+      postcode: "",
+    );
+
+    _cities = [city];
+
     super.initState();
     this.fetchStates();
+    this.fetchServiceCenter();
   }
 
   Future<void> fetchStates() async {
@@ -49,15 +60,72 @@ class _ServiceLocatorState extends State<ServiceLocator> {
       headers: authHeader,
     );
 
-    print("aa");
-
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
       var states =
           (resp['states'] as List).map((i) => States.fromJson(i)).toList();
 
+      states.insert(
+          0,
+          new States(
+              countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+
       setState(() {
         _states = states;
+        state = states[0];
+      });
+    }
+  }
+
+  Future<void> fetchCities(String stateId) async {
+    var url = Uri.parse(Api.endpoint + Api.GET_CITIES + "?state_id=$stateId");
+    Map<String, String> authHeader = {
+      'Content-Type': 'application/json',
+      'Authorization': Api.defaultToken,
+    };
+    final response = await http.get(
+      url,
+      headers: authHeader,
+    );
+
+    if (response.statusCode == 200) {
+      Map resp = json.decode(response.body);
+      var cities = (resp['city'] as List).map((i) => City.fromJson(i)).toList();
+
+      cities.insert(
+          0,
+          new City(
+              stateId: "",
+              city: "--Select--",
+              cityId: "",
+              postcodeId: "",
+              postcode: ""));
+
+      setState(() {
+        _cities = cities;
+        city = cities[0];
+      });
+    }
+  }
+
+  Future<void> fetchServiceCenter() async {
+    var url = Uri.parse(Api.endpoint + Api.GET_SERVICE);
+    Map<String, String> authHeader = {
+      'Content-Type': 'application/json',
+      'Authorization': Api.defaultToken,
+    };
+    final response = await http.get(
+      url,
+      headers: authHeader,
+    );
+
+    if (response.statusCode == 200) {
+      Map resp = json.decode(response.body);
+      var svcCenters =
+          (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
+
+      setState(() {
+        _serviceCenters = svcCenters;
       });
     }
   }
@@ -89,23 +157,25 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                   Container(
                     padding: EdgeInsets.only(left: 10),
                     width: width * 0.45,
-                    child: DropdownButton<String>(
-                      items: _states.map<DropdownMenuItem<String>>((e) {
-                        return DropdownMenuItem<String>(
+                    child: DropdownButton<States>(
+                      items: _states.map<DropdownMenuItem<States>>((e) {
+                        return DropdownMenuItem<States>(
                           child: Text(
                             e.state!,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
-                          value: e.stateId!,
+                          value: e,
                         );
                       }).toList(),
                       isExpanded: true,
-                      // value: state,
+                      value: state,
                       onChanged: (value) {
-                        this.fetchStates();
+                        if (value != null) {
+                          this.fetchCities(value.stateId!);
+                        }
                         setState(() {
-                          state = value.toString();
+                          state = value!;
                         });
                       },
                     ),
@@ -128,13 +198,12 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                   Container(
                     padding: EdgeInsets.only(left: 10),
                     width: width * 0.45,
-                    child: DropdownButton<String>(
-                      items:
-                          cities.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
+                    child: DropdownButton<City>(
+                      items: _cities.map<DropdownMenuItem<City>>((City value) {
+                        return DropdownMenuItem<City>(
                           value: value,
                           child: Text(
-                            value,
+                            value.city!,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
@@ -144,7 +213,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                       value: city,
                       onChanged: (value) {
                         setState(() {
-                          city = value.toString();
+                          city = value!;
                         });
                       },
                     ),
@@ -167,101 +236,134 @@ class _ServiceLocatorState extends State<ServiceLocator> {
             SizedBox(
               height: 10,
             ),
-            Container(
-              width: double.infinity,
-              height: 130,
-              margin: EdgeInsets.only(bottom: 10),
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 0.5,
-                    color: Colors.grey,
-                    spreadRadius: 0.5,
-                    // offset:
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(7.5),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Khind Marketing (M) SDN BHD",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                      // height: 2,
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w800,
+            Expanded(
+              child: _serviceCenters.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text("No more data to show, tap to refresh",
+                            style: TextStyle(color: Colors.black)),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _serviceCenters.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ServiceCard(
+                            serviceCenter: _serviceCenters[index]);
+                      },
                     ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'No 2, Jalan Astaka U8/82, Bukit Jelutong, 40150 Shah Alam,  Selangor',
-                    style:
-                        TextStyle(height: 1, fontSize: 14, color: Colors.black),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Operating Hours:",
-                        overflow: TextOverflow.visible,
-                        style: TextStyle(
-                          // height: 2,
-                          fontSize: 18,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text("8:30 AM - 6:00 PM Mon-Sun",
-                            style: TextStyle(
-                                height: 1, fontSize: 14, color: Colors.black)),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Contact:",
-                        overflow: TextOverflow.visible,
-                        style: TextStyle(
-                          // height: 2,
-                          fontSize: 18,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text("6096314175",
-                            style: TextStyle(
-                                height: 1, fontSize: 14, color: Colors.black)),
-                      )
-                    ],
-                  )
-                ],
-              ),
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ServiceCard extends StatelessWidget {
+  const ServiceCard({
+    Key? key,
+    required this.serviceCenter,
+  }) : super(key: key);
+
+  final ServiceCenter serviceCenter;
+
+  @override
+  Widget build(BuildContext context) {
+    final telephone =
+        serviceCenter?.telephone == null ? "" : serviceCenter?.telephone;
+
+    return Container(
+      width: double.infinity,
+      height: 140,
+      margin: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 0.5,
+            color: Colors.grey,
+            spreadRadius: 0.5,
+            // offset:
+          ),
+        ],
+        borderRadius: BorderRadius.circular(7.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            serviceCenter!.serviceCenterName!,
+            overflow: TextOverflow.visible,
+            style: TextStyle(
+              // height: 2,
+              fontSize: 18,
+              color: Colors.black,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            serviceCenter.address!,
+            style: TextStyle(height: 1, fontSize: 14, color: Colors.black),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Row(
+            children: [
+              Text(
+                "Operating Hours:",
+                overflow: TextOverflow.visible,
+                style: TextStyle(
+                  // height: 2,
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5),
+                child: Text(serviceCenter.operatingHours!,
+                    style: TextStyle(
+                        height: 1, fontSize: 14, color: Colors.black)),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Row(
+            children: [
+              Text(
+                "Contact:",
+                overflow: TextOverflow.visible,
+                style: TextStyle(
+                  // height: 2,
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5),
+                child: Text(telephone!,
+                    style: TextStyle(
+                        height: 1, fontSize: 14, color: Colors.black)),
+              )
+            ],
+          )
+        ],
       ),
     );
   }

@@ -12,4 +12,6 @@ class Api {
   static final ENCODING = Encoding.getByName('utf-8');
 
   static const GET_STATES = "provider/state.php";
+  static const GET_CITIES = "provider/city.php";
+  static const GET_SERVICE = "provider/service.php";
 }
