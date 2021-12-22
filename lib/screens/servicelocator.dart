@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/models/states.dart';
 import 'dart:convert';
+
+import 'package:khind/services/api.dart';
 
 class ServiceLocator extends StatefulWidget {
   const ServiceLocator({Key? key}) : super(key: key);
@@ -16,6 +19,8 @@ class _ServiceLocatorState extends State<ServiceLocator> {
     'Perak',
   ];
 
+  List<States> _states = [];
+
   List<String> cities = [
     'Kuala Lumpur',
     'Shah Alam',
@@ -24,6 +29,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
   late String state;
   late String city;
+
   @override
   void initState() {
     state = states[0];
@@ -33,23 +39,26 @@ class _ServiceLocatorState extends State<ServiceLocator> {
   }
 
   Future<void> fetchStates() async {
-    var url = Uri.parse('http://cm.khind.com.my/provider/state.php');
+    var url = Uri.parse(Api.endpoint + Api.GET_STATES);
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
-      'Authorization': 'Basic a2hpbmRhcGk6S2hpbmQxcWF6MndzeDNlZGM=',
+      'Authorization': Api.defaultToken,
     };
-    final response = await http.post(
+    final response = await http.get(
       url,
       headers: authHeader,
     );
 
+    print("aa");
+
     if (response.statusCode == 200) {
-      Map data = json.decode(response.body);
-      // var news = jsonResponse.map((data) => new New.fromJson(data)).toList();
-      // setState(() {
-      //   _news = news;
-      // });
-      // var x = parsed.map<New>((json) => New.fromJson(json)).toList();
+      Map resp = json.decode(response.body);
+      var states =
+          (resp['states'] as List).map((i) => States.fromJson(i)).toList();
+
+      setState(() {
+        _states = states;
+      });
     }
   }
 
@@ -81,20 +90,20 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                     padding: EdgeInsets.only(left: 10),
                     width: width * 0.45,
                     child: DropdownButton<String>(
-                      items:
-                          states.map<DropdownMenuItem<String>>((String value) {
+                      items: _states.map<DropdownMenuItem<String>>((e) {
                         return DropdownMenuItem<String>(
-                          value: value,
                           child: Text(
-                            value,
+                            e.state!,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
+                          value: e.stateId!,
                         );
                       }).toList(),
                       isExpanded: true,
-                      value: state,
+                      // value: state,
                       onChanged: (value) {
+                        this.fetchStates();
                         setState(() {
                           state = value.toString();
                         });
