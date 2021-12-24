@@ -32,8 +32,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
   @override
   void initState() {
-    state = new States(
-        countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
     city = new City(
       stateId: "",
       city: "--Select--",
@@ -62,13 +61,9 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var states =
-          (resp['states'] as List).map((i) => States.fromJson(i)).toList();
+      var states = (resp['states'] as List).map((i) => States.fromJson(i)).toList();
 
-      states.insert(
-          0,
-          new States(
-              countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+      states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
       setState(() {
         _states = states;
@@ -93,13 +88,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
       var cities = (resp['city'] as List).map((i) => City.fromJson(i)).toList();
 
       cities.insert(
-          0,
-          new City(
-              stateId: "",
-              city: "--Select--",
-              cityId: "",
-              postcodeId: "",
-              postcode: ""));
+          0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
 
       setState(() {
         _cities = cities;
@@ -121,8 +110,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var svcCenters =
-          (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
+      var svcCenters = (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
 
       setState(() {
         _serviceCenters = svcCenters;
@@ -248,8 +236,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                   : ListView.builder(
                       itemCount: _serviceCenters.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return ServiceCard(
-                            serviceCenter: _serviceCenters[index]);
+                        return ServiceCard(serviceCenter: _serviceCenters[index]);
                       },
                     ),
             )
@@ -270,8 +257,7 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final telephone =
-        serviceCenter?.telephone == null ? "" : serviceCenter?.telephone;
+    final telephone = serviceCenter.telephone == null ? "" : serviceCenter.telephone;
 
     return Container(
       width: double.infinity,
@@ -295,7 +281,7 @@ class ServiceCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            serviceCenter!.serviceCenterName!,
+            serviceCenter.serviceCenterName!,
             overflow: TextOverflow.visible,
             style: TextStyle(
               // height: 2,
@@ -332,8 +318,7 @@ class ServiceCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(top: 5),
                 child: Text(serviceCenter.operatingHours!,
-                    style: TextStyle(
-                        height: 1, fontSize: 14, color: Colors.black)),
+                    style: TextStyle(height: 1, fontSize: 14, color: Colors.black)),
               )
             ],
           ),
@@ -358,8 +343,7 @@ class ServiceCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(top: 5),
                 child: Text(telephone!,
-                    style: TextStyle(
-                        height: 1, fontSize: 14, color: Colors.black)),
+                    style: TextStyle(height: 1, fontSize: 14, color: Colors.black)),
               )
             ],
           )

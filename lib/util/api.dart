@@ -1,11 +1,13 @@
 import 'dart:convert';
-
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
-// import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:khind/util/key.dart';
 
-class ApiInterceptor implements InterceptorContract {
+final storage = new FlutterSecureStorage();
+
+class AuthInterceptor implements InterceptorContract {
   @override
   Future<RequestData> interceptRequest({required RequestData data}) async {
     try {
@@ -16,7 +18,31 @@ class ApiInterceptor implements InterceptorContract {
       data.headers['Content-Type'] = 'application/json';
       data.headers['authorization'] = basicAuth;
     } catch (e) {
-      print('Interceptor error $e');
+      print('Auth Interceptor error $e');
+    }
+    return data;
+  }
+
+  @override
+  Future<ResponseData> interceptResponse({required ResponseData data}) async {
+    return data;
+  }
+}
+
+class ApiInterceptor implements InterceptorContract {
+  @override
+  Future<RequestData> interceptRequest({required RequestData data}) async {
+    try {
+      data.headers['Content-Type'] = 'application/json';
+
+      var token = await storage.read(key: TOKEN);
+      print('TOKEN: $token');
+      if (token != null) {
+        String bearerAuth = 'Bearer $token';
+        data.headers['authorization'] = bearerAuth;
+      }
+    } catch (e) {
+      print('Api Interceptor error $e');
     }
     return data;
   }
@@ -28,14 +54,34 @@ class ApiInterceptor implements InterceptorContract {
 }
 
 class Api {
-  static Client client = InterceptedClient.build(interceptors: [ApiInterceptor()]);
+  static http.Client authClient = InterceptedClient.build(interceptors: [AuthInterceptor()]);
+  static http.Client client = InterceptedClient.build(interceptors: [ApiInterceptor()]);
 
-  static get(endpoint, {params}) async {
+  static basicPost(endpoint, {params}) async {
+    try {
+      final response;
+      String url = '${(dotenv.env["API_URL"] as String)}/$endpoint';
+      print("Url: $url");
+      if (params != null) {
+        response = await authClient.post(url.toUri(), body: params);
+      } else {
+        response = await authClient.post(url.toUri());
+      }
+      print('Basic Response: ${response.body}');
+
+      return jsonDecode(response.body);
+    } catch (e) {
+      print('Post error : $e');
+      return {'error': e.toString()};
+    }
+  }
+
+  static bearerGet(endpoint, {params}) async {
     try {
       String url = '${(dotenv.env["API_URL"] as String)}/$endpoint';
       print("Url: $url");
       final response = await client.get(url.toUri());
-      print('Response: ${response.body}');
+      print('Bearer Response: ${response.body}');
 
       return jsonDecode(response.body);
     } catch (e) {
@@ -44,7 +90,7 @@ class Api {
     }
   }
 
-  static post(endpoint, {params}) async {
+  static bearerPost(endpoint, {params}) async {
     try {
       final response;
       String url = '${(dotenv.env["API_URL"] as String)}/$endpoint';
@@ -54,7 +100,7 @@ class Api {
       } else {
         response = await client.post(url.toUri());
       }
-      print('Response: ${response.body}');
+      print('Bearer Response: ${response.body}');
 
       return jsonDecode(response.body);
     } catch (e) {

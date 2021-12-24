@@ -17,11 +17,14 @@ class _SignInState extends State<SignIn> {
   TextEditingController passwordCT = new TextEditingController();
   bool isLoading = false;
   bool showPassword = false;
+  String error = "";
   final storage = new FlutterSecureStorage();
 
   @override
   void initState() {
-    fetchToken();
+    refreshToken();
+    emailCT.text = 'digit@gmail.com';
+    passwordCT.text = 'passwprd';
     super.initState();
   }
 
@@ -32,7 +35,7 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  void fetchToken() async {
+  refreshToken() async {
     String? tokenExp = await storage.read(key: TOKEN_EXPIRY);
 
     if (tokenExp != null) {
@@ -40,42 +43,69 @@ class _SignInState extends State<SignIn> {
 
       // print('DIFF: ${expDate.difference(DateTime.now()).inSeconds}');
 
-      if (expDate.difference(DateTime.now()).inSeconds <= 0) {
+      if (expDate.difference(DateTime.now()).inMilliseconds <= 0) {
         print("Token Expired: $expDate");
-        final response = await Api.post('oauth2/token/client_credentials');
-
-        if (response['access_token'] != null) {
-          await storage.write(key: TOKEN, value: response['access_token']);
-
-          if (response['expires_in'] != null) {
-            int expInDays = (response['expires_in'] / 86400).floor();
-
-            var curDate = new DateTime.now();
-            var expDate = curDate.add(Duration(days: expInDays));
-
-            await storage.write(
-                key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
-          }
-        }
+        fetchOauth();
       } else {
         print("Token Not Expired");
       }
     } else {
-      final response = await Api.post('oauth2/token/client_credentials');
+      fetchOauth();
+    }
+  }
 
-      if (response['access_token'] != null) {
-        await storage.write(key: TOKEN, value: response['access_token']);
+  void fetchOauth() async {
+    final response = await Api.basicPost('oauth2/token/client_credentials');
 
-        if (response['expires_in'] != null) {
-          int expInDays = (response['expires_in'] / 86400).floor();
+    if (response['access_token'] != null) {
+      await storage.write(key: TOKEN, value: response['access_token']);
 
-          var curDate = new DateTime.now();
-          var expDate = curDate.add(Duration(days: expInDays));
+      if (response['expires_in'] != null) {
+        // int expInDays = (response['expires_in'] / 86400).floor();
 
-          await storage.write(
-              key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
-        }
+        var curDate = new DateTime.now();
+        var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
+
+        await storage.write(key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
       }
+    }
+  }
+
+  void handleSignIn() async {
+    final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
+    final response = await Api.bearerPost('login', params: map);
+
+    setState(() {
+      isLoading = true;
+      error = "";
+    });
+    // print('ERROR:' + response);
+
+    if (response['error'] != null) {
+      if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
+        fetchOauth();
+        final response1 = await Api.bearerPost('login', params: map);
+
+        if (response1['error'] != null) {
+          setState(() {
+            isLoading = false;
+            error = response1['error']['warning'] != null
+                ? response1['error']['warning']
+                : "Incorrect credentials";
+          });
+        } else {
+          Navigator.pushReplacementNamed(context, 'home');
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+          error = response['error']['warning'] != null
+              ? response['error']['warning']
+              : "Incorrect credentials";
+        });
+      }
+    } else {
+      Navigator.pushReplacementNamed(context, 'home');
     }
   }
 
@@ -156,7 +186,7 @@ class _SignInState extends State<SignIn> {
                   colors: <Color>[Colors.white, Colors.grey[400]!],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter),
-              onPressed: () {}),
+              onPressed: () => handleSignIn()),
           SizedBox(height: 50),
           Text("New to Khind?"),
           SizedBox(height: 10),
@@ -186,6 +216,18 @@ class _SignInState extends State<SignIn> {
         ]));
   }
 
+  _renderError() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      // SizedBox(height: 10),
+      Text(
+        error,
+        style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+        textAlign: TextAlign.center,
+      ),
+      SizedBox(height: 20),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,7 +236,8 @@ class _SignInState extends State<SignIn> {
           padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
           child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
             _renderHeader(),
-            SizedBox(height: 50),
+            SizedBox(height: error != "" ? 20 : 50),
+            error != "" ? _renderError() : Container(),
             _renderForm(),
             SizedBox(height: 50)
           ])),
