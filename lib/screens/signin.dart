@@ -72,6 +72,8 @@ class _SignInState extends State<SignIn> {
   }
 
   void handleSignIn() async {
+    showAlertDialog();
+
     final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
     final response = await Api.bearerPost('login', params: map);
 
@@ -79,12 +81,13 @@ class _SignInState extends State<SignIn> {
       isLoading = true;
       error = "";
     });
-    // print('ERROR:' + response);
 
     if (response['error'] != null) {
       if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
         fetchOauth();
         final response1 = await Api.bearerPost('login', params: map);
+        // Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pop(context);
 
         if (response1['error'] != null) {
           setState(() {
@@ -102,11 +105,30 @@ class _SignInState extends State<SignIn> {
           error = response['error']['warning'] != null
               ? response['error']['warning']
               : "Incorrect credentials";
+          Navigator.pop(context);
         });
       }
     } else {
       Navigator.pushReplacementNamed(context, 'home');
     }
+  }
+
+  showAlertDialog() {
+    AlertDialog alert = AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
+        ],
+      ),
+    );
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   Widget _renderHeader() {
@@ -211,6 +233,9 @@ class _SignInState extends State<SignIn> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter),
               onPressed: () {
+                setState(() {
+                  error = "";
+                });
                 Navigator.pushNamed(context, 'signup');
               })
         ]));
