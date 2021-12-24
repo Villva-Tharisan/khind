@@ -15,7 +15,7 @@ class SplashScreenState extends State<SplashScreen> {
   void initState() {
     Timer(Duration(seconds: 2), () {
       // Navigator.pushNamed(context, 'home');
-      Navigator.pushNamed(context, 'signin');
+      Navigator.pushNamed(context, 'signup');
 
       // Navigator.of(context).push(new SignInPageRoute());
     });

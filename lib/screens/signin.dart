@@ -116,6 +116,7 @@ class _SignInState extends State<SignIn> {
   showAlertDialog() {
     AlertDialog alert = AlertDialog(
       content: new Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(),
           Container(margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
