@@ -1,7 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'dart:math';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/themes/text_styles.dart';
+import 'package:khind/util/api.dart';
+import 'package:khind/util/key.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -14,9 +17,11 @@ class _SignInState extends State<SignIn> {
   TextEditingController passwordCT = new TextEditingController();
   bool isLoading = false;
   bool showPassword = false;
+  final storage = new FlutterSecureStorage();
 
   @override
   void initState() {
+    fetchToken();
     super.initState();
   }
 
@@ -25,6 +30,53 @@ class _SignInState extends State<SignIn> {
     emailCT.dispose();
     passwordCT.dispose();
     super.dispose();
+  }
+
+  void fetchToken() async {
+    String? tokenExp = await storage.read(key: TOKEN_EXPIRY);
+
+    if (tokenExp != null) {
+      var expDate = DateTime.fromMillisecondsSinceEpoch(int.parse(tokenExp));
+
+      // print('DIFF: ${expDate.difference(DateTime.now()).inSeconds}');
+
+      if (expDate.difference(DateTime.now()).inSeconds <= 0) {
+        print("Token Expired: $expDate");
+        final response = await Api.post('oauth2/token/client_credentials');
+
+        if (response['access_token'] != null) {
+          await storage.write(key: TOKEN, value: response['access_token']);
+
+          if (response['expires_in'] != null) {
+            int expInDays = (response['expires_in'] / 86400).floor();
+
+            var curDate = new DateTime.now();
+            var expDate = curDate.add(Duration(days: expInDays));
+
+            await storage.write(
+                key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
+          }
+        }
+      } else {
+        print("Token Not Expired");
+      }
+    } else {
+      final response = await Api.post('oauth2/token/client_credentials');
+
+      if (response['access_token'] != null) {
+        await storage.write(key: TOKEN, value: response['access_token']);
+
+        if (response['expires_in'] != null) {
+          int expInDays = (response['expires_in'] / 86400).floor();
+
+          var curDate = new DateTime.now();
+          var expDate = curDate.add(Duration(days: expInDays));
+
+          await storage.write(
+              key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
+        }
+      }
+    }
   }
 
   Widget _renderHeader() {
@@ -53,8 +105,7 @@ class _SignInState extends State<SignIn> {
             },
             decoration: InputDecoration(
                 hintText: 'eg: khind@gmail.com',
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                     borderRadius: BorderRadius.circular(5))),
@@ -76,8 +127,7 @@ class _SignInState extends State<SignIn> {
               },
               decoration: InputDecoration(
                   hintText: '******',
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.circular(5))),
@@ -91,16 +141,13 @@ class _SignInState extends State<SignIn> {
                         showPassword = !showPassword;
                       });
                     },
-                    child: Icon(showPassword
-                        ? Icons.visibility
-                        : Icons.visibility_off)))
+                    child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
           ]),
           SizedBox(height: 5),
           Container(
               alignment: Alignment.centerLeft,
               child: InkWell(
-                  child: Text("Forgot Password?", textAlign: TextAlign.left),
-                  onTap: () {})),
+                  child: Text("Forgot Password?", textAlign: TextAlign.left), onTap: () {})),
           SizedBox(height: 30),
           GradientButton(
               height: 40,
@@ -144,8 +191,7 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
-          padding:
-              const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
+          padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
           child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
             _renderHeader(),
             SizedBox(height: 50),
