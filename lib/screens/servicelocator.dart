@@ -26,13 +26,15 @@ class _ServiceLocatorState extends State<ServiceLocator> {
   List<City> _cities = [];
 
   List<ServiceCenter> _serviceCenters = [];
+  List<ServiceCenter> _filteredServiceCenters = [];
 
   late States state;
   late City city;
 
   @override
   void initState() {
-    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    state = new States(
+        countryId: "", state: "--Select--", stateId: "", stateCode: "");
     city = new City(
       stateId: "",
       city: "--Select--",
@@ -61,9 +63,13 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var states = (resp['states'] as List).map((i) => States.fromJson(i)).toList();
+      var states =
+          (resp['states'] as List).map((i) => States.fromJson(i)).toList();
 
-      states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+      states.insert(
+          0,
+          new States(
+              countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
       setState(() {
         _states = states;
@@ -73,6 +79,15 @@ class _ServiceLocatorState extends State<ServiceLocator> {
   }
 
   Future<void> fetchCities(String stateId) async {
+    // setState(() {
+    //   city = new City(
+    //       stateId: "",
+    //       city: "--Select--",
+    //       cityId: "",
+    //       postcodeId: "",
+    //       postcode: "");
+    // });
+
     var url = Uri.parse(Api.endpoint + Api.GET_CITIES + "?state_id=$stateId");
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
@@ -88,7 +103,13 @@ class _ServiceLocatorState extends State<ServiceLocator> {
       var cities = (resp['city'] as List).map((i) => City.fromJson(i)).toList();
 
       cities.insert(
-          0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
+          0,
+          new City(
+              stateId: "",
+              city: "--Select--",
+              cityId: "",
+              postcodeId: "",
+              postcode: ""));
 
       setState(() {
         _cities = cities;
@@ -110,12 +131,30 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var svcCenters = (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
+      var svcCenters =
+          (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
 
       setState(() {
         _serviceCenters = svcCenters;
+        _filteredServiceCenters = svcCenters;
       });
     }
+  }
+
+  void filterServiceCenter() {
+    var filtered = _serviceCenters;
+    if (state.stateId != "") {
+      filtered =
+          _serviceCenters.where((e) => e.stateId == state.stateId).toList();
+    }
+
+    if (city.cityId != "") {
+      filtered = _serviceCenters.where((e) => e.cityId == city.cityId).toList();
+    }
+
+    setState(() {
+      _filteredServiceCenters = filtered;
+    });
   }
 
   @override
@@ -159,12 +198,15 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                       isExpanded: true,
                       value: state,
                       onChanged: (value) {
-                        if (value != null) {
+                        if (value != null && value.stateId != "") {
                           this.fetchCities(value.stateId!);
                         }
+
                         setState(() {
                           state = value!;
                         });
+
+                        this.filterServiceCenter();
                       },
                     ),
                     decoration: BoxDecoration(
@@ -203,6 +245,8 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                         setState(() {
                           city = value!;
                         });
+
+                        this.filterServiceCenter();
                       },
                     ),
                     decoration: BoxDecoration(
@@ -225,7 +269,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
               height: 10,
             ),
             Expanded(
-              child: _serviceCenters.isEmpty
+              child: _filteredServiceCenters.isEmpty
                   ? Center(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -234,9 +278,10 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                       ),
                     )
                   : ListView.builder(
-                      itemCount: _serviceCenters.length,
+                      itemCount: _filteredServiceCenters.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return ServiceCard(serviceCenter: _serviceCenters[index]);
+                        return ServiceCard(
+                            serviceCenter: _filteredServiceCenters[index]);
                       },
                     ),
             )
@@ -257,7 +302,8 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final telephone = serviceCenter.telephone == null ? "" : serviceCenter.telephone;
+    final telephone =
+        serviceCenter.telephone == null ? "" : serviceCenter.telephone;
 
     return Container(
       width: double.infinity,
@@ -285,7 +331,7 @@ class ServiceCard extends StatelessWidget {
             overflow: TextOverflow.visible,
             style: TextStyle(
               // height: 2,
-              fontSize: 18,
+              fontSize: 16,
               color: Colors.black,
               fontWeight: FontWeight.w800,
             ),
@@ -295,7 +341,7 @@ class ServiceCard extends StatelessWidget {
           ),
           Text(
             serviceCenter.address!,
-            style: TextStyle(height: 1, fontSize: 14, color: Colors.black),
+            style: TextStyle(height: 1, fontSize: 12, color: Colors.black),
           ),
           SizedBox(
             height: 5,
@@ -307,7 +353,7 @@ class ServiceCard extends StatelessWidget {
                 overflow: TextOverflow.visible,
                 style: TextStyle(
                   // height: 2,
-                  fontSize: 18,
+                  fontSize: 16,
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
                 ),
@@ -318,7 +364,8 @@ class ServiceCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(top: 5),
                 child: Text(serviceCenter.operatingHours!,
-                    style: TextStyle(height: 1, fontSize: 14, color: Colors.black)),
+                    style: TextStyle(
+                        height: 1, fontSize: 12, color: Colors.black)),
               )
             ],
           ),
@@ -332,7 +379,7 @@ class ServiceCard extends StatelessWidget {
                 overflow: TextOverflow.visible,
                 style: TextStyle(
                   // height: 2,
-                  fontSize: 18,
+                  fontSize: 16,
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
                 ),
@@ -343,7 +390,8 @@ class ServiceCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(top: 5),
                 child: Text(telephone!,
-                    style: TextStyle(height: 1, fontSize: 14, color: Colors.black)),
+                    style: TextStyle(
+                        height: 1, fontSize: 12, color: Colors.black)),
               )
             ],
           )
