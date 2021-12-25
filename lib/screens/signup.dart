@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
+import 'package:khind/util/helpers.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -30,13 +31,13 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    firstNameCT.text = "test";
-    lastNameCT.text = "khind";
-    mobileNoCT.text = "0156663229";
-    emailCT.text = "test.khind@gmail.com";
-    passwordCT.text = "p455word";
-    dobCT.text = "01-01-1990";
-    confirmPasswordCT.text = "p455word";
+    // firstNameCT.text = "test";
+    // lastNameCT.text = "khind";
+    // mobileNoCT.text = "0156663229";
+    // emailCT.text = "test.khind@gmail.com";
+    // passwordCT.text = "p455word";
+    // dobCT.text = "01-01-1990";
+    // confirmPasswordCT.text = "p455word";
     super.initState();
   }
 
@@ -85,94 +86,67 @@ class _SignUpState extends State<SignUp> {
     confirmPasswordCT.clear();
   }
 
-  _showAlertDialog({bool success = false}) {
-    AlertDialog alert;
-
-    if (success) {
-      alert = AlertDialog(
-        content: new Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-                margin: EdgeInsets.only(left: 5), child: Text("You have successfully sign up")),
-          ],
-        ),
-        actions: <Widget>[
-          MaterialButton(
-              child: Text('Ok'),
-              onPressed: () {
-                _clearTextField();
-                Navigator.of(context).pop();
-              })
-        ],
-      );
-    } else {
-      alert = AlertDialog(
-        content: new Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            Container(margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
-          ],
-        ),
-      );
-    }
-
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
   void _handleSignUp() async {
-    _showAlertDialog();
+    Helpers.showAlert(context);
+    if (_formKey.currentState!.validate()) {
+      final Map<String, dynamic> map = {
+        'email': emailCT.text,
+        'firstname': firstNameCT.text,
+        'lastname': lastNameCT.text,
+        'password': passwordCT.text,
+        'telephone': mobileNoCT.text,
+        'confirm': confirmPasswordCT.text,
+        'agree': 1
+      };
 
-    final Map<String, dynamic> map = {
-      'email': emailCT.text,
-      'firstname': firstNameCT.text,
-      'lastname': lastNameCT.text,
-      'password': passwordCT.text,
-      'telephone': mobileNoCT.text,
-      'agree': 1
-    };
+      // print("MAP: $map");
+      final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
+      setState(() {
+        isLoading = true;
+        errorMsg = "";
+        errors = [];
+      });
+      Navigator.pop(context);
 
-    print("MAP: $map");
-    final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
-    setState(() {
-      isLoading = true;
-      errorMsg = "";
-      errors = [];
-    });
-    Navigator.pop(context);
-
-    if (response['success']) {
-      _showAlertDialog(success: true);
-    } else {
-      // print("ERROR: ${response['error']}");
-      if (response['error'] != null) {
-        setState(() {
-          isLoading = false;
-          errorMsg = "Validation failed!";
-
-          if (response['error'] is LinkedHashMap) {
-            // print("response['error']?.runtimeType: ${response['error']?.runtimeType}");
-
-            (response['error'] as LinkedHashMap).forEach((key, value) {
-              print('$key | $value');
-              errors.add(value);
-            });
-          }
-        });
+      if (response['success']) {
+        Helpers.showAlert(context, hasAction: true, onPressed: () {
+          _clearTextField();
+          Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, 'home');
+        },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    margin: EdgeInsets.only(left: 5), child: Text("You have successfully sign up")),
+              ],
+            ));
       } else {
-        setState(() {
-          isLoading = false;
-          // errorMsg = "Validation failed!";
-          errors.add("Validation failed!");
-        });
+        // print("ERROR: ${response['error']}");
+        if (response['error'] != null) {
+          setState(() {
+            isLoading = false;
+            errorMsg = "Validation failed!";
+
+            if (response['error'] is LinkedHashMap) {
+              // print("response['error']?.runtimeType: ${response['error']?.runtimeType}");
+
+              (response['error'] as LinkedHashMap).forEach((key, value) {
+                print('$key | $value');
+                errors.add(value);
+              });
+            }
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+            // errorMsg = "Validation failed!";
+            errors.add("Validation failed!");
+          });
+        }
       }
+    } else {
+      Navigator.pop(context);
     }
   }
 
@@ -326,6 +300,8 @@ class _SignUpState extends State<SignUp> {
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Please enter confirm password';
+                } else if (value != passwordCT.text) {
+                  return 'Password does not match with confirm password';
                 }
                 return null;
               },
@@ -395,13 +371,13 @@ class _SignUpState extends State<SignUp> {
           child: Container(
               padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
               child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                SizedBox(height: 50),
+                SizedBox(height: 20),
                 _renderHeader(),
                 SizedBox(height: errors.length > 0 ? 20 : 50),
                 errors.length > 0 ? _renderError() : Container(),
                 SizedBox(height: errors.length > 0 ? 10 : 0),
                 _renderForm(),
-                SizedBox(height: 50)
+                // SizedBox(height: 50)
               ]))),
     );
   }

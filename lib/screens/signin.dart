@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
+import 'package:khind/util/helpers.dart';
 import 'package:khind/util/key.dart';
 
 class SignIn extends StatefulWidget {
@@ -22,7 +23,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    refreshToken();
+    _refreshToken();
     // emailCT.text = 'digit@gmail.com';
     // passwordCT.text = 'passwprd';
     super.initState();
@@ -35,7 +36,7 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  refreshToken() async {
+  _refreshToken() async {
     String? tokenExp = await storage.read(key: TOKEN_EXPIRY);
 
     if (tokenExp != null) {
@@ -45,16 +46,16 @@ class _SignInState extends State<SignIn> {
 
       if (expDate.difference(DateTime.now()).inMinutes <= 0) {
         print("Token Expired: $expDate");
-        fetchOauth();
+        _fetchOauth();
       } else {
         print("Token Not Expired");
       }
     } else {
-      fetchOauth();
+      _fetchOauth();
     }
   }
 
-  void fetchOauth() async {
+  void _fetchOauth() async {
     final response = await Api.basicPost('oauth2/token/client_credentials');
 
     if (response['access_token'] != null) {
@@ -72,64 +73,48 @@ class _SignInState extends State<SignIn> {
   }
 
   void handleSignIn() async {
-    showAlertDialog();
+    Helpers.showAlert(context);
+    if (_formKey.currentState!.validate()) {
+      final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
+      final response = await Api.bearerPost('login', params: map);
 
-    final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
-    final response = await Api.bearerPost('login', params: map);
+      setState(() {
+        isLoading = true;
+        errorMsg = "";
+      });
 
-    setState(() {
-      isLoading = true;
-      errorMsg = "";
-    });
+      if (response['error'] != null) {
+        if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
+          _fetchOauth();
+          final response1 = await Api.bearerPost('login', params: map);
+          // Navigator.of(context, rootNavigator: true).pop();
+          Navigator.pop(context);
 
-    if (response['error'] != null) {
-      if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
-        fetchOauth();
-        final response1 = await Api.bearerPost('login', params: map);
-        // Navigator.of(context, rootNavigator: true).pop();
-        Navigator.pop(context);
-
-        if (response1['error'] != null) {
+          if (response1['error'] != null) {
+            setState(() {
+              isLoading = false;
+              errorMsg = response1['error']['warning'] != null
+                  ? response1['error']['warning']
+                  : "Incorrect credentials";
+            });
+          } else {
+            Navigator.pushReplacementNamed(context, 'home');
+          }
+        } else {
           setState(() {
             isLoading = false;
-            errorMsg = response1['error']['warning'] != null
-                ? response1['error']['warning']
+            errorMsg = response['error']['warning'] != null
+                ? response['error']['warning']
                 : "Incorrect credentials";
+            Navigator.pop(context);
           });
-        } else {
-          Navigator.pushReplacementNamed(context, 'home');
         }
       } else {
-        setState(() {
-          isLoading = false;
-          errorMsg = response['error']['warning'] != null
-              ? response['error']['warning']
-              : "Incorrect credentials";
-          Navigator.pop(context);
-        });
+        Navigator.pushReplacementNamed(context, 'home');
       }
     } else {
-      Navigator.pushReplacementNamed(context, 'home');
+      Navigator.pop(context);
     }
-  }
-
-  showAlertDialog() {
-    AlertDialog alert = AlertDialog(
-      content: new Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          Container(margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
-        ],
-      ),
-    );
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
   }
 
   Widget _renderHeader() {
