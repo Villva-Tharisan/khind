@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
+import 'package:khind/util/helpers.dart';
 import 'package:khind/util/key.dart';
 
 class SignIn extends StatefulWidget {
@@ -17,14 +18,14 @@ class _SignInState extends State<SignIn> {
   TextEditingController passwordCT = new TextEditingController();
   bool isLoading = false;
   bool showPassword = false;
-  String error = "";
+  String errorMsg = "";
   final storage = new FlutterSecureStorage();
 
   @override
   void initState() {
-    refreshToken();
-    emailCT.text = 'digit@gmail.com';
-    passwordCT.text = 'passwprd';
+    _refreshToken();
+    // emailCT.text = 'digit@gmail.com';
+    // passwordCT.text = 'passwprd';
     super.initState();
   }
 
@@ -35,26 +36,26 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  refreshToken() async {
+  _refreshToken() async {
     String? tokenExp = await storage.read(key: TOKEN_EXPIRY);
 
     if (tokenExp != null) {
       var expDate = DateTime.fromMillisecondsSinceEpoch(int.parse(tokenExp));
 
-      // print('DIFF: ${expDate.difference(DateTime.now()).inSeconds}');
+      // print('DIFF: ${expDate.difference(DateTime.now()).inMinutes}');
 
-      if (expDate.difference(DateTime.now()).inMilliseconds <= 0) {
+      if (expDate.difference(DateTime.now()).inMinutes <= 0) {
         print("Token Expired: $expDate");
-        fetchOauth();
+        _fetchOauth();
       } else {
         print("Token Not Expired");
       }
     } else {
-      fetchOauth();
+      _fetchOauth();
     }
   }
 
-  void fetchOauth() async {
+  void _fetchOauth() async {
     final response = await Api.basicPost('oauth2/token/client_credentials');
 
     if (response['access_token'] != null) {
@@ -72,63 +73,48 @@ class _SignInState extends State<SignIn> {
   }
 
   void handleSignIn() async {
-    showAlertDialog();
+    Helpers.showAlert(context);
+    if (_formKey.currentState!.validate()) {
+      final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
+      final response = await Api.bearerPost('login', params: map);
 
-    final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
-    final response = await Api.bearerPost('login', params: map);
+      setState(() {
+        isLoading = true;
+        errorMsg = "";
+      });
 
-    setState(() {
-      isLoading = true;
-      error = "";
-    });
+      if (response['error'] != null) {
+        if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
+          _fetchOauth();
+          final response1 = await Api.bearerPost('login', params: map);
+          // Navigator.of(context, rootNavigator: true).pop();
+          Navigator.pop(context);
 
-    if (response['error'] != null) {
-      if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
-        fetchOauth();
-        final response1 = await Api.bearerPost('login', params: map);
-        // Navigator.of(context, rootNavigator: true).pop();
-        Navigator.pop(context);
-
-        if (response1['error'] != null) {
+          if (response1['error'] != null) {
+            setState(() {
+              isLoading = false;
+              errorMsg = response1['error']['warning'] != null
+                  ? response1['error']['warning']
+                  : "Incorrect credentials";
+            });
+          } else {
+            Navigator.pushReplacementNamed(context, 'home');
+          }
+        } else {
           setState(() {
             isLoading = false;
-            error = response1['error']['warning'] != null
-                ? response1['error']['warning']
+            errorMsg = response['error']['warning'] != null
+                ? response['error']['warning']
                 : "Incorrect credentials";
+            Navigator.pop(context);
           });
-        } else {
-          Navigator.pushReplacementNamed(context, 'home');
         }
       } else {
-        setState(() {
-          isLoading = false;
-          error = response['error']['warning'] != null
-              ? response['error']['warning']
-              : "Incorrect credentials";
-          Navigator.pop(context);
-        });
+        Navigator.pushReplacementNamed(context, 'home');
       }
     } else {
-      Navigator.pushReplacementNamed(context, 'home');
+      Navigator.pop(context);
     }
-  }
-
-  showAlertDialog() {
-    AlertDialog alert = AlertDialog(
-      content: new Row(
-        children: [
-          CircularProgressIndicator(),
-          Container(margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
-        ],
-      ),
-    );
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
   }
 
   Widget _renderHeader() {
@@ -199,7 +185,8 @@ class _SignInState extends State<SignIn> {
           Container(
               alignment: Alignment.centerLeft,
               child: InkWell(
-                  child: Text("Forgot Password?", textAlign: TextAlign.left), onTap: () {})),
+                  child: Text("Forgot Password?", textAlign: TextAlign.left),
+                  onTap: () => Navigator.pushNamed(context, 'forgot'))),
           SizedBox(height: 30),
           GradientButton(
               height: 40,
@@ -234,7 +221,7 @@ class _SignInState extends State<SignIn> {
                   end: Alignment.bottomCenter),
               onPressed: () {
                 setState(() {
-                  error = "";
+                  errorMsg = "";
                 });
                 Navigator.pushNamed(context, 'signup');
               })
@@ -245,7 +232,7 @@ class _SignInState extends State<SignIn> {
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       // SizedBox(height: 10),
       Text(
-        error,
+        errorMsg,
         style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
         textAlign: TextAlign.center,
       ),
@@ -261,8 +248,8 @@ class _SignInState extends State<SignIn> {
           padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
           child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
             _renderHeader(),
-            SizedBox(height: error != "" ? 20 : 50),
-            error != "" ? _renderError() : Container(),
+            SizedBox(height: errorMsg != "" ? 20 : 50),
+            errorMsg != "" ? _renderError() : Container(),
             _renderForm(),
             SizedBox(height: 50)
           ])),

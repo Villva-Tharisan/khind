@@ -8,6 +8,7 @@ import 'package:khind/screens/product_model.dart';
 import 'package:khind/screens/splash.dart';
 import 'package:khind/screens/signin.dart';
 import 'package:khind/screens/signup.dart';
+import 'package:khind/screens/forgot_password.dart';
 import 'package:khind/screens/home.dart';
 
 class AppRouter {
@@ -23,6 +24,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => SignIn());
       case 'signup':
         return MaterialPageRoute(builder: (_) => SignUp());
+      case 'forgot':
+        return MaterialPageRoute(builder: (_) => ForgotPassword());
       case 'home':
         return MaterialPageRoute(builder: (_) => Home());
       case 'news':
