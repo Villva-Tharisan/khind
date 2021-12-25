@@ -16,8 +16,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<Widget> _tabs = [
-    // const News(),
-    const ServiceLocator(),
+    const News(),
+    // const ServiceLocator(),
     const MyPurchases(),
     const Mall(),
     const ServiceTracker(),

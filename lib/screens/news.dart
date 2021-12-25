@@ -101,7 +101,7 @@ class NewsCard extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     return Container(
       width: double.infinity,
-      height: 75,
+      height: 80,
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,

@@ -14,4 +14,5 @@ class Api {
   static const GET_STATES = "provider/state.php";
   static const GET_CITIES = "provider/city.php";
   static const GET_SERVICE = "provider/service.php";
+  static const GET_MY_PURCHASE = "provider/purchase.php";
 }

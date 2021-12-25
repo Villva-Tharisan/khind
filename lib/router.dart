@@ -4,6 +4,7 @@ import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
 import 'package:khind/screens/ewarranty_product_manual.dart';
 import 'package:khind/screens/news.dart';
+import 'package:khind/screens/product_model.dart';
 import 'package:khind/screens/splash.dart';
 import 'package:khind/screens/signin.dart';
 import 'package:khind/screens/signup.dart';
@@ -46,10 +47,14 @@ class AppRouter {
           builder: (_) => EwarrantyProductManual(),
         );
 
+      case 'productModel':
+        return MaterialPageRoute(builder: (_) => ProductModel());
+
       default:
         return MaterialPageRoute(
-            builder: (_) =>
-                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
+            builder: (_) => Scaffold(
+                body: Center(
+                    child: Text('No route defined for ${settings.name}'))));
     }
   }
 
