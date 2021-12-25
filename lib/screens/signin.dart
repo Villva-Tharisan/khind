@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -24,8 +26,8 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     _refreshToken();
-    // emailCT.text = 'digit@gmail.com';
-    // passwordCT.text = 'passwprd';
+    emailCT.text = 'khindcustomerservice@gmail.com';
+    passwordCT.text = 'Khindanshin118';
     super.initState();
   }
 
@@ -76,17 +78,19 @@ class _SignInState extends State<SignIn> {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
-      final response = await Api.bearerPost('login', params: map);
+      final response = await Api.bearerPost('login', params: jsonEncode(map));
 
       setState(() {
         isLoading = true;
         errorMsg = "";
       });
 
+      print("MAP: $map");
+
       if (response['error'] != null) {
         if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
           _fetchOauth();
-          final response1 = await Api.bearerPost('login', params: map);
+          final response1 = await Api.bearerPost('login', params: jsonEncode(map));
           // Navigator.of(context, rootNavigator: true).pop();
           Navigator.pop(context);
 
