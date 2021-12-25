@@ -111,6 +111,9 @@ class _SignUpState extends State<SignUp> {
       if (response['success']) {
         Helpers.showAlert(context, hasAction: true, onPressed: () {
           _clearTextField();
+          setState(() {
+            errors = [];
+          });
           Navigator.pop(context);
           Navigator.pushReplacementNamed(context, 'home');
         },
@@ -122,17 +125,13 @@ class _SignUpState extends State<SignUp> {
               ],
             ));
       } else {
-        // print("ERROR: ${response['error']}");
         if (response['error'] != null) {
           setState(() {
             isLoading = false;
             errorMsg = "Validation failed!";
 
             if (response['error'] is LinkedHashMap) {
-              // print("response['error']?.runtimeType: ${response['error']?.runtimeType}");
-
               (response['error'] as LinkedHashMap).forEach((key, value) {
-                print('$key | $value');
                 errors.add(value);
               });
             }
@@ -140,7 +139,6 @@ class _SignUpState extends State<SignUp> {
         } else {
           setState(() {
             isLoading = false;
-            // errorMsg = "Validation failed!";
             errors.add("Validation failed!");
           });
         }

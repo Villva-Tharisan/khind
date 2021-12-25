@@ -185,7 +185,8 @@ class _SignInState extends State<SignIn> {
           Container(
               alignment: Alignment.centerLeft,
               child: InkWell(
-                  child: Text("Forgot Password?", textAlign: TextAlign.left), onTap: () {})),
+                  child: Text("Forgot Password?", textAlign: TextAlign.left),
+                  onTap: () => Navigator.pushNamed(context, 'forgot'))),
           SizedBox(height: 30),
           GradientButton(
               height: 40,

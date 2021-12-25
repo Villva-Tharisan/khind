@@ -6,17 +6,19 @@ import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 
-class SignIn extends StatefulWidget {
+class ForgotPassword extends StatefulWidget {
   @override
-  _SignInState createState() => _SignInState();
+  _ForgotPasswordState createState() => _ForgotPasswordState();
 }
 
-class _SignInState extends State<SignIn> {
+class _ForgotPasswordState extends State<ForgotPassword> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailCT = new TextEditingController();
   bool isLoading = false;
   bool showPassword = false;
+  bool success = false;
   String errorMsg = "";
+  List errors = [];
   final storage = new FlutterSecureStorage();
 
   @override
@@ -40,13 +42,21 @@ class _SignInState extends State<SignIn> {
     Navigator.pop(context);
 
     setState(() {
+      success = false;
       isLoading = true;
-      errorMsg = "";
+      errors = [];
     });
 
     if (response['error'] != null) {
+      (response['error'] as List<dynamic>).forEach((elem) {
+        errors.add(elem);
+      });
     } else {
       Helpers.showAlert(context, hasAction: true, onPressed: () {
+        setState(() {
+          success = true;
+          errors = [];
+        });
         Navigator.pop(context);
       },
           child: Row(
@@ -72,6 +82,9 @@ class _SignInState extends State<SignIn> {
     return Form(
         key: _formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text("Enter your email", style: TextStyle(fontWeight: FontWeight.w500)),
+          Text("address", style: TextStyle(fontWeight: FontWeight.w500)),
+          SizedBox(height: 20),
           TextFormField(
             keyboardType: TextInputType.text,
             validator: (value) {
@@ -91,15 +104,10 @@ class _SignInState extends State<SignIn> {
                     borderSide: BorderSide(color: Colors.white),
                     borderRadius: BorderRadius.circular(5))),
           ),
-          SizedBox(height: 5),
-          Container(
-              alignment: Alignment.centerLeft,
-              child: InkWell(
-                  child: Text("Forgot Password?", textAlign: TextAlign.left), onTap: () {})),
-          SizedBox(height: 30),
+          SizedBox(height: 100),
           GradientButton(
               height: 40,
-              child: Text("Sign In", style: TextStyles.textW500),
+              child: Text("Send me my new password", style: TextStyles.textW500),
               gradient: LinearGradient(
                   colors: <Color>[Colors.white, Colors.grey[400]!],
                   begin: Alignment.topCenter,
@@ -108,16 +116,28 @@ class _SignInState extends State<SignIn> {
         ]));
   }
 
+  _renderSuccess() {
+    return Container(
+        alignment: Alignment.center,
+        child: Container(
+            child: Text(
+          "Check out your new password within 12 hours",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          textAlign: TextAlign.center,
+        )));
+  }
+
   _renderError() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      // SizedBox(height: 10),
-      Text(
-        errorMsg,
-        style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
-      ),
-      SizedBox(height: 20),
-    ]);
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: errors
+            .map((elem) => Container(
+                    child: Text(
+                  elem,
+                  style: TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
+                )))
+            .toList());
   }
 
   @override
@@ -126,10 +146,12 @@ class _SignInState extends State<SignIn> {
       resizeToAvoidBottomInset: false,
       body: Container(
           padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
-          child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             _renderHeader(),
-            SizedBox(height: errorMsg != "" ? 20 : 50),
-            errorMsg != "" ? _renderError() : Container(),
+            SizedBox(height: 50),
+            errors.length > 0 ? _renderError() : Container(),
+            success ? _renderSuccess() : Container(),
+            SizedBox(height: errors.length > 0 || success ? 20 : 0),
             _renderForm(),
             SizedBox(height: 50)
           ])),
