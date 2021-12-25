@@ -25,7 +25,6 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    _refreshToken();
     emailCT.text = 'khindcustomerservice@gmail.com';
     passwordCT.text = 'Khindanshin118';
     super.initState();
@@ -38,25 +37,6 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  _refreshToken() async {
-    String? tokenExp = await storage.read(key: TOKEN_EXPIRY);
-
-    if (tokenExp != null) {
-      var expDate = DateTime.fromMillisecondsSinceEpoch(int.parse(tokenExp));
-
-      // print('DIFF: ${expDate.difference(DateTime.now()).inMinutes}');
-
-      if (expDate.difference(DateTime.now()).inMinutes <= 0) {
-        print("Token Expired: $expDate");
-        _fetchOauth();
-      } else {
-        print("Token Not Expired");
-      }
-    } else {
-      _fetchOauth();
-    }
-  }
-
   void _fetchOauth() async {
     final response = await Api.basicPost('oauth2/token/client_credentials');
 
@@ -64,8 +44,6 @@ class _SignInState extends State<SignIn> {
       await storage.write(key: TOKEN, value: response['access_token']);
 
       if (response['expires_in'] != null) {
-        // int expInDays = (response['expires_in'] / 86400).floor();
-
         var curDate = new DateTime.now();
         var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
 
@@ -85,13 +63,10 @@ class _SignInState extends State<SignIn> {
         errorMsg = "";
       });
 
-      print("MAP: $map");
-
       if (response['error'] != null) {
         if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
           _fetchOauth();
           final response1 = await Api.bearerPost('login', params: jsonEncode(map));
-          // Navigator.of(context, rootNavigator: true).pop();
           Navigator.pop(context);
 
           if (response1['error'] != null) {
