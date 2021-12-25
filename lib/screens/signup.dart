@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/themes/text_styles.dart';
@@ -20,13 +23,20 @@ class _SignUpState extends State<SignUp> {
   bool isLoading = false;
   bool showPassword = false;
   bool showConfirmPassword = false;
-  String error = "";
-  String success = "";
+  String errorMsg = "";
+  List errors = [];
   DateTime now = DateTime.now();
   DateTime selectedDob = DateTime(DateTime.now().year - 10);
 
   @override
   void initState() {
+    firstNameCT.text = "test";
+    lastNameCT.text = "khind";
+    mobileNoCT.text = "0156663229";
+    emailCT.text = "test.khind@gmail.com";
+    passwordCT.text = "p455word";
+    dobCT.text = "01-01-1990";
+    confirmPasswordCT.text = "p455word";
     super.initState();
   }
 
@@ -125,21 +135,45 @@ class _SignUpState extends State<SignUp> {
       'firstname': firstNameCT.text,
       'lastname': lastNameCT.text,
       'password': passwordCT.text,
-      'telephone': mobileNoCT.text
+      'telephone': mobileNoCT.text,
+      'agree': 1
     };
 
     print("MAP: $map");
-    final response = await Api.bearerPost('register_user.php', params: map);
-
+    final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
     setState(() {
       isLoading = true;
-      error = "";
+      errorMsg = "";
+      errors = [];
     });
-
     Navigator.pop(context);
 
-    if (response['error'] != null) {
-    } else {}
+    if (response['success']) {
+      _showAlertDialog(success: true);
+    } else {
+      // print("ERROR: ${response['error']}");
+      if (response['error'] != null) {
+        setState(() {
+          isLoading = false;
+          errorMsg = "Validation failed!";
+
+          if (response['error'] is LinkedHashMap) {
+            // print("response['error']?.runtimeType: ${response['error']?.runtimeType}");
+
+            (response['error'] as LinkedHashMap).forEach((key, value) {
+              print('$key | $value');
+              errors.add(value);
+            });
+          }
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          // errorMsg = "Validation failed!";
+          errors.add("Validation failed!");
+        });
+      }
+    }
   }
 
   Widget _renderForm() {
@@ -329,6 +363,19 @@ class _SignUpState extends State<SignUp> {
         ]));
   }
 
+  _renderError() {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: errors
+            .map((elem) => Container(
+                    child: Text(
+                  elem,
+                  style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
+                )))
+            .toList());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -350,7 +397,9 @@ class _SignUpState extends State<SignUp> {
               child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
                 SizedBox(height: 50),
                 _renderHeader(),
-                SizedBox(height: 50),
+                SizedBox(height: errors.length > 0 ? 20 : 50),
+                errors.length > 0 ? _renderError() : Container(),
+                SizedBox(height: errors.length > 0 ? 10 : 0),
                 _renderForm(),
                 SizedBox(height: 50)
               ]))),

@@ -17,14 +17,14 @@ class _SignInState extends State<SignIn> {
   TextEditingController passwordCT = new TextEditingController();
   bool isLoading = false;
   bool showPassword = false;
-  String error = "";
+  String errorMsg = "";
   final storage = new FlutterSecureStorage();
 
   @override
   void initState() {
     refreshToken();
-    emailCT.text = 'digit@gmail.com';
-    passwordCT.text = 'passwprd';
+    // emailCT.text = 'digit@gmail.com';
+    // passwordCT.text = 'passwprd';
     super.initState();
   }
 
@@ -41,9 +41,9 @@ class _SignInState extends State<SignIn> {
     if (tokenExp != null) {
       var expDate = DateTime.fromMillisecondsSinceEpoch(int.parse(tokenExp));
 
-      // print('DIFF: ${expDate.difference(DateTime.now()).inSeconds}');
+      // print('DIFF: ${expDate.difference(DateTime.now()).inMinutes}');
 
-      if (expDate.difference(DateTime.now()).inMilliseconds <= 0) {
+      if (expDate.difference(DateTime.now()).inMinutes <= 0) {
         print("Token Expired: $expDate");
         fetchOauth();
       } else {
@@ -79,7 +79,7 @@ class _SignInState extends State<SignIn> {
 
     setState(() {
       isLoading = true;
-      error = "";
+      errorMsg = "";
     });
 
     if (response['error'] != null) {
@@ -92,7 +92,7 @@ class _SignInState extends State<SignIn> {
         if (response1['error'] != null) {
           setState(() {
             isLoading = false;
-            error = response1['error']['warning'] != null
+            errorMsg = response1['error']['warning'] != null
                 ? response1['error']['warning']
                 : "Incorrect credentials";
           });
@@ -102,7 +102,7 @@ class _SignInState extends State<SignIn> {
       } else {
         setState(() {
           isLoading = false;
-          error = response['error']['warning'] != null
+          errorMsg = response['error']['warning'] != null
               ? response['error']['warning']
               : "Incorrect credentials";
           Navigator.pop(context);
@@ -235,7 +235,7 @@ class _SignInState extends State<SignIn> {
                   end: Alignment.bottomCenter),
               onPressed: () {
                 setState(() {
-                  error = "";
+                  errorMsg = "";
                 });
                 Navigator.pushNamed(context, 'signup');
               })
@@ -246,7 +246,7 @@ class _SignInState extends State<SignIn> {
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       // SizedBox(height: 10),
       Text(
-        error,
+        errorMsg,
         style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
         textAlign: TextAlign.center,
       ),
@@ -262,8 +262,8 @@ class _SignInState extends State<SignIn> {
           padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
           child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
             _renderHeader(),
-            SizedBox(height: error != "" ? 20 : 50),
-            error != "" ? _renderError() : Container(),
+            SizedBox(height: errorMsg != "" ? 20 : 50),
+            errorMsg != "" ? _renderError() : Container(),
             _renderForm(),
             SizedBox(height: 50)
           ])),
