@@ -52,7 +52,7 @@ class _SignInState extends State<SignIn> {
     }
   }
 
-  void handleSignIn() async {
+  void _handleSignIn() async {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
@@ -89,6 +89,7 @@ class _SignInState extends State<SignIn> {
           });
         }
       } else {
+        Navigator.pop(context);
         Navigator.pushReplacementNamed(context, 'home');
       }
     } else {
@@ -100,7 +101,7 @@ class _SignInState extends State<SignIn> {
     return Container(
         alignment: Alignment.center,
         child: Image(
-            image: AssetImage('assets/images/logo.png'),
+            image: AssetImage('assets/images/logo_text.png'),
             height: MediaQuery.of(context).size.width * 0.2));
   }
 
@@ -174,7 +175,7 @@ class _SignInState extends State<SignIn> {
                   colors: <Color>[Colors.white, Colors.grey[400]!],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter),
-              onPressed: () => handleSignIn()),
+              onPressed: () => _handleSignIn()),
           SizedBox(height: 50),
           Text("New to Khind?"),
           SizedBox(height: 10),

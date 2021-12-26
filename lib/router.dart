@@ -5,6 +5,8 @@ import 'package:khind/screens/ewarranty_product.dart';
 import 'package:khind/screens/ewarranty_product_manual.dart';
 import 'package:khind/screens/news.dart';
 import 'package:khind/screens/product_model.dart';
+import 'package:khind/screens/profile.dart';
+import 'package:khind/screens/servicelocator.dart';
 import 'package:khind/screens/splash.dart';
 import 'package:khind/screens/signin.dart';
 import 'package:khind/screens/signup.dart';
@@ -26,11 +28,14 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => SignUp());
       case 'forgot':
         return MaterialPageRoute(builder: (_) => ForgotPassword());
+      case 'profile':
+        return MaterialPageRoute(builder: (_) => Profile());
       case 'home':
         return MaterialPageRoute(builder: (_) => Home());
       case 'news':
         return MaterialPageRoute(builder: (_) => News());
-
+      case 'service_locator':
+        return MaterialPageRoute(builder: (_) => ServiceLocator());
       case 'ewarranty':
         return MaterialPageRoute(builder: (_) => Ewarranty());
 
@@ -55,9 +60,8 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-            builder: (_) => Scaffold(
-                body: Center(
-                    child: Text('No route defined for ${settings.name}'))));
+            builder: (_) =>
+                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
     }
   }
 

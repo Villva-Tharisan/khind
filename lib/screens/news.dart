@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:khind/models/new.dart';
 import 'package:intl/intl.dart';
+import 'package:khind/util/helpers.dart';
 
 class News extends StatefulWidget {
   const News({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class News extends StatefulWidget {
 }
 
 class _NewsState extends State<News> {
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<New> _news = [];
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
 
@@ -48,6 +50,8 @@ class _NewsState extends State<News> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "News"),
       body: Container(
         padding: const EdgeInsets.symmetric(
           vertical: 20,
@@ -158,11 +162,9 @@ class NewsCard extends StatelessWidget {
                 ),
                 Text(
                   DateFormat('dd/MM/yyyy').format(
-                          DateFormat('yyyy-MM-dd hh:mm:ss')
-                              .parse(news!.createdAt!.toString())) +
+                          DateFormat('yyyy-MM-dd hh:mm:ss').parse(news!.createdAt!.toString())) +
                       " | ${category!}",
-                  style:
-                      TextStyle(height: 2, fontSize: 12, color: Colors.black),
+                  style: TextStyle(height: 2, fontSize: 12, color: Colors.black),
                 ),
               ],
             ),

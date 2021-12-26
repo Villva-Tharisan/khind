@@ -80,7 +80,7 @@ class SplashScreenState extends State<SplashScreen> {
     return Container(
         alignment: Alignment.center,
         child: Image(
-            image: AssetImage('assets/images/logo.png'),
+            image: AssetImage('assets/images/logo_text.png'),
             height: MediaQuery.of(context).size.width * 0.2));
   }
 

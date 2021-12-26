@@ -7,12 +7,12 @@ import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 
-class SignUp extends StatefulWidget {
+class Profile extends StatefulWidget {
   @override
-  _SignUpState createState() => _SignUpState();
+  _ProfileState createState() => _ProfileState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _ProfileState extends State<Profile> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController emailCT = new TextEditingController();
@@ -54,14 +54,6 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  Widget _renderHeader() {
-    return Container(
-        alignment: Alignment.center,
-        child: Image(
-            image: AssetImage('assets/images/logo_text.png'),
-            height: MediaQuery.of(context).size.width * 0.2));
-  }
-
   Future<void> _selectDob(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -101,7 +93,7 @@ class _SignUpState extends State<SignUp> {
       };
 
       // print("MAP: $map");
-      final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
+      final response = await Api.bearerPost('update_user.php', params: jsonEncode(map));
       setState(() {
         isLoading = true;
         errorMsg = "";
@@ -122,7 +114,8 @@ class _SignUpState extends State<SignUp> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                    margin: EdgeInsets.only(left: 5), child: Text("You have successfully sign up")),
+                    margin: EdgeInsets.only(left: 5),
+                    child: Text("Your profile has been successfully updated")),
               ],
             ));
       } else {
@@ -329,7 +322,7 @@ class _SignUpState extends State<SignUp> {
           SizedBox(height: 30),
           GradientButton(
               height: 40,
-              child: Text("Sign Up", style: TextStyles.textW500),
+              child: Text("Submit", style: TextStyles.textW500),
               gradient: LinearGradient(
                   colors: <Color>[Colors.white, Colors.grey[400]!],
                   begin: Alignment.topCenter,
@@ -356,13 +349,13 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "Sign Up", isBack: true, hasActions: false),
+          title: "My Profile", isBack: true, hasActions: false),
       body: SingleChildScrollView(
           child: Container(
               padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
               child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                SizedBox(height: 20),
-                _renderHeader(),
+                // SizedBox(height: 20),
+                // _renderHeader(),
                 SizedBox(height: errors.length > 0 ? 20 : 50),
                 errors.length > 0 ? _renderError() : Container(),
                 SizedBox(height: errors.length > 0 ? 10 : 0),

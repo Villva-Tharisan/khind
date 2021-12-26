@@ -20,6 +20,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final List<Widget> _tabs = [
     const News(),
+    // const ServiceLocator(),
     const MyPurchases(),
     const Mall(),
     const ServiceTracker(),
@@ -66,7 +67,52 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
+  _renderLeftWidget() {
+    return Container(child: Text("TEST"));
+  }
+
+  BottomNavigationBarItem _makeItem(int index, Icon icon) {
+    const titles = ["News", "My Purchases ", "Mall", "Service Tracker", "E-Warranty"];
+
+    return BottomNavigationBarItem(
+        icon: icon, backgroundColor: Colors.grey[400], label: titles[index]);
+  }
+
   _renderBottomNav() {
+    if (Platform.isIOS) {
+      return CupertinoTabScaffold(
+          tabBar: CupertinoTabBar(
+            items: [
+              _makeItem(0, Icon(CupertinoIcons.list_bullet, size: size)),
+              _makeItem(1, Icon(CupertinoIcons.purchased, size: size)),
+              _makeItem(2, Icon(CupertinoIcons.home, size: size)),
+              _makeItem(3, Icon(CupertinoIcons.time, size: size)),
+              _makeItem(4, Icon(CupertinoIcons.map, size: size))
+            ],
+          ),
+          tabBuilder: (BuildContext context, index) {
+            return _tabs[index];
+          });
+    }
+    // return BottomNavigationBar(
+    //     unselectedItemColor: Colors.white,
+    //     selectedItemColor: Colors.grey[700],
+    //     currentIndex: page,
+    //     selectedLabelStyle: TextStyle(fontSize: 10),
+    //     unselectedLabelStyle: TextStyle(fontSize: 10),
+    //     showUnselectedLabels: true,
+    //     onTap: (int index) {
+    //       setState(() {
+    //         this.page = index;
+    //       });
+    //     },
+    //     items: [
+    //       _makeItem(0, Icon(CupertinoIcons.list_bullet, size: size)),
+    //       _makeItem(1, Icon(CupertinoIcons.purchased, size: size)),
+    //       _makeItem(2, Icon(CupertinoIcons.home, size: size)),
+    //       _makeItem(3, Icon(CupertinoIcons.time, size: size)),
+    //       _makeItem(4, Icon(CupertinoIcons.map, size: size))
+    //     ]);
     return AnimatedBottomNavigationBar.builder(
       itemCount: icons.length,
       tabBuilder: (int index, bool isActive) {
@@ -116,49 +162,54 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _renderRightWidget() {
-    return Container();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: icons[tabIdx] != null
-      //       ? Text(icons[tabIdx]['label'] as String, style: TextStyle(color: Colors.black))
-      //       : Container(),
-      //   elevation: 1,
-      //   backgroundColor: Colors.grey[300],
-      //   actions: [_renderRightWidget()],
-      // ),
-      body: IndexedStack(children: _tabs, index: page),
-      floatingActionButton: ScaleTransition(
-        scale: animation,
-        child: FloatingActionButton(
-          // clipBehavior: Clip.hardEdge,
-          elevation: 8,
-          backgroundColor: HexColor('#FFA400'),
-          child: Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(5),
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                SizedBox(height: 5),
-                Image(image: AssetImage('assets/images/logo_sm.png')),
-                SizedBox(height: 2),
-                Text("Mall", style: TextStyle(fontSize: 8))
-              ])),
-          onPressed: () {
-            setState(() {
-              // tabIdx = 5;
-              page = 2;
-            });
-            _animationController.reset();
-            _animationController.forward();
-          },
+    if (Platform.isIOS) {
+      return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          padding: const EdgeInsetsDirectional.fromSTEB(5, 10, 5, 5),
+          middle: Text('Khind'),
+          trailing: _renderLeftWidget(),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _renderBottomNav(),
-    );
+        child: _renderBottomNav(),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Khind'),
+          elevation: 1,
+          backgroundColor: Colors.grey[300],
+          // actions: [_renderLeftWidget()],
+        ),
+        body: IndexedStack(children: _tabs, index: page),
+        floatingActionButton: ScaleTransition(
+          scale: animation,
+          child: FloatingActionButton(
+            // clipBehavior: Clip.hardEdge,
+            elevation: 8,
+            backgroundColor: HexColor('#FFA400'),
+            child: Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(5),
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  SizedBox(height: 5),
+                  Image(image: AssetImage('assets/images/logo_sm.png')),
+                  SizedBox(height: 2),
+                  Text("Mall", style: TextStyle(fontSize: 8))
+                ])),
+            onPressed: () {
+              setState(() {
+                tabIdx = 5;
+                page = 2;
+              });
+              _animationController.reset();
+              _animationController.forward();
+            },
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: _renderBottomNav(),
+      );
+    }
   }
 }

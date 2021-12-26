@@ -42,6 +42,9 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   http_interceptor: ^1.0.1
   flutter_dotenv: ^5.0.2
+  animated_bottom_navigation_bar: ^0.3.2
+  auto_size_text: ^3.0.0
+  hexcolor: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +79,7 @@ flutter:
     - .env
     - assets/
     - assets/images/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
