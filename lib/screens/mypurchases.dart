@@ -43,8 +43,7 @@ class _MyPurchasesState extends State<MyPurchases> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var purchases =
-          (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+      var purchases = (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
 
       setState(() {
         _myPurchase = purchases;
@@ -124,8 +123,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text(
-                                  "No more data to show, tap to refresh",
+                              child: Text("No more data to show, tap to refresh",
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )

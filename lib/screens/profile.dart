@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/themes/text_styles.dart';
@@ -29,6 +28,7 @@ class _ProfileState extends State<Profile> {
   List errors = [];
   DateTime now = DateTime.now();
   DateTime selectedDob = DateTime(DateTime.now().year - 10);
+  final textStyle = TextStyle(fontSize: 14);
 
   @override
   void initState() {
@@ -142,206 +142,252 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  Widget _renderDivider() {
+    return Container(height: 1, color: Colors.grey, width: double.infinity);
+  }
+
   Widget _renderForm() {
     return Form(
         key: _formKey,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter email';
-              }
-              return null;
-            },
-            controller: emailCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'eg: khind@gmail.com',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter first name';
-              }
-              return null;
-            },
-            controller: firstNameCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'First Name',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter last name';
-              }
-              return null;
-            },
-            controller: lastNameCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'Last Name',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter mobile number';
-              }
-              return null;
-            },
-            controller: mobileNoCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'Mobile Number',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          Stack(children: [
-            TextFormField(
-              keyboardType: TextInputType.text,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter date of birth';
-                }
-                return null;
-              },
-              controller: dobCT,
-              onFieldSubmitted: (val) {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              decoration: InputDecoration(
-                  hintText: 'Date of Birth',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(5))),
-            ),
-            Positioned(
-                right: 0,
-                child: IconButton(
-                    onPressed: () => _selectDob(context), icon: Icon(Icons.date_range, size: 25)))
-          ]),
-          SizedBox(height: 5),
-          Stack(children: [
-            TextFormField(
-              keyboardType: TextInputType.text,
-              obscureText: !showPassword,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter password';
-                }
-                return null;
-              },
-              controller: passwordCT,
-              onFieldSubmitted: (val) {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              decoration: InputDecoration(
-                  hintText: 'Password',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(5))),
-            ),
-            Positioned(
-                right: 15,
-                top: 10,
-                child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        showPassword = !showPassword;
-                      });
-                    },
-                    child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
-          ]),
-          SizedBox(height: 5),
-          Stack(children: [
-            TextFormField(
-              keyboardType: TextInputType.text,
-              obscureText: !showConfirmPassword,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter confirm password';
-                } else if (value != passwordCT.text) {
-                  return 'Password does not match with confirm password';
-                }
-                return null;
-              },
-              controller: confirmPasswordCT,
-              onFieldSubmitted: (val) {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              decoration: InputDecoration(
-                  hintText: 'Retype Password',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(5))),
-            ),
-            Positioned(
-                right: 15,
-                top: 10,
-                child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        showConfirmPassword = !showConfirmPassword;
-                      });
-                    },
-                    child: Icon(showConfirmPassword ? Icons.visibility : Icons.visibility_off)))
-          ]),
-          SizedBox(height: 30),
-          GradientButton(
-              height: 40,
-              child: Text("Submit", style: TextStyles.textW500),
-              gradient: LinearGradient(
-                  colors: <Color>[Colors.white, Colors.grey[400]!],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-              onPressed: () => _handleSignUp())
-        ]));
-  }
-
-  _renderError() {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: errors
-            .map((elem) => Container(
-                    child: Text(
-                  elem,
-                  style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
-                  textAlign: TextAlign.center,
-                )))
-            .toList());
+        child: Container(
+            padding: const EdgeInsets.only(left: 10),
+            child: Column(children: [
+              Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(children: [
+                    Text("Name"),
+                    SizedBox(width: 10),
+                    Flexible(
+                        child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter email';
+                        }
+                        return null;
+                      },
+                      controller: emailCT,
+                      onFieldSubmitted: (val) {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      },
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'eg: khind@gmail.com',
+                          contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
+                    )),
+                  ])),
+              SizedBox(height: 5),
+              _renderDivider(),
+              SizedBox(height: 10),
+              Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(children: [
+                    Text("Name"),
+                    SizedBox(width: 10),
+                    Flexible(
+                        child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter first name';
+                        }
+                        return null;
+                      },
+                      controller: firstNameCT,
+                      onFieldSubmitted: (val) {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      },
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'First Name',
+                        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      ),
+                    ))
+                  ])),
+              SizedBox(height: 5),
+              _renderDivider(),
+              SizedBox(height: 10),
+              Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(children: [
+                    Text("Name"),
+                    SizedBox(width: 10),
+                    Flexible(
+                        child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter last name';
+                        }
+                        return null;
+                      },
+                      controller: lastNameCT,
+                      onFieldSubmitted: (val) {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      },
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Last Name',
+                          contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
+                    ))
+                  ])),
+              SizedBox(height: 5),
+              _renderDivider(),
+              SizedBox(height: 10),
+              Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(children: [
+                    Text("Name"),
+                    SizedBox(width: 10),
+                    Flexible(
+                        child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter mobile number';
+                        }
+                        return null;
+                      },
+                      controller: mobileNoCT,
+                      onFieldSubmitted: (val) {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      },
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Mobile Number',
+                          contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
+                    ))
+                  ])),
+              SizedBox(height: 5),
+              _renderDivider(),
+              SizedBox(height: 10),
+              Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(children: [
+                    Text("D.O.B"),
+                    SizedBox(width: 10),
+                    Flexible(
+                        child: Stack(children: [
+                      TextFormField(
+                        keyboardType: TextInputType.text,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter date of birth';
+                          }
+                          return null;
+                        },
+                        controller: dobCT,
+                        onFieldSubmitted: (val) {
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                        },
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'dd-mm-yyyy',
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
+                      ),
+                      Positioned(
+                          right: 0,
+                          child: IconButton(
+                              onPressed: () => _selectDob(context),
+                              icon: Icon(Icons.date_range, size: 25)))
+                    ]))
+                  ])),
+              SizedBox(height: 5),
+              _renderDivider(),
+              SizedBox(height: 10),
+              Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(children: [
+                    Text("Password"),
+                    SizedBox(width: 10),
+                    Flexible(
+                        child: Stack(children: [
+                      TextFormField(
+                        keyboardType: TextInputType.text,
+                        obscureText: !showPassword,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter password';
+                          }
+                          return null;
+                        },
+                        controller: passwordCT,
+                        onFieldSubmitted: (val) {
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                        },
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Password',
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
+                      ),
+                      Positioned(
+                          right: 15,
+                          top: 10,
+                          child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  showPassword = !showPassword;
+                                });
+                              },
+                              child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
+                    ]))
+                  ])),
+              SizedBox(height: 5),
+              _renderDivider(),
+              SizedBox(height: 10),
+              Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(children: [
+                    Text("Address"),
+                    SizedBox(width: 10),
+                    Flexible(
+                        child: Stack(children: [
+                      TextFormField(
+                        keyboardType: TextInputType.text,
+                        obscureText: !showConfirmPassword,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter address';
+                          }
+                          return null;
+                        },
+                        controller: confirmPasswordCT,
+                        onFieldSubmitted: (val) {
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                        },
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Address',
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
+                      ),
+                      Positioned(
+                          right: 15,
+                          top: 10,
+                          child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  showConfirmPassword = !showConfirmPassword;
+                                });
+                              },
+                              child: Icon(
+                                  showConfirmPassword ? Icons.visibility : Icons.visibility_off)))
+                    ]))
+                  ])),
+              SizedBox(height: 5),
+              _renderDivider(),
+              Expanded(child: Container()),
+              GradientButton(
+                  height: 40,
+                  child: Text("Submit", style: TextStyles.textW500),
+                  gradient: LinearGradient(
+                      colors: <Color>[Colors.white, Colors.grey[400]!],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter),
+                  onPressed: () => _handleSignUp())
+            ])));
   }
 
   @override
@@ -350,18 +396,12 @@ class _ProfileState extends State<Profile> {
       key: _scaffoldKey,
       appBar: Helpers.customAppBar(context, _scaffoldKey,
           title: "My Profile", isBack: true, hasActions: false),
-      body: SingleChildScrollView(
-          child: Container(
-              padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
-              child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                // SizedBox(height: 20),
-                // _renderHeader(),
-                SizedBox(height: errors.length > 0 ? 20 : 50),
-                errors.length > 0 ? _renderError() : Container(),
-                SizedBox(height: errors.length > 0 ? 10 : 0),
-                _renderForm(),
-                // SizedBox(height: 50)
-              ]))),
+      body: CustomScrollView(slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: _renderForm(),
+        )
+      ]),
     );
   }
 }
