@@ -57,10 +57,11 @@ class Api {
   static http.Client authClient = InterceptedClient.build(interceptors: [AuthInterceptor()]);
   static http.Client client = InterceptedClient.build(interceptors: [ApiInterceptor()]);
 
-  static basicPost(endpoint, {params}) async {
+  static basicPost(endpoint, {params, isCms = false}) async {
     try {
       final response;
-      String url = '${(dotenv.env["API_URL"] as String)}/$endpoint';
+      String baseUrl = isCms ? dotenv.env["CMS_URL"] as String : dotenv.env["API_URL"] as String;
+      String url = '$baseUrl/$endpoint';
       print("Url: $url");
       if (params != null) {
         response = await authClient.post(url.toUri(), body: params);
@@ -76,9 +77,10 @@ class Api {
     }
   }
 
-  static bearerGet(endpoint, {params}) async {
+  static bearerGet(endpoint, {params, isCms = false}) async {
     try {
-      String url = '${(dotenv.env["API_URL"] as String)}/$endpoint';
+      String baseUrl = isCms ? dotenv.env["CMS_URL"] as String : dotenv.env["API_URL"] as String;
+      String url = '$baseUrl/$endpoint';
       print("Url: $url");
       final response = await client.get(url.toUri());
       print('Bearer Response: ${response.body}');
@@ -90,10 +92,11 @@ class Api {
     }
   }
 
-  static bearerPost(endpoint, {params}) async {
+  static bearerPost(endpoint, {params, isCms = false}) async {
     try {
       final response;
-      String url = '${(dotenv.env["API_URL"] as String)}/$endpoint';
+      String baseUrl = isCms ? dotenv.env["CMS_URL"] as String : dotenv.env["API_URL"] as String;
+      String url = '$baseUrl/$endpoint';
       print("Url: $url");
       if (params != null) {
         response = await client.post(url.toUri(), body: params);
