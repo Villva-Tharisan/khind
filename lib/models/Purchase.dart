@@ -1,3 +1,6 @@
+import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
+
 class Purchase {
   dynamic? warrantyRegistrationId;
   String? userId;
@@ -65,6 +68,8 @@ class Purchase {
   dynamic? lastLoginDatetime;
   dynamic? storeName;
   dynamic? bpStatus;
+  String? status;
+  String? statusCode;
 
   Purchase(
       {this.warrantyRegistrationId,
@@ -201,6 +206,23 @@ class Purchase {
     this.lastLoginDatetime = json["last_login_datetime"];
     this.storeName = json["store_name"];
     this.bpStatus = json["bp_status"];
+    var purchaseDate = DateFormat('yyyy-MM-dd').parse(this.purchaseDate!);
+    var warrantyMonth = int.parse(this.warrantyMonths!);
+    var warrantyDate = Jiffy(purchaseDate).add(months: warrantyMonth).dateTime;
+
+    var today = DateTime.now();
+    var diff = warrantyDate.difference(today).inDays;
+
+    this.statusCode = "0";
+    this.status = "Expired";
+    if (diff > 0) {
+      this.status = "Active";
+      this.statusCode = "1";
+    }
+    if (diff > 0 && diff < 61) {
+      this.status = "Nearing Expiry";
+      this.statusCode = "2";
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -271,6 +293,7 @@ class Purchase {
     data["last_login_datetime"] = this.lastLoginDatetime;
     data["store_name"] = this.storeName;
     data["bp_status"] = this.bpStatus;
+
     return data;
   }
 }

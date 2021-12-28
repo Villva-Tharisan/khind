@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khind/util/helpers.dart';
 
 class ProductModel extends StatefulWidget {
   @override
@@ -6,12 +7,12 @@ class ProductModel extends StatefulWidget {
 }
 
 class _ProductModelState extends State<ProductModel> {
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Product Model'),
-      ),
+      appBar: Helpers.customAppBar(context, _scaffoldKey,
+          title: "Product Model", hasActions: false, isBack: true),
       body: Container(
         width: double.infinity,
         height: double.infinity,

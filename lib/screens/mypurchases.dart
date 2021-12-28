@@ -5,6 +5,8 @@ import 'package:khind/services/api.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:khind/util/helpers.dart';
+
 class MyPurchases extends StatefulWidget {
   const MyPurchases({Key? key}) : super(key: key);
 
@@ -13,19 +15,36 @@ class MyPurchases extends StatefulWidget {
 }
 
 class _MyPurchasesState extends State<MyPurchases> {
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<String> _status = [
     'All',
     'Active',
+    'Expired',
+    'Nearing Expiry',
   ];
 
   String selectedStatus = "All";
 
   List<Purchase> _myPurchase = [];
+  List<Purchase> _filteredMyPurchase = [];
 
   @override
   void initState() {
     super.initState();
     this.fetchMyPurchases();
+  }
+
+  void onSelectStatus(String status) {
+    List<Purchase> filter;
+    if (status == "All") {
+      filter = _myPurchase;
+    } else {
+      filter =
+          _myPurchase.where((element) => element.status == status).toList();
+    }
+    setState(() {
+      _filteredMyPurchase = filter;
+    });
   }
 
   Future<void> fetchMyPurchases() async {
@@ -47,6 +66,7 @@ class _MyPurchasesState extends State<MyPurchases> {
 
       setState(() {
         _myPurchase = purchases;
+        _filteredMyPurchase = purchases;
       });
     }
   }
@@ -56,6 +76,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+      appBar: Helpers.customAppBar(context, _scaffoldKey,
+          title: "My Purchases", hasActions: false),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -66,9 +88,6 @@ class _MyPurchasesState extends State<MyPurchases> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 70,
-            ),
             Container(
               width: double.infinity,
               // decoration: BoxDecoration(
@@ -106,8 +125,9 @@ class _MyPurchasesState extends State<MyPurchases> {
                           isExpanded: true,
                           value: selectedStatus,
                           onChanged: (value) {
+                            this.onSelectStatus(value!);
                             setState(() {
-                              selectedStatus = value!;
+                              selectedStatus = value;
                             });
                           },
                         ),
@@ -129,11 +149,11 @@ class _MyPurchasesState extends State<MyPurchases> {
                           )
                         : ListView.builder(
                             // shrinkWrap: false,
-                            itemCount: _myPurchase.length,
+                            itemCount: _filteredMyPurchase.length,
                             itemBuilder: (BuildContext context, int index) {
                               return PurchaseItem(
                                 width: width,
-                                purchase: _myPurchase[index],
+                                purchase: _filteredMyPurchase[index],
                               );
                             },
                           ),
@@ -165,6 +185,8 @@ class _MyPurchasesState extends State<MyPurchases> {
   }
 }
 
+class _scaffoldKey {}
+
 class PurchaseItem extends StatelessWidget {
   const PurchaseItem({
     Key? key,
@@ -174,6 +196,13 @@ class PurchaseItem extends StatelessWidget {
 
   final double width;
   final Purchase purchase;
+
+  Color getColor() {
+    if (this.purchase.statusCode == "0") return Colors.red;
+    if (this.purchase.statusCode == "1") return Colors.green;
+
+    return Colors.orange;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +239,7 @@ class PurchaseItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    purchase.productGroupDescription!,
+                    purchase.productModel!,
                     overflow: TextOverflow.visible,
                     style: TextStyle(
                         // height: 2,
@@ -232,7 +261,7 @@ class PurchaseItem extends StatelessWidget {
                   ),
                   Expanded(child: Container()),
                   Text(
-                    "Warranty Status : Active",
+                    "Warranty Status : ${purchase.status}",
                     overflow: TextOverflow.visible,
                     style: TextStyle(
                         // height: 2,
@@ -251,7 +280,7 @@ class PurchaseItem extends StatelessWidget {
               height: 80,
               padding: EdgeInsets.only(right: 1),
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: getColor(),
                 boxShadow: [
                   BoxShadow(
                     blurRadius: 0.5,

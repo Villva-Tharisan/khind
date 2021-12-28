@@ -45,6 +45,7 @@ dependencies:
   animated_bottom_navigation_bar: ^0.3.2
   auto_size_text: ^3.0.0
   hexcolor: ^2.0.5
+  jiffy: ^5.0.0
 
 dev_dependencies:
   flutter_test:
