@@ -34,6 +34,7 @@ class ApiInterceptor implements InterceptorContract {
   Future<RequestData> interceptRequest({required RequestData data}) async {
     try {
       data.headers['Content-Type'] = 'application/json';
+      data.headers['Accept'] = 'application/json';
 
       var token = await storage.read(key: TOKEN);
       print('TOKEN: $token');
@@ -79,8 +80,21 @@ class Api {
 
   static bearerGet(endpoint, {params, isCms = false}) async {
     try {
+      String newParams = "";
+      if (params != null) {
+        params.forEach((key, val) {
+          if (key == 0) {
+            newParams = '?$val';
+            return;
+          }
+          newParams += '&$val';
+        });
+      }
+
+      print("#NEWPARAMS: $newParams");
+
       String baseUrl = isCms ? dotenv.env["CMS_URL"] as String : dotenv.env["API_URL"] as String;
-      String url = '$baseUrl/$endpoint';
+      String url = params != null ? '$baseUrl/$endpoint?$newParams' : '$baseUrl/$endpoint';
       print("Url: $url");
       final response = await client.get(url.toUri());
       print('Bearer Response: ${response.body}');

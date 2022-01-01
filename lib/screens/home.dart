@@ -116,21 +116,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _renderRightWidget() {
-    return Container();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: icons[tabIdx] != null
-      //       ? Text(icons[tabIdx]['label'] as String, style: TextStyle(color: Colors.black))
-      //       : Container(),
-      //   elevation: 1,
-      //   backgroundColor: Colors.grey[300],
-      //   actions: [_renderRightWidget()],
-      // ),
       body: IndexedStack(children: _tabs, index: page),
       floatingActionButton: ScaleTransition(
         scale: animation,

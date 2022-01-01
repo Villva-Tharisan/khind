@@ -6,6 +6,7 @@ class GradientButton extends StatelessWidget {
   final double width;
   final double height;
   final Function onPressed;
+  final Border? customBorder;
 
   const GradientButton(
       {Key? key,
@@ -13,6 +14,7 @@ class GradientButton extends StatelessWidget {
       required this.gradient,
       this.width = double.infinity,
       this.height = 50.0,
+      this.customBorder,
       required this.onPressed})
       : super(key: key);
 
@@ -27,7 +29,9 @@ class GradientButton extends StatelessWidget {
             height: height,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[400]!, width: 0.5),
+              border: customBorder != null
+                  ? Border.all(color: Colors.grey[400]!, width: 0.5)
+                  : customBorder,
               gradient: gradient,
               // boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0.0, 1.5), blurRadius: 1.5)]
             ),

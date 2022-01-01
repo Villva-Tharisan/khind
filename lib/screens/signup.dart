@@ -40,6 +40,7 @@ class _SignUpState extends State<SignUp> {
     // dobCT.text = "01-01-1990";
     // confirmPasswordCT.text = "p455word";
     super.initState();
+    _fetchStates();
   }
 
   @override
@@ -52,6 +53,17 @@ class _SignUpState extends State<SignUp> {
     passwordCT.dispose();
     confirmPasswordCT.dispose();
     super.dispose();
+  }
+
+  _fetchStates() async {
+    final response = await Api.bearerGet('provider/states.php', isCms: true);
+    print(response);
+  }
+
+  _fetchCity(int stateId) async {
+    Map<String, dynamic> map = {'state_id': stateId};
+    final response = await Api.bearerGet('provider/states.php', params: map);
+    print(response);
   }
 
   Widget _renderHeader() {

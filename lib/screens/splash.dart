@@ -46,6 +46,7 @@ class SplashScreenState extends State<SplashScreen> {
 
     if (tokenExp != null) {
       var expDate = DateTime.fromMillisecondsSinceEpoch(int.parse(tokenExp));
+      print("TOKEN EXP: $expDate");
 
       if (expDate.difference(DateTime.now()).inMinutes <= 0) {
         print("Token Expired: $expDate");
