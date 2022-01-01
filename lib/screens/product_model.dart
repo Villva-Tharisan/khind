@@ -171,7 +171,12 @@ class _ProductModelState extends State<ProductModel> {
                       ),
                       color: Colors.grey.withOpacity(0.3),
                       textColor: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          'serviceType',
+                        );
+                      },
                     ),
                   ),
                   SizedBox(
@@ -180,7 +185,7 @@ class _ProductModelState extends State<ProductModel> {
                   Container(
                     child: FlatButton(
                       child: Text(
-                        'Request Repair',
+                        'Extend Warranty',
                         // style: TextStyle(fontSize: 20.0),
                       ),
                       color: Colors.grey.withOpacity(0.3),
@@ -203,7 +208,17 @@ class _ProductModelState extends State<ProductModel> {
                       ),
                       color: Colors.grey.withOpacity(0.3),
                       textColor: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        Helpers.showAlert(context,
+                            okTitle: "Yes",
+                            noTitle: "No",
+                            // title: "Sign out confirmation",
+                            desc:
+                                "Do you want to remove this product from 'My Purchase'",
+                            hasAction: true,
+                            hasCancel: true,
+                            onPressed: () async {});
+                      },
                     ),
                   ),
                 ],

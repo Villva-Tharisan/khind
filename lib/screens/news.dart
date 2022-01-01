@@ -162,9 +162,11 @@ class NewsCard extends StatelessWidget {
                 ),
                 Text(
                   DateFormat('dd/MM/yyyy').format(
-                          DateFormat('yyyy-MM-dd hh:mm:ss').parse(news!.createdAt!.toString())) +
+                          DateFormat('yyyy-MM-dd hh:mm:ss')
+                              .parse(news!.createdAt!.toString())) +
                       " | ${category!}",
-                  style: TextStyle(height: 2, fontSize: 12, color: Colors.black),
+                  style:
+                      TextStyle(height: 2, fontSize: 12, color: Colors.black),
                 ),
               ],
             ),

@@ -13,6 +13,8 @@ import 'package:khind/screens/signup.dart';
 import 'package:khind/screens/forgot_password.dart';
 import 'package:khind/screens/home.dart';
 
+import 'screens/service_type.dart';
+
 class AppRouter {
   static const String initialRoute = "/";
 
@@ -58,10 +60,14 @@ class AppRouter {
       case 'productModel':
         return MaterialPageRoute(builder: (_) => ProductModel());
 
+      case 'serviceType':
+        return MaterialPageRoute(builder: (_) => ServiceType());
+
       default:
         return MaterialPageRoute(
-            builder: (_) =>
-                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
+            builder: (_) => Scaffold(
+                body: Center(
+                    child: Text('No route defined for ${settings.name}'))));
     }
   }
 

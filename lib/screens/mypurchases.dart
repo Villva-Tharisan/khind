@@ -62,7 +62,8 @@ class _MyPurchasesState extends State<MyPurchases> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var purchases = (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+      var purchases =
+          (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
 
       setState(() {
         _myPurchase = purchases;
@@ -138,12 +139,13 @@ class _MyPurchasesState extends State<MyPurchases> {
                     height: 10,
                   ),
                   Container(
-                    height: height * 0.5,
+                    height: height * 0.65,
                     child: _myPurchase.isEmpty
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text("No more data to show, tap to refresh",
+                              child: Text(
+                                  "No more data to show, tap to refresh",
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )
@@ -158,23 +160,23 @@ class _MyPurchasesState extends State<MyPurchases> {
                             },
                           ),
                   ),
-                  SizedBox(
-                    height: height * 0.08,
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      height: 40,
-                      width: width * 0.4,
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        // color: Color(0xFFEFF0EF),
-                        color: Colors.grey.withOpacity(0.3),
-                        // borderRadius: BorderRadius.circular(7.5),
-                      ),
-                      child: Text('Out of Warranty but Request Repair'),
-                    ),
-                  )
+                  // SizedBox(
+                  //   height: height * 0.08,
+                  // ),
+                  // GestureDetector(
+                  //   onTap: () {},
+                  //   child: Container(
+                  //     height: 40,
+                  //     width: width * 0.4,
+                  //     padding: EdgeInsets.all(5),
+                  //     decoration: BoxDecoration(
+                  //       // color: Color(0xFFEFF0EF),
+                  //       color: Colors.grey.withOpacity(0.3),
+                  //       // borderRadius: BorderRadius.circular(7.5),
+                  //     ),
+                  //     child: Text('Out of Warranty but Request Repair'),
+                  //   ),
+                  // )
                 ],
               ),
             )
