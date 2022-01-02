@@ -7,6 +7,9 @@ import 'package:khind/screens/extend_warranty.dart';
 import 'package:khind/screens/news.dart';
 import 'package:khind/screens/product_model.dart';
 import 'package:khind/screens/profile.dart';
+import 'package:khind/screens/request_date.dart';
+import 'package:khind/screens/request_date_dropin.dart';
+import 'package:khind/screens/request_service_locator.dart';
 import 'package:khind/screens/service_tracker_details.dart';
 import 'package:khind/screens/servicelocator.dart';
 import 'package:khind/screens/splash.dart';
@@ -15,6 +18,7 @@ import 'package:khind/screens/signup.dart';
 import 'package:khind/screens/forgot_password.dart';
 import 'package:khind/screens/home.dart';
 
+import 'screens/request_date_pickup.dart';
 import 'screens/service_type.dart';
 
 class AppRouter {
@@ -64,6 +68,16 @@ class AppRouter {
 
       case 'serviceType':
         return MaterialPageRoute(builder: (_) => ServiceType());
+
+      case 'requestDate':
+        return MaterialPageRoute(builder: (_) => RequestDate());
+      case 'requestDateDropIn':
+        return MaterialPageRoute(builder: (_) => RequestDateDropIn());
+      case 'requestDatePickup':
+        return MaterialPageRoute(builder: (_) => RequestDatePickup());
+
+      case 'requestServiceLocator':
+        return MaterialPageRoute(builder: (_) => ServiceRequestLocator());
 
       case 'ExtendWarranty':
         return MaterialPageRoute(builder: (_) => ExtendWarranty());

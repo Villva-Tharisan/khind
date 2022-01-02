@@ -9,7 +9,7 @@ class ServiceType extends StatefulWidget {
 
 class _ServiceTypeState extends State<ServiceType> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String isChecked = "";
+  String _selectedType = "";
   List<String> _serviceTypes = [
     'Home Visit',
     'Drop By',
@@ -47,22 +47,24 @@ class _ServiceTypeState extends State<ServiceType> {
               height: 20,
             ),
             Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Tell us what type of service you require'),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'For 1.0L RICE COOKER product',
-                    style: TextStyle(
-                        // height: 2,
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400),
-                  ),
-                ],
+              child: Form(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Tell us what type of service you require'),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'For 1.0L RICE COOKER product',
+                      style: TextStyle(
+                          // height: 2,
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(
@@ -94,10 +96,10 @@ class _ServiceTypeState extends State<ServiceType> {
                             checkColor: Colors.white,
                             fillColor:
                                 MaterialStateProperty.resolveWith(getColor),
-                            value: isChecked == e ? true : false,
+                            value: _selectedType == e ? true : false,
                             onChanged: (value) {
                               setState(() {
-                                isChecked = e;
+                                _selectedType = e;
                               });
                             },
                           ),
@@ -135,7 +137,25 @@ class _ServiceTypeState extends State<ServiceType> {
                       colors: <Color>[Colors.white, Colors.grey[400]!],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter),
-                  onPressed: () {},
+                  onPressed: () {
+                    //                   [
+                    //   'Home Visit',
+                    //   'Drop By',
+                    //   'Request for pickup service RM 95.00',
+                    // ];
+                    if (_selectedType.isEmpty) return;
+                    var path = 'requestDate';
+                    if (_selectedType == "Drop By") {
+                      path = "requestServiceLocator";
+                    }
+                    if (_selectedType.contains("Request for pickup")) {
+                      path = "requestDatePickup";
+                    }
+                    Navigator.pushNamed(
+                      context,
+                      path,
+                    );
+                  },
                 ),
               ),
             ),
