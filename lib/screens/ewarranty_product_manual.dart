@@ -1,5 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:khind/components/gradient_button.dart';
+import 'package:khind/util/helpers.dart';
 
 class EwarrantyProductManual extends StatefulWidget {
   @override
@@ -13,7 +15,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
   List<String> productGroup = [
     'Oven',
     'Fan',
-    'Washing Machine Washing MachineWashing MachineWashing MachineWashing MachineWashing MachineWashing Machine',
+    'Washing Machin',
   ];
 
   List<String> productModel = [
@@ -32,14 +34,20 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
     super.initState();
   }
 
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Ewarranty'),
+      appBar: Helpers.customAppBar(
+        context,
+        _scaffoldKey,
+        title: "E-Warranty",
+        hasActions: false,
+        isBack: true,
       ),
       body: Container(
         width: double.infinity,
@@ -306,12 +314,17 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Save'),
+                child: GradientButton(
+                  height: 40,
+                  child: Text(
+                    "Apply",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  gradient: LinearGradient(
+                      colors: <Color>[Colors.white, Colors.grey[400]!],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter),
+                  onPressed: () {},
                 ),
               ),
             ),

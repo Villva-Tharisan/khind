@@ -190,7 +190,9 @@ class _ProductModelState extends State<ProductModel> {
                       ),
                       color: Colors.grey.withOpacity(0.3),
                       textColor: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('ExtendWarranty');
+                      },
                     ),
                   ),
                   SizedBox(

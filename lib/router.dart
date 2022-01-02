@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
 import 'package:khind/screens/ewarranty_product_manual.dart';
+import 'package:khind/screens/extend_warranty.dart';
 import 'package:khind/screens/news.dart';
 import 'package:khind/screens/product_model.dart';
 import 'package:khind/screens/profile.dart';
+import 'package:khind/screens/service_tracker_details.dart';
 import 'package:khind/screens/servicelocator.dart';
 import 'package:khind/screens/splash.dart';
 import 'package:khind/screens/signin.dart';
@@ -62,6 +64,12 @@ class AppRouter {
 
       case 'serviceType':
         return MaterialPageRoute(builder: (_) => ServiceType());
+
+      case 'ExtendWarranty':
+        return MaterialPageRoute(builder: (_) => ExtendWarranty());
+
+      case 'ServiceTrackerDetails':
+        return MaterialPageRoute(builder: (_) => ServiceTrackerDetails());
 
       default:
         return MaterialPageRoute(

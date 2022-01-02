@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:khind/components/gradient_button.dart';
 import 'package:khind/screens/ewarranty_product.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -53,17 +54,24 @@ class _EwarrantyState extends State<Ewarranty> {
                   child: Text('Please scan the product QR code'),
                 ),
                 SizedBox(height: 20),
-                Center(
-                  child: ElevatedButton(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: GradientButton(
+                    height: 40,
+                    child: Text(
+                      'Click here if you don\'t have a QR code',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    gradient: LinearGradient(
+                        colors: <Color>[Colors.white, Colors.grey[400]!],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter),
                     onPressed: () {
                       Navigator.pushNamed(
                         context,
                         'EwarrantyProductManual',
                       );
                     },
-                    child: Text(
-                      'Click here if you don\'t have a Qr code',
-                    ),
                   ),
                 ),
               ],
