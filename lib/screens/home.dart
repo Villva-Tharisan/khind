@@ -1,15 +1,17 @@
 import 'dart:io' show Platform;
+
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/mall.dart';
 import 'package:khind/screens/mypurchases.dart';
 import 'package:khind/screens/news.dart';
-import 'package:khind/screens/servicetracker.dart';
 import 'package:khind/themes/app_colors.dart';
+import 'package:khind/screens/service_tracker.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);

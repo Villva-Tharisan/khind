@@ -3,15 +3,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
 import 'package:khind/screens/ewarranty_product_manual.dart';
+import 'package:khind/screens/extend_warranty.dart';
 import 'package:khind/screens/news.dart';
 import 'package:khind/screens/product_model.dart';
 import 'package:khind/screens/profile.dart';
+import 'package:khind/screens/service_tracker_details.dart';
 import 'package:khind/screens/servicelocator.dart';
 import 'package:khind/screens/splash.dart';
 import 'package:khind/screens/signin.dart';
 import 'package:khind/screens/signup.dart';
 import 'package:khind/screens/forgot_password.dart';
 import 'package:khind/screens/home.dart';
+
+import 'screens/service_type.dart';
 
 class AppRouter {
   static const String initialRoute = "/";
@@ -58,10 +62,20 @@ class AppRouter {
       case 'productModel':
         return MaterialPageRoute(builder: (_) => ProductModel());
 
+      case 'serviceType':
+        return MaterialPageRoute(builder: (_) => ServiceType());
+
+      case 'ExtendWarranty':
+        return MaterialPageRoute(builder: (_) => ExtendWarranty());
+
+      case 'ServiceTrackerDetails':
+        return MaterialPageRoute(builder: (_) => ServiceTrackerDetails());
+
       default:
         return MaterialPageRoute(
-            builder: (_) =>
-                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
+            builder: (_) => Scaffold(
+                body: Center(
+                    child: Text('No route defined for ${settings.name}'))));
     }
   }
 
