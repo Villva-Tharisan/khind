@@ -13,222 +13,221 @@ class _ProductModelState extends State<ProductModel> {
     return Scaffold(
       appBar: Helpers.customAppBar(context, _scaffoldKey,
           title: "Product Model", hasActions: false, isBack: true),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          vertical: 20,
-          horizontal: 15,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 0.5,
-                    color: Colors.grey,
-                    spreadRadius: 0.5,
-                    // offset:
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(7.5),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "AIR FRYER",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                        // height: 2,
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text("ARF3000 AIR FRYER 3L BK KD"),
-                  SizedBox(
-                    height: 13,
-                  ),
-                  Text(
-                    "Warranty Period: 12-12-2020 - 12-12-2021",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                        // height: 2,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400),
-                  ),
-                ],
-              ),
+      body: CustomScrollView(slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              vertical: 20,
+              horizontal: 15,
             ),
-            SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 0.5,
-                    color: Colors.grey,
-                    spreadRadius: 0.5,
-                    // offset:
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 0.5,
+                        color: Colors.grey,
+                        spreadRadius: 0.5,
+                        // offset:
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(7.5),
                   ),
-                ],
-                borderRadius: BorderRadius.circular(7.5),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Purchase Date: 10-12-2020"),
-                  SizedBox(
-                    height: 13,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "AIR FRYER",
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                            // height: 2,
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text("ARF3000 AIR FRYER 3L BK KD"),
+                      SizedBox(
+                        height: 13,
+                      ),
+                      Text(
+                        "Warranty Period: 12-12-2020 - 12-12-2021",
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                            // height: 2,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "Store: Khind Marketing (M) SDN BHD",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                        // height: 2,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 0.5,
+                        color: Colors.grey,
+                        spreadRadius: 0.5,
+                        // offset:
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(7.5),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 0.5,
-                    color: Colors.grey,
-                    spreadRadius: 0.5,
-                    // offset:
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Purchase Date: 10-12-2020"),
+                      SizedBox(
+                        height: 13,
+                      ),
+                      Text(
+                        "Store: Khind Marketing (M) SDN BHD",
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                            // height: 2,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ],
                   ),
-                ],
-                borderRadius: BorderRadius.circular(7.5),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Fill in the product serial number"),
-                  SizedBox(
-                    height: 13,
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 0.5,
+                        color: Colors.grey,
+                        spreadRadius: 0.5,
+                        // offset:
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(7.5),
                   ),
-                  Form(
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter email';
-                            }
-                            return null;
-                          },
-                          // controller: emailCT,
-                          onFieldSubmitted: (val) {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
-                          },
-                          decoration: InputDecoration(
-                              hintText: 'eg: AP550XXXXXMLKD',
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 5),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(0))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Fill in the product serial number"),
+                      Form(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Please enter email';
+                                  }
+                                  return null;
+                                },
+                                // controller: emailCT,
+                                onFieldSubmitted: (val) {
+                                  FocusScope.of(context)
+                                      .requestFocus(new FocusNode());
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'eg: AP550XXXXXMLKD',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
+                                )),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.05,
+                ),
+                Container(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        child: FlatButton(
+                          child: Text(
+                            'Request Repair',
+                            // style: TextStyle(fontSize: 20.0),
+                          ),
+                          color: Colors.grey.withOpacity(0.3),
+                          textColor: Colors.black,
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              'serviceType',
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        child: FlatButton(
+                          child: Text(
+                            'Extend Warranty',
+                            // style: TextStyle(fontSize: 20.0),
+                          ),
+                          color: Colors.grey.withOpacity(0.3),
+                          textColor: Colors.black,
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('ExtendWarranty');
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        width: 128,
+                        child: FlatButton(
+                          padding: EdgeInsets.only(
+                              left: 10, right: 10, bottom: 10, top: 10),
+                          child: Text(
+                            'I dont have this anymore',
+                            textAlign: TextAlign.center,
+                            // style: TextStyle(fontSize: 20.0),
+                          ),
+                          color: Colors.grey.withOpacity(0.3),
+                          textColor: Colors.black,
+                          onPressed: () {
+                            Helpers.showAlert(context,
+                                okTitle: "Yes",
+                                noTitle: "No",
+                                // title: "Sign out confirmation",
+                                desc:
+                                    "Do you want to remove this product from 'My Purchase'",
+                                hasAction: true,
+                                hasCancel: true,
+                                onPressed: () async {});
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.05,
-            ),
-            Container(
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    child: FlatButton(
-                      child: Text(
-                        'Request Repair',
-                        // style: TextStyle(fontSize: 20.0),
-                      ),
-                      color: Colors.grey.withOpacity(0.3),
-                      textColor: Colors.black,
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          'serviceType',
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    child: FlatButton(
-                      child: Text(
-                        'Extend Warranty',
-                        // style: TextStyle(fontSize: 20.0),
-                      ),
-                      color: Colors.grey.withOpacity(0.3),
-                      textColor: Colors.black,
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('ExtendWarranty');
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    width: 128,
-                    child: FlatButton(
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, bottom: 10, top: 10),
-                      child: Text(
-                        'I dont have this anymore',
-                        textAlign: TextAlign.center,
-                        // style: TextStyle(fontSize: 20.0),
-                      ),
-                      color: Colors.grey.withOpacity(0.3),
-                      textColor: Colors.black,
-                      onPressed: () {
-                        Helpers.showAlert(context,
-                            okTitle: "Yes",
-                            noTitle: "No",
-                            // title: "Sign out confirmation",
-                            desc:
-                                "Do you want to remove this product from 'My Purchase'",
-                            hasAction: true,
-                            hasCancel: true,
-                            onPressed: () async {});
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
+          ),
+        )
+      ]),
     );
   }
 }
