@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       // Remove the debug banner
       debugShowCheckedModeBanner: false,
       title: 'Kindacode.com',
+      // theme: ThemeData(primaryColor: Colors.white),
       initialRoute: AppRouter.initialRoute,
       onGenerateRoute: AppRouter.generateRoute,
     );

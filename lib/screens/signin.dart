@@ -1,9 +1,10 @@
 import 'dart:convert';
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:khind/components/gradient_button.dart';
+import 'package:khind/components/bg_painter.dart';
+import 'package:khind/components/round_button.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
@@ -15,9 +16,12 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailCT = new TextEditingController();
   TextEditingController passwordCT = new TextEditingController();
+  FocusNode focusEmail = new FocusNode();
+  FocusNode focusPwd = new FocusNode();
   bool isLoading = false;
   bool showPassword = false;
   String errorMsg = "";
@@ -25,8 +29,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    emailCT.text = 'khindcustomerservice@gmail.com';
-    passwordCT.text = 'Khindanshin118';
+    // emailCT.text = 'khindcustomerservice@gmail.com';
+    // passwordCT.text = 'Khindanshin118';
     super.initState();
   }
 
@@ -101,111 +105,124 @@ class _SignInState extends State<SignIn> {
     return Container(
         alignment: Alignment.center,
         child: Image(
-            image: AssetImage('assets/images/logo_text.png'),
-            height: MediaQuery.of(context).size.width * 0.2));
+            image: AssetImage('assets/images/logo_text_white.png'),
+            height: MediaQuery.of(context).size.width * 0.15));
   }
 
   Widget _renderForm() {
-    return Form(
-        key: _formKey,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter email';
-              }
-              return null;
-            },
-            controller: emailCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'eg: khind@gmail.com',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          Stack(children: [
-            TextFormField(
-              keyboardType: TextInputType.text,
-              obscureText: !showPassword,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter password';
-                }
-                return null;
-              },
-              controller: passwordCT,
-              onFieldSubmitted: (val) {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              decoration: InputDecoration(
-                  hintText: '******',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(5))),
-            ),
-            Positioned(
-                right: 15,
-                top: 10,
-                child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        showPassword = !showPassword;
-                      });
-                    },
-                    child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
-          ]),
-          SizedBox(height: 5),
-          Container(
-              alignment: Alignment.centerLeft,
-              child: InkWell(
-                  child: Text("Forgot Password?", textAlign: TextAlign.left),
-                  onTap: () => Navigator.pushNamed(context, 'forgot'))),
-          SizedBox(height: 30),
-          GradientButton(
-              height: 40,
-              child: Text("Sign In", style: TextStyles.textW500),
-              gradient: LinearGradient(
-                  colors: <Color>[Colors.white, Colors.grey[400]!],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-              onPressed: () => _handleSignIn()),
-          SizedBox(height: 50),
-          Text("New to Khind?"),
-          SizedBox(height: 10),
-          GradientButton(
-              height: 40,
-              child: Text("Activate My E-Warranty", style: TextStyles.textW500),
-              gradient: LinearGradient(
-                  colors: <Color>[Colors.white, Colors.grey[400]!],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-              onPressed: () {
-                Navigator.of(context).pushNamed('ewarranty');
-              }),
-          SizedBox(height: 15),
-          Text("or"),
-          SizedBox(height: 15),
-          GradientButton(
-              height: 40,
-              child: Text("Create a new account", style: TextStyles.textW500),
-              gradient: LinearGradient(
-                  colors: <Color>[Colors.white, Colors.grey[400]!],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-              onPressed: () {
-                setState(() {
-                  errorMsg = "";
-                });
-                Navigator.pushNamed(context, 'signup');
-              })
-        ]));
+    return Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+        child: Form(
+            key: _formKey,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Text("Login Account", style: TextStyles.textTitle),
+              SizedBox(height: 10),
+              TextFormField(
+                focusNode: focusEmail,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter email';
+                  }
+                  return null;
+                },
+                controller: emailCT,
+                onFieldSubmitted: (val) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                    ),
+                    hintText: 'E-mail',
+                    hintStyle:
+                        focusEmail.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              ),
+              SizedBox(height: 5),
+              Stack(children: [
+                TextFormField(
+                  focusNode: focusPwd,
+                  keyboardType: TextInputType.text,
+                  obscureText: !showPassword,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter password';
+                    }
+                    return null;
+                  },
+                  controller: passwordCT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  style: TextStyles.textDefault,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                      ),
+                      hintText: 'Password',
+                      hintStyle:
+                          focusPwd.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+                ),
+                Positioned(
+                    right: 15,
+                    top: 10,
+                    child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            showPassword = !showPassword;
+                          });
+                        },
+                        child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
+              ]),
+              SizedBox(height: 15),
+              Container(
+                  alignment: Alignment.centerLeft,
+                  child: InkWell(
+                      child: Text("In case you forgot password?",
+                          textAlign: TextAlign.left,
+                          style: TextStyles.textSm
+                              .copyWith(fontWeight: FontWeight.bold, color: AppColors.primary)),
+                      onTap: () => Navigator.pushNamed(context, 'forgot'))),
+              SizedBox(height: 30),
+              RoundButton(height: 40, title: "Sign In", onPressed: () => _handleSignIn()),
+              SizedBox(height: 15),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Expanded(child: Divider(color: AppColors.greyLight)),
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    child: Text("OR",
+                        style: TextStyles.textDefault.copyWith(fontWeight: FontWeight.w500)),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[300], borderRadius: BorderRadius.circular(15))),
+                Expanded(child: Divider(color: AppColors.greyLight)),
+              ]),
+              SizedBox(height: 15),
+              RoundButton(
+                  title: "Activate My E-Warranty",
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('ewarranty');
+                  }),
+            ])));
   }
 
   _renderError() {
@@ -220,19 +237,40 @@ class _SignInState extends State<SignIn> {
     ]);
   }
 
+  _renderBottom() {
+    return Column(children: [
+      Text("Don't have an account?", style: TextStyles.textDefaultBold),
+      SizedBox(height: 10),
+      InkWell(
+          child: Text("REGISTER", style: TextStyles.textPrimaryBold.copyWith(fontSize: 18)),
+          onTap: () {
+            setState(() {
+              errorMsg = "";
+            });
+            Navigator.pushNamed(context, 'signup');
+          })
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
-      body: Container(
-          padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
-          child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-            _renderHeader(),
-            SizedBox(height: errorMsg != "" ? 20 : 50),
-            errorMsg != "" ? _renderError() : Container(),
-            _renderForm(),
-            SizedBox(height: 50)
-          ])),
+      body: CustomPaint(
+          painter: BgPainter(),
+          child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+              decoration: new BoxDecoration(color: Colors.white.withOpacity(0.0)),
+              child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                _renderHeader(),
+                SizedBox(height: errorMsg != "" ? 20 : 50),
+                errorMsg != "" ? _renderError() : Container(),
+                _renderForm(),
+                SizedBox(height: 30),
+                _renderBottom(),
+              ]))),
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:khind/screens/mall.dart';
 import 'package:khind/screens/mypurchases.dart';
 import 'package:khind/screens/news.dart';
 import 'package:khind/screens/servicetracker.dart';
+import 'package:khind/themes/app_colors.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -96,7 +97,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ));
       },
       gapWidth: 60,
-      backgroundColor: HexColor('#373A36'),
+      backgroundColor: AppColors.primary,
       gapLocation: GapLocation.center,
       notchSmoothness: NotchSmoothness.defaultEdge,
       activeIndex: tabIdx,

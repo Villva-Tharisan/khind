@@ -81,20 +81,23 @@ class Api {
   static bearerGet(endpoint, {params, isCms = false}) async {
     try {
       String newParams = "";
+      int cnt = 0;
       if (params != null) {
         params.forEach((key, val) {
-          if (key == 0) {
-            newParams = '?$val';
+          // print(key);
+          if (cnt == 0) {
+            newParams = '?$key=$val';
             return;
           }
           newParams += '&$val';
+          cnt++;
         });
       }
 
       print("#NEWPARAMS: $newParams");
 
       String baseUrl = isCms ? dotenv.env["CMS_URL"] as String : dotenv.env["API_URL"] as String;
-      String url = params != null ? '$baseUrl/$endpoint?$newParams' : '$baseUrl/$endpoint';
+      String url = params != null ? '$baseUrl/$endpoint$newParams' : '$baseUrl/$endpoint';
       print("Url: $url");
       final response = await client.get(url.toUri());
       print('Bearer Response: ${response.body}');

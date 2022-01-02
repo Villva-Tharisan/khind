@@ -2,9 +2,12 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/components/round_button.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
+import 'package:khind/util/key.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -385,14 +388,12 @@ class _ProfileState extends State<Profile> {
                 _renderDivider(),
               ])),
           Expanded(child: Container()),
-          GradientButton(
+          RoundButton(
+              title: 'Sign Out',
               height: MediaQuery.of(context).size.height * 0.1,
-              customBorder: Border(top: BorderSide(width: 1, color: Colors.grey[400]!)),
-              child: Text("Sign Out", style: TextStyle(fontSize: 16)),
-              gradient: LinearGradient(
-                  colors: <Color>[Colors.white, Colors.grey[400]!],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(0),
+              titleStyles: TextStyles.textPrimaryBold.copyWith(fontSize: 18),
               onPressed: () async {
                 Helpers.showAlert(context,
                     okTitle: "Yes",
@@ -402,6 +403,9 @@ class _ProfileState extends State<Profile> {
                     hasAction: true,
                     hasCancel: true, onPressed: () async {
                   await Api.bearerPost('logout');
+                  // await storage.delete(key: TOKEN);
+                  await storage.delete(key: TOKEN_EXPIRY);
+
                   Navigator.pop(context);
                   Navigator.pushNamedAndRemoveUntil(context, 'signin', (route) => false);
                 });

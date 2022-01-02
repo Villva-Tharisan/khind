@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/screens/signin.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:khind/util/key.dart';
@@ -42,11 +43,12 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   _refreshToken() async {
+    // _fetchOauth();
     String? tokenExp = await storage.read(key: TOKEN_EXPIRY);
 
     if (tokenExp != null) {
       var expDate = DateTime.fromMillisecondsSinceEpoch(int.parse(tokenExp));
-      print("TOKEN EXP: $expDate");
+      // print("TOKEN EXP: $expDate");
 
       if (expDate.difference(DateTime.now()).inMinutes <= 0) {
         print("Token Expired: $expDate");
@@ -86,7 +88,7 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   Widget _renderLoading() {
-    return CircularProgressIndicator(color: Colors.green);
+    return CircularProgressIndicator(color: AppColors.primary);
   }
 
   @override

@@ -2,7 +2,11 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:khind/components/gradient_button.dart';
+import 'package:khind/components/bg_painter.dart';
+import 'package:khind/components/round_button.dart';
+import 'package:khind/models/city.dart';
+import 'package:khind/models/states.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
@@ -13,15 +17,32 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  static final GlobalKey<FormState> _basicFormKey = GlobalKey<FormState>();
+  static final GlobalKey<FormState> _addressFormKey = GlobalKey<FormState>();
+  static final GlobalKey<FormState> _pwdFormKey = GlobalKey<FormState>();
   TextEditingController emailCT = new TextEditingController();
   TextEditingController firstNameCT = new TextEditingController();
   TextEditingController lastNameCT = new TextEditingController();
   TextEditingController mobileNoCT = new TextEditingController();
   TextEditingController dobCT = new TextEditingController();
+  TextEditingController address1CT = new TextEditingController();
+  TextEditingController address2CT = new TextEditingController();
+  TextEditingController postcodeCT = new TextEditingController();
   TextEditingController passwordCT = new TextEditingController();
   TextEditingController confirmPasswordCT = new TextEditingController();
+  FocusNode focusEmail = new FocusNode();
+  FocusNode focusFirstName = new FocusNode();
+  FocusNode focusLastName = new FocusNode();
+  FocusNode focusMobile = new FocusNode();
+  FocusNode focusDob = new FocusNode();
+  FocusNode focusAddress1 = new FocusNode();
+  FocusNode focusAddress2 = new FocusNode();
+  FocusNode focusPostcode = new FocusNode();
+  FocusNode focusPwd = new FocusNode();
+  FocusNode focusConfirmPwd = new FocusNode();
+  FocusNode focusCity = new FocusNode();
+  FocusNode focusState = new FocusNode();
   bool isLoading = false;
   bool showPassword = false;
   bool showConfirmPassword = false;
@@ -29,16 +50,24 @@ class _SignUpState extends State<SignUp> {
   List errors = [];
   DateTime now = DateTime.now();
   DateTime selectedDob = DateTime(DateTime.now().year - 10);
+  bool showPwdForm = false;
+  bool showAddressForm = false;
+  late List<States> states = [];
+  late List<City> cities = [];
+  City? city;
+  States? state;
+  String? postcode;
 
   @override
   void initState() {
-    // firstNameCT.text = "test";
-    // lastNameCT.text = "khind";
-    // mobileNoCT.text = "0156663229";
-    // emailCT.text = "test.khind@gmail.com";
-    // passwordCT.text = "p455word";
-    // dobCT.text = "01-01-1990";
-    // confirmPasswordCT.text = "p455word";
+    firstNameCT.text = "test1";
+    lastNameCT.text = "khind";
+    mobileNoCT.text = "0156663229";
+    emailCT.text = "test1.khind@gmail.com";
+    passwordCT.text = "p455word";
+    dobCT.text = "01-01-1990";
+    address1CT.text = "No 44 Taman Miharja";
+    confirmPasswordCT.text = "p455word";
     super.initState();
     _fetchStates();
   }
@@ -56,22 +85,36 @@ class _SignUpState extends State<SignUp> {
   }
 
   _fetchStates() async {
-    final response = await Api.bearerGet('provider/states.php', isCms: true);
-    print(response);
+    final response = await Api.bearerGet('provider/state.php', isCms: true);
+
+    if (response['states'] != null) {
+      setState(() {
+        states = (response['states'] as List<dynamic>).map((e) => States.fromJson(e)).toList();
+      });
+    }
   }
 
-  _fetchCity(int stateId) async {
+  _fetchCity(stateId) async {
+    setState(() {
+      city = null;
+      cities = [];
+    });
     Map<String, dynamic> map = {'state_id': stateId};
-    final response = await Api.bearerGet('provider/states.php', params: map);
-    print(response);
+    final response = await Api.bearerGet('provider/city.php', params: map, isCms: true);
+    // print(response);
+    if (response['city'] != null) {
+      setState(() {
+        cities = (response['city'] as List<dynamic>).map((e) => City.fromJson(e)).toList();
+      });
+    }
   }
 
   Widget _renderHeader() {
     return Container(
         alignment: Alignment.center,
         child: Image(
-            image: AssetImage('assets/images/logo_text.png'),
-            height: MediaQuery.of(context).size.width * 0.2));
+            image: AssetImage('assets/images/logo_text_white.png'),
+            height: MediaQuery.of(context).size.width * 0.15));
   }
 
   Future<void> _selectDob(BuildContext context) async {
@@ -101,253 +144,550 @@ class _SignUpState extends State<SignUp> {
 
   void _handleSignUp() async {
     Helpers.showAlert(context);
-    if (_formKey.currentState!.validate()) {
-      final Map<String, dynamic> map = {
-        'email': emailCT.text,
-        'firstname': firstNameCT.text,
-        'lastname': lastNameCT.text,
-        'password': passwordCT.text,
-        'telephone': mobileNoCT.text,
-        'confirm': confirmPasswordCT.text,
-        'agree': 1
-      };
+    // if (_formKey.currentState!.validate()) {
+    final Map<String, dynamic> map = {
+      'email': emailCT.text,
+      'firstname': firstNameCT.text,
+      'lastname': lastNameCT.text,
+      'address_1': address1CT.text,
+      'postcode': postcode,
+      'city': city?.cityId,
+      'zone_id': state?.stateId,
+      'country_id': 'Malaysia',
+      'telephone': mobileNoCT.text,
+      'password': passwordCT.text,
+      'confirm': confirmPasswordCT.text,
+      'agree': 1
+    };
 
-      // print("MAP: $map");
-      final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
-      setState(() {
-        isLoading = true;
-        errorMsg = "";
-        errors = [];
+    // print("MAP: $map");
+    final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
+    setState(() {
+      isLoading = true;
+      errorMsg = "";
+      errors = [];
+    });
+    Navigator.pop(context);
+
+    if (response['success']) {
+      Helpers.showAlert(context, title: 'You have successfully sign up', hasAction: true,
+          onPressed: () {
+        _clearTextField();
+        setState(() {
+          errors = [];
+        });
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, 'home');
       });
-      Navigator.pop(context);
-
-      if (response['success']) {
-        Helpers.showAlert(context, hasAction: true, onPressed: () {
-          _clearTextField();
-          setState(() {
-            errors = [];
-          });
-          Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home');
-        },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                    margin: EdgeInsets.only(left: 5), child: Text("You have successfully sign up")),
-              ],
-            ));
-      } else {
-        if (response['error'] != null) {
-          setState(() {
-            isLoading = false;
-            errorMsg = "Validation failed!";
-
-            if (response['error'] is LinkedHashMap) {
-              (response['error'] as LinkedHashMap).forEach((key, value) {
-                errors.add(value);
-              });
-            }
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-            errors.add("Validation failed!");
-          });
-        }
-      }
     } else {
-      Navigator.pop(context);
+      if (response['error'] != null) {
+        setState(() {
+          isLoading = false;
+          errorMsg = "Validation failed!";
+
+          if (response['error'] is LinkedHashMap) {
+            (response['error'] as LinkedHashMap).forEach((key, value) {
+              errors.add(value);
+            });
+          }
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          errors.add("Validation failed!");
+        });
+      }
     }
+    // } else {
+    //   Navigator.pop(context);
+    // }
   }
 
-  Widget _renderForm() {
-    return Form(
-        key: _formKey,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter email';
-              }
-              return null;
-            },
-            controller: emailCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'eg: khind@gmail.com',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter first name';
-              }
-              return null;
-            },
-            controller: firstNameCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'First Name',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter last name';
-              }
-              return null;
-            },
-            controller: lastNameCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'Last Name',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter mobile number';
-              }
-              return null;
-            },
-            controller: mobileNoCT,
-            onFieldSubmitted: (val) {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            decoration: InputDecoration(
-                hintText: 'Mobile Number',
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(5))),
-          ),
-          SizedBox(height: 5),
-          Stack(children: [
-            TextFormField(
-              keyboardType: TextInputType.text,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter date of birth';
-                }
-                return null;
-              },
-              controller: dobCT,
-              onFieldSubmitted: (val) {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              decoration: InputDecoration(
-                  hintText: 'Date of Birth',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(5))),
-            ),
-            Positioned(
-                right: 0,
-                child: IconButton(
-                    onPressed: () => _selectDob(context), icon: Icon(Icons.date_range, size: 25)))
-          ]),
-          SizedBox(height: 5),
-          Stack(children: [
-            TextFormField(
-              keyboardType: TextInputType.text,
-              obscureText: !showPassword,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter password';
-                }
-                return null;
-              },
-              controller: passwordCT,
-              onFieldSubmitted: (val) {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              decoration: InputDecoration(
-                  hintText: 'Password',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(5))),
-            ),
-            Positioned(
-                right: 15,
-                top: 10,
-                child: InkWell(
-                    onTap: () {
+  Widget _renderProfileForm() {
+    return Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+        child: Form(
+            key: _basicFormKey,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Text("Step 1 : Fill in your information", style: TextStyles.textDefaultBold),
+              SizedBox(height: 20),
+              TextFormField(
+                focusNode: focusEmail,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter email';
+                  }
+                  return null;
+                },
+                controller: emailCT,
+                onFieldSubmitted: (val) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                    ),
+                    hintText: 'E-mail',
+                    hintStyle:
+                        focusEmail.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              ),
+              SizedBox(height: 5),
+              TextFormField(
+                focusNode: focusFirstName,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter first name';
+                  }
+                  return null;
+                },
+                controller: firstNameCT,
+                onFieldSubmitted: (val) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                    ),
+                    hintText: 'First Name',
+                    hintStyle:
+                        focusFirstName.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              ),
+              SizedBox(height: 5),
+              TextFormField(
+                focusNode: focusLastName,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter last name';
+                  }
+                  return null;
+                },
+                controller: lastNameCT,
+                onFieldSubmitted: (val) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                    ),
+                    hintText: 'Last Name',
+                    hintStyle:
+                        focusLastName.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              ),
+              SizedBox(height: 5),
+              TextFormField(
+                focusNode: focusMobile,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter mobile number';
+                  }
+                  return null;
+                },
+                controller: mobileNoCT,
+                onFieldSubmitted: (val) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                    ),
+                    hintText: 'Mobile Number',
+                    hintStyle:
+                        focusMobile.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              ),
+              SizedBox(height: 5),
+              Stack(children: [
+                TextFormField(
+                  focusNode: focusDob,
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter date of birth';
+                    }
+                    return null;
+                  },
+                  controller: dobCT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  style: TextStyles.textDefault,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                      ),
+                      hintText: 'Date of Birth',
+                      hintStyle:
+                          focusDob.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+                ),
+                Positioned(
+                    right: 0,
+                    child: IconButton(
+                        onPressed: () => _selectDob(context),
+                        icon: Icon(Icons.date_range, size: 25)))
+              ]),
+              SizedBox(height: 30),
+              RoundButton(
+                  title: "Sign Up",
+                  icon: Icons.arrow_right_alt_rounded,
+                  onPressed: () {
+                    if (_basicFormKey.currentState!.validate()) {
                       setState(() {
-                        showPassword = !showPassword;
+                        showAddressForm = true;
                       });
-                    },
-                    child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
-          ]),
-          SizedBox(height: 5),
-          Stack(children: [
-            TextFormField(
-              keyboardType: TextInputType.text,
-              obscureText: !showConfirmPassword,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter confirm password';
-                } else if (value != passwordCT.text) {
-                  return 'Password does not match with confirm password';
-                }
-                return null;
-              },
-              controller: confirmPasswordCT,
-              onFieldSubmitted: (val) {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              decoration: InputDecoration(
-                  hintText: 'Retype Password',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(5))),
-            ),
-            Positioned(
-                right: 15,
-                top: 10,
-                child: InkWell(
-                    onTap: () {
+                    }
+                  })
+            ])));
+  }
+
+  Widget _renderAddressForm() {
+    // print("CITY: $cities");
+    return Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+        child: Form(
+            key: _addressFormKey,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Row(children: [
+                InkWell(
+                    onTap: () => setState(() {
+                          showAddressForm = false;
+                          showPwdForm = false;
+                        }),
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: Icon(Icons.arrow_back, color: Colors.blue),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
+                SizedBox(width: 20),
+                Flexible(
+                    child: Text("Step 2 : Fill in your address", style: TextStyles.textDefaultBold))
+              ]),
+              SizedBox(height: 20),
+              TextFormField(
+                focusNode: focusAddress1,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter address';
+                  }
+                  return null;
+                },
+                controller: address1CT,
+                onFieldSubmitted: (val) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                    ),
+                    hintText: 'Address',
+                    hintStyle:
+                        focusAddress1.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              ),
+              SizedBox(height: 5),
+              states.length > 0
+                  ? DropdownButtonFormField(
+                      key: UniqueKey(),
+                      hint: Text("Select state"),
+                      focusNode: focusState,
+                      style: TextStyles.textDefault,
+                      decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                        ),
+                        border: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
+                      ),
+                      // dropdownColor: Colors.blueAccent,
+                      value: state != null ? state : null,
+                      onChanged: (val) {
+                        // print("VAL:$val | ${val.runtimeType}");
+                        setState(() {
+                          state = (val as States);
+                          _fetchCity(val.stateId);
+                        });
+                      },
+                      items: states
+                          .map((e) => DropdownMenuItem(
+                              child: Text(e.state!), value: e, key: Key(jsonEncode(e))))
+                          .toList())
+                  : Container(),
+              SizedBox(height: 5),
+              cities.length > 0
+                  ? DropdownButtonFormField(
+                      key: UniqueKey(),
+                      hint: Text("Select city"),
+                      focusNode: focusCity,
+                      style: TextStyles.textDefault,
+                      decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                        ),
+                        border: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
+                      ),
+                      value: city != null ? city : null,
+                      onChanged: (val) {
+                        setState(() {
+                          city = (val as City);
+                          if (val.postcode != null) {
+                            postcodeCT.text = val.postcode!;
+                            postcode = val.postcode!;
+                          }
+                        });
+                      },
+                      items: cities
+                          .map((e) => DropdownMenuItem(
+                              child: Text(e.city!), value: e, key: Key(jsonEncode(e))))
+                          .toList())
+                  : Container(),
+              TextFormField(
+                focusNode: focusPostcode,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter postcode';
+                  }
+                  return null;
+                },
+                controller: postcodeCT,
+                onFieldSubmitted: (val) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                    ),
+                    hintText: 'Postcode',
+                    hintStyle:
+                        focusPostcode.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              ),
+              SizedBox(height: 30),
+              RoundButton(
+                  title: "Next",
+                  icon: Icons.arrow_right_alt_rounded,
+                  onPressed: () {
+                    if (_addressFormKey.currentState!.validate()) {
                       setState(() {
-                        showConfirmPassword = !showConfirmPassword;
+                        showPwdForm = true;
+                        showAddressForm = false;
                       });
-                    },
-                    child: Icon(showConfirmPassword ? Icons.visibility : Icons.visibility_off)))
-          ]),
-          SizedBox(height: 30),
-          GradientButton(
-              height: 40,
-              child: Text("Sign Up", style: TextStyles.textW500),
-              gradient: LinearGradient(
-                  colors: <Color>[Colors.white, Colors.grey[400]!],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-              onPressed: () => _handleSignUp())
-        ]));
+                    }
+                  })
+            ])));
+  }
+
+  Widget _renderPwdForm() {
+    return Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+        child: Form(
+            key: _pwdFormKey,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Row(children: [
+                InkWell(
+                    onTap: () => setState(() {
+                          showPwdForm = false;
+                          showAddressForm = true;
+                        }),
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: Icon(Icons.arrow_back, color: Colors.blue),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
+                SizedBox(width: 20),
+                Flexible(child: Text("Step 3 : Create password", style: TextStyles.textDefaultBold))
+              ]),
+              SizedBox(height: 20),
+              Stack(children: [
+                TextFormField(
+                  focusNode: focusPwd,
+                  keyboardType: TextInputType.text,
+                  obscureText: !showPassword,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter password';
+                    }
+                    return null;
+                  },
+                  controller: passwordCT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  style: TextStyles.textDefault,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                      ),
+                      hintText: 'Password',
+                      hintStyle:
+                          focusPwd.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+                ),
+                Positioned(
+                    right: 15,
+                    top: 10,
+                    child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            showPassword = !showPassword;
+                          });
+                        },
+                        child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
+              ]),
+              SizedBox(height: 5),
+              Stack(children: [
+                TextFormField(
+                  focusNode: focusConfirmPwd,
+                  keyboardType: TextInputType.text,
+                  obscureText: !showConfirmPassword,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter confirm password';
+                    } else if (value != passwordCT.text) {
+                      return 'Password does not match with confirm password';
+                    }
+                    return null;
+                  },
+                  controller: confirmPasswordCT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  style: TextStyles.textDefault,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                      ),
+                      hintText: 'Retype Password',
+                      hintStyle: focusConfirmPwd.hasFocus
+                          ? TextStyles.textPrimary
+                          : TextStyles.textGreyDark,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+                ),
+                Positioned(
+                    right: 15,
+                    top: 10,
+                    child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            showConfirmPassword = !showConfirmPassword;
+                          });
+                        },
+                        child: Icon(showConfirmPassword ? Icons.visibility : Icons.visibility_off)))
+              ]),
+              SizedBox(height: 30),
+              RoundButton(
+                  title: "Sign Up",
+                  onPressed: () {
+                    if (_pwdFormKey.currentState!.validate()) {
+                      _handleSignUp();
+                    }
+                  })
+            ])));
   }
 
   _renderError() {
@@ -366,21 +706,28 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: true,
       key: _scaffoldKey,
       appBar: Helpers.customAppBar(context, _scaffoldKey,
           title: "Sign Up", isBack: true, hasActions: false),
-      body: SingleChildScrollView(
-          child: Container(
-              padding: const EdgeInsets.only(bottom: 20, left: 50, right: 50, top: 10),
-              child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                SizedBox(height: 20),
-                _renderHeader(),
-                SizedBox(height: errors.length > 0 ? 20 : 50),
-                errors.length > 0 ? _renderError() : Container(),
-                SizedBox(height: errors.length > 0 ? 10 : 0),
-                _renderForm(),
-                // SizedBox(height: 50)
-              ]))),
+      body: CustomPaint(
+          painter: BgPainter(hasAppBar: true),
+          child: SingleChildScrollView(
+              // physics: ClampingScrollPhysics(parent: NeverScrollableScrollPhysics()),
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
+                  child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+                      child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                        _renderHeader(),
+                        SizedBox(height: errors.length > 0 ? 20 : 50),
+                        errors.length > 0 ? _renderError() : Container(),
+                        SizedBox(height: errors.length > 0 ? 10 : 0),
+                        showAddressForm ? _renderAddressForm() : Container(),
+                        showPwdForm ? _renderPwdForm() : Container(),
+                        !showAddressForm && !showPwdForm ? _renderProfileForm() : Container()
+                        // SizedBox(height: 50)
+                      ]))))),
     );
   }
 }

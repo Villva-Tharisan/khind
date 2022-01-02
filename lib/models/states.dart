@@ -7,12 +7,7 @@ class States {
   dynamic? updatedAt;
 
   States(
-      {this.stateId,
-      this.countryId,
-      this.stateCode,
-      this.state,
-      this.insertedAt,
-      this.updatedAt});
+      {this.stateId, this.countryId, this.stateCode, this.state, this.insertedAt, this.updatedAt});
 
   States.fromJson(Map<String, dynamic> json) {
     this.stateId = json["state_id"];

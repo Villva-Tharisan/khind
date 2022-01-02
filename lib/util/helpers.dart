@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Helpers {
@@ -13,12 +14,9 @@ class Helpers {
       noTitle = "Cancel",
       hasCancel = false}) {
     if (hasAction) {
-      Alert(
-        context: ctx,
-        type: AlertType.warning,
-        title: title,
-        desc: desc,
-        buttons: [
+      List<DialogButton> actionButtons = [];
+      if (hasCancel) {
+        actionButtons = [
           DialogButton(
             child: Text(
               okTitle != null ? okTitle : "Ok",
@@ -28,21 +26,34 @@ class Helpers {
             gradient: LinearGradient(
                 colors: [Color.fromRGBO(116, 116, 191, 1.0), Color.fromRGBO(52, 138, 199, 1.0)]),
           ),
-          hasCancel
-              ? DialogButton(
-                  child: Text(
-                    noTitle != null ? noTitle : "Cancel",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  onPressed: () => Navigator.pop(ctx),
-                  gradient: LinearGradient(colors: [
-                    Color.fromRGBO(188, 188, 188, 1.0),
-                    Color.fromRGBO(209, 209, 209, 1.0),
-                  ]),
-                )
-              : DialogButton(onPressed: () {}, child: Container())
-        ],
-      ).show();
+          DialogButton(
+            child: Text(
+              noTitle != null ? noTitle : "Cancel",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => Navigator.pop(ctx),
+            gradient: LinearGradient(colors: [
+              Color.fromRGBO(188, 188, 188, 1.0),
+              Color.fromRGBO(209, 209, 209, 1.0),
+            ]),
+          )
+        ];
+      } else {
+        actionButtons = [
+          DialogButton(
+            child: Text(
+              okTitle != null ? okTitle : "Ok",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => onPressed(),
+            gradient: LinearGradient(
+                colors: [Color.fromRGBO(116, 116, 191, 1.0), Color.fromRGBO(52, 138, 199, 1.0)]),
+          )
+        ];
+      }
+
+      Alert(context: ctx, type: AlertType.warning, title: title, desc: desc, buttons: actionButtons)
+          .show();
     } else {
       AlertDialog alert;
       alert = AlertDialog(
@@ -71,7 +82,7 @@ class Helpers {
       leadingWidth: isBack ? 50 : 20,
       leading: isBack
           ? IconButton(
-              icon: Icon(Icons.arrow_back_ios_new, color: Colors.blue[500], size: 30),
+              icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
               onPressed: () {
                 if (!isBack) {
                   scaffoldKey.currentState!.openDrawer();
@@ -80,7 +91,7 @@ class Helpers {
                 }
               })
           : Container(),
-      backgroundColor: HexColor('#373A36'),
+      backgroundColor: AppColors.primary,
       elevation: 0.0,
       titleSpacing: 0,
       centerTitle: false,
@@ -93,19 +104,19 @@ class Helpers {
               new IconButton(
                   color: Colors.transparent,
                   // iconSize: 10,
-                  icon: Image(image: AssetImage('assets/icons/location.png'), height: 32),
+                  icon: Image(image: AssetImage('assets/icons/location.png'), height: 22),
                   onPressed: () {
                     Navigator.pushNamed(ctx, 'service_locator');
                   }),
               SizedBox(width: 5),
-              new IconButton(
-                  color: Colors.transparent,
+              new InkWell(
+                  // color: Colors.transparent,
                   // iconSize: 10,
-                  icon: Image(image: AssetImage('assets/icons/user.png'), height: 27),
-                  onPressed: () {
+                  child: Icon(Icons.account_circle_rounded, size: 25),
+                  onTap: () {
                     Navigator.pushNamed(ctx, 'profile');
                   }),
-              SizedBox(width: 5)
+              SizedBox(width: 10)
             ]
           : [],
     );
