@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khind/components/gradient_button.dart';
 import 'package:khind/util/helpers.dart';
 
 class ProductModel extends StatefulWidget {
@@ -148,6 +149,22 @@ class _ProductModelState extends State<ProductModel> {
                                 )),
                           ],
                         ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            child: FlatButton(
+                              child: Text(
+                                'Save',
+                                // style: TextStyle(fontSize: 20.0),
+                              ),
+                              color: Colors.grey.withOpacity(0.3),
+                              textColor: Colors.black,
+                              onPressed: () {},
+                            ),
+                          ),
+                        ],
                       )
                     ],
                   ),

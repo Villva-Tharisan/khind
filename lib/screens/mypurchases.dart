@@ -222,7 +222,7 @@ class PurchaseItem extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        height: 80,
+        height: 95,
         // padding: EdgeInsets.all(10),
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
@@ -262,7 +262,21 @@ class PurchaseItem extends StatelessWidget {
                         color: Colors.black,
                         fontWeight: FontWeight.w400),
                   ),
-                  Expanded(child: Container()),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "Serial No : ${purchase.serialNo}",
+                    overflow: TextOverflow.visible,
+                    style: TextStyle(
+                        // height: 2,
+                        fontSize: 12,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Text(
                     "Warranty Status : ${purchase.status}",
                     overflow: TextOverflow.visible,
