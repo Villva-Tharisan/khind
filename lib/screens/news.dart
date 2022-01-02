@@ -122,18 +122,21 @@ class NewsCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            // color: Colors.red,
-            width: width * 0.3,
-            height: MediaQuery.of(context).size.width * 0.3,
-            // alignment: Alignment.topLeft,
-            child: FittedBox(
-              child: Image.network(
-                'http://cm.khind.com.my/${thumbnail!}',
-                // height: 75,
-              ),
-              fit: BoxFit.fill,
-            ),
-          ),
+              width: width * 0.3,
+              // padding: EdgeInsets.all(2),
+              height: MediaQuery.of(context).size.width * 0.3,
+              // alignment: Alignment.topLeft,
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(7.5),
+                  topLeft: Radius.circular(7.5),
+                ),
+                child: Image.network(
+                  'http://cm.khind.com.my/${thumbnail!}',
+                  // height: 75,
+                  fit: BoxFit.fill,
+                ),
+              )),
           SizedBox(
             width: 10,
           ),

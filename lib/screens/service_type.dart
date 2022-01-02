@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khind/components/gradient_button.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceType extends StatefulWidget {
@@ -119,6 +120,23 @@ class _ServiceTypeState extends State<ServiceType> {
                     'Request for pick up service only available around Klang Valley',
                   ),
                 ],
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: GradientButton(
+                  height: 40,
+                  child: Text(
+                    "Next",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  gradient: LinearGradient(
+                      colors: <Color>[Colors.white, Colors.grey[400]!],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter),
+                  onPressed: () {},
+                ),
               ),
             ),
           ],

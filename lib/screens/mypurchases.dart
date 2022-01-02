@@ -84,7 +84,7 @@ class _MyPurchasesState extends State<MyPurchases> {
         height: double.infinity,
         padding: const EdgeInsets.symmetric(
           vertical: 20,
-          horizontal: 15,
+          horizontal: 0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,6 +111,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                     children: [
                       Container(
                         width: width * 0.5,
+                        padding: EdgeInsets.only(right: 10),
                         // height: 100,
                         child: DropdownButton<String>(
                           items: _status.map<DropdownMenuItem<String>>((e) {
@@ -139,6 +140,8 @@ class _MyPurchasesState extends State<MyPurchases> {
                     height: 10,
                   ),
                   Container(
+                    // color: Colors.black,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     height: height * 0.65,
                     child: _myPurchase.isEmpty
                         ? Center(
@@ -150,6 +153,8 @@ class _MyPurchasesState extends State<MyPurchases> {
                             ),
                           )
                         : ListView.builder(
+                            physics: ClampingScrollPhysics(),
+                            shrinkWrap: true,
                             // shrinkWrap: false,
                             itemCount: _filteredMyPurchase.length,
                             itemBuilder: (BuildContext context, int index) {
@@ -222,14 +227,10 @@ class PurchaseItem extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 0.5,
-              color: Colors.grey,
-              spreadRadius: 0.5,
-              // offset:
-            ),
-          ],
+          border: Border.all(
+            width: 1,
+            color: Colors.grey.withOpacity(0.5),
+          ),
           borderRadius: BorderRadius.circular(7.5),
         ),
         child: Row(
@@ -283,17 +284,9 @@ class PurchaseItem extends StatelessWidget {
               padding: EdgeInsets.only(right: 1),
               decoration: BoxDecoration(
                 color: getColor(),
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 0.5,
-                    color: Colors.grey,
-                    spreadRadius: 0.5,
-                    // offset:
-                  ),
-                ],
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(7.5),
-                  bottomRight: Radius.circular(7.5),
+                  topRight: Radius.circular(7),
+                  bottomRight: Radius.circular(7),
                 ),
               ),
               child: Icon(

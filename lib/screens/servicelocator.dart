@@ -213,18 +213,6 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                         this.filterServiceCenter();
                       },
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 0.5,
-                          color: Colors.grey,
-                          spreadRadius: 0.5,
-                          // offset:
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(7.5),
-                    ),
                   ),
                   // SizedBox(
                   //   width: 10,
@@ -252,18 +240,6 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
                         this.filterServiceCenter();
                       },
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 0.5,
-                          color: Colors.grey,
-                          spreadRadius: 0.5,
-                          // offset:
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(7.5),
                     ),
                   ),
                 ],
@@ -316,14 +292,10 @@ class ServiceCard extends StatelessWidget {
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 0.5,
-            color: Colors.grey,
-            spreadRadius: 0.5,
-            // offset:
-          ),
-        ],
+        border: Border.all(
+          width: 1,
+          color: Colors.grey.withOpacity(0.5),
+        ),
         borderRadius: BorderRadius.circular(7.5),
       ),
       child: Column(
@@ -352,28 +324,30 @@ class ServiceCard extends StatelessWidget {
           ),
           Row(
             children: [
-              Flexible(
-                child: Text(
-                  "Operating Hours:",
-                  overflow: TextOverflow.visible,
-                  style: TextStyle(
-                    // height: 2,
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                  ),
+              Text(
+                "Operating Hours",
+                overflow: TextOverflow.visible,
+                style: TextStyle(
+                  // height: 2,
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               SizedBox(
                 width: 15,
               ),
-              Container(
-                padding: EdgeInsets.only(top: 5),
-                child: Text(serviceCenter.operatingHours!,
-                    style: TextStyle(
-                        height: 1, fontSize: 12, color: Colors.black)),
-              )
             ],
+          ),
+          Flexible(
+            // padding: EdgeInsets.only(top: 5),
+            child: Container(
+              width: double.infinity,
+              child: Text(serviceCenter.operatingHours!,
+                  overflow: TextOverflow.visible,
+                  style:
+                      TextStyle(height: 2, fontSize: 12, color: Colors.black)),
+            ),
           ),
           SizedBox(
             height: 5,

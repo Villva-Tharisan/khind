@@ -49,9 +49,12 @@ class _SignInState extends State<SignIn> {
 
       if (response['expires_in'] != null) {
         var curDate = new DateTime.now();
-        var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
+        var expDate =
+            curDate.add(Duration(milliseconds: response['expires_in']));
 
-        await storage.write(key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
+        await storage.write(
+            key: TOKEN_EXPIRY,
+            value: (expDate.millisecondsSinceEpoch).toString());
       }
     }
   }
@@ -59,7 +62,10 @@ class _SignInState extends State<SignIn> {
   void _handleSignIn() async {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
-      final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
+      final Map<String, dynamic> map = {
+        'email': emailCT.text,
+        'password': passwordCT.text
+      };
       final response = await Api.bearerPost('login', params: jsonEncode(map));
 
       setState(() {
@@ -68,9 +74,11 @@ class _SignInState extends State<SignIn> {
       });
 
       if (response['error'] != null) {
-        if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
+        if (response['error'].runtimeType == String &&
+            response['error'] == 'invalid_token') {
           _fetchOauth();
-          final response1 = await Api.bearerPost('login', params: jsonEncode(map));
+          final response1 =
+              await Api.bearerPost('login', params: jsonEncode(map));
           Navigator.pop(context);
 
           if (response1['error'] != null) {
@@ -112,117 +120,144 @@ class _SignInState extends State<SignIn> {
   Widget _renderForm() {
     return Container(
         padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(25)),
         child: Form(
             key: _formKey,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Text("Login Account", style: TextStyles.textTitle),
-              SizedBox(height: 10),
-              TextFormField(
-                focusNode: focusEmail,
-                keyboardType: TextInputType.text,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter email';
-                  }
-                  return null;
-                },
-                controller: emailCT,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                style: TextStyles.textDefault,
-                decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
-                    ),
-                    hintText: 'E-mail',
-                    hintStyle:
-                        focusEmail.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                    border: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
-              ),
-              SizedBox(height: 5),
-              Stack(children: [
-                TextFormField(
-                  focusNode: focusPwd,
-                  keyboardType: TextInputType.text,
-                  obscureText: !showPassword,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter password';
-                    }
-                    return null;
-                  },
-                  controller: passwordCT,
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
-                  style: TextStyles.textDefault,
-                  decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppColors.primary, width: 2, style: BorderStyle.solid),
-                      ),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
-                      ),
-                      hintText: 'Password',
-                      hintStyle:
-                          focusPwd.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                      border: UnderlineInputBorder(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("Login Account", style: TextStyles.textTitle),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    focusNode: focusEmail,
+                    keyboardType: TextInputType.text,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter email';
+                      }
+                      return null;
+                    },
+                    controller: emailCT,
+                    onFieldSubmitted: (val) {
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                    },
+                    style: TextStyles.textDefault,
+                    decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
-                ),
-                Positioned(
-                    right: 15,
-                    top: 10,
-                    child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            showPassword = !showPassword;
-                          });
-                        },
-                        child: Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
-              ]),
-              SizedBox(height: 15),
-              Container(
-                  alignment: Alignment.centerLeft,
-                  child: InkWell(
-                      child: Text("In case you forgot password?",
-                          textAlign: TextAlign.left,
-                          style: TextStyles.textSm
-                              .copyWith(fontWeight: FontWeight.bold, color: AppColors.primary)),
-                      onTap: () => Navigator.pushNamed(context, 'forgot'))),
-              SizedBox(height: 30),
-              RoundButton(height: 40, title: "Sign In", onPressed: () => _handleSignIn()),
-              SizedBox(height: 15),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Expanded(child: Divider(color: AppColors.greyLight)),
-                Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: Text("OR",
-                        style: TextStyles.textDefault.copyWith(fontWeight: FontWeight.w500)),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[300], borderRadius: BorderRadius.circular(15))),
-                Expanded(child: Divider(color: AppColors.greyLight)),
-              ]),
-              SizedBox(height: 15),
-              RoundButton(
-                  title: "Activate My E-Warranty",
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('ewarranty');
-                  }),
-            ])));
+                              color: AppColors.primary,
+                              width: 2,
+                              style: BorderStyle.solid),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.greyLight,
+                              width: 1,
+                              style: BorderStyle.solid),
+                        ),
+                        hintText: 'E-mail',
+                        hintStyle: focusEmail.hasFocus
+                            ? TextStyles.textPrimary
+                            : TextStyles.textGreyDark,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                        border: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.greyLight,
+                                width: 1,
+                                style: BorderStyle.solid))),
+                  ),
+                  SizedBox(height: 5),
+                  Stack(children: [
+                    TextFormField(
+                      focusNode: focusPwd,
+                      keyboardType: TextInputType.text,
+                      obscureText: !showPassword,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter password';
+                        }
+                        return null;
+                      },
+                      controller: passwordCT,
+                      onFieldSubmitted: (val) {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      },
+                      style: TextStyles.textDefault,
+                      decoration: InputDecoration(
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.primary,
+                                width: 2,
+                                style: BorderStyle.solid),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.greyLight,
+                                width: 1,
+                                style: BorderStyle.solid),
+                          ),
+                          hintText: 'Password',
+                          hintStyle: focusPwd.hasFocus
+                              ? TextStyles.textPrimary
+                              : TextStyles.textGreyDark,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 5),
+                          border: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: AppColors.greyLight,
+                                  width: 1,
+                                  style: BorderStyle.solid))),
+                    ),
+                    Positioned(
+                        right: 15,
+                        top: 10,
+                        child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                showPassword = !showPassword;
+                              });
+                            },
+                            child: Icon(showPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off)))
+                  ]),
+                  SizedBox(height: 15),
+                  Container(
+                      alignment: Alignment.centerLeft,
+                      child: InkWell(
+                          child: Text("In case you forgot password?",
+                              textAlign: TextAlign.left,
+                              style: TextStyles.textSm.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary)),
+                          onTap: () => Navigator.pushNamed(context, 'forgot'))),
+                  SizedBox(height: 30),
+                  RoundButton(
+                      height: 40,
+                      title: "Sign In",
+                      onPressed: () => _handleSignIn()),
+                  SizedBox(height: 15),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Expanded(child: Divider(color: AppColors.greyLight)),
+                    Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: Text("OR",
+                            style: TextStyles.textDefault
+                                .copyWith(fontWeight: FontWeight.w500)),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(15))),
+                    Expanded(child: Divider(color: AppColors.greyLight)),
+                  ]),
+                  SizedBox(height: 15),
+                  RoundButton(
+                      title: "Activate My E-Warranty",
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('ewarranty');
+                      }),
+                ])));
   }
 
   _renderError() {
@@ -230,7 +265,8 @@ class _SignInState extends State<SignIn> {
       // SizedBox(height: 10),
       Text(
         errorMsg,
-        style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+        style: TextStyle(
+            color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
         textAlign: TextAlign.center,
       ),
       SizedBox(height: 20),
@@ -242,7 +278,8 @@ class _SignInState extends State<SignIn> {
       Text("Don't have an account?", style: TextStyles.textDefaultBold),
       SizedBox(height: 10),
       InkWell(
-          child: Text("REGISTER", style: TextStyles.textPrimaryBold.copyWith(fontSize: 18)),
+          child: Text("REGISTER",
+              style: TextStyles.textPrimaryBold.copyWith(fontSize: 18)),
           onTap: () {
             setState(() {
               errorMsg = "";
@@ -261,8 +298,10 @@ class _SignInState extends State<SignIn> {
           painter: BgPainter(),
           child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
-              decoration: new BoxDecoration(color: Colors.white.withOpacity(0.0)),
-              child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+              decoration:
+                  new BoxDecoration(color: Colors.white.withOpacity(0.0)),
+              child:
+                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                 _renderHeader(),
                 SizedBox(height: errorMsg != "" ? 20 : 50),
