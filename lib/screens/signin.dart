@@ -297,7 +297,7 @@ class _SignInState extends State<SignIn> {
       body: CustomPaint(
           painter: BgPainter(),
           child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
               decoration:
                   new BoxDecoration(color: Colors.white.withOpacity(0.0)),
               child:
