@@ -39,8 +39,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     if (status == "All") {
       filter = _myPurchase;
     } else {
-      filter =
-          _myPurchase.where((element) => element.status == status).toList();
+      filter = _myPurchase.where((element) => element.status == status).toList();
     }
     setState(() {
       _filteredMyPurchase = filter;
@@ -62,8 +61,7 @@ class _MyPurchasesState extends State<MyPurchases> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var purchases =
-          (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+      var purchases = (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
 
       setState(() {
         _myPurchase = purchases;
@@ -77,15 +75,14 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "My Purchases", hasActions: false),
+      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "My Purchases", hasActions: false),
       body: Container(
         width: double.infinity,
-        height: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          vertical: 20,
-          horizontal: 0,
-        ),
+        // height: double.infinity,
+        // padding: const EdgeInsets.symmetric(
+        //   vertical: 20,
+        //   horizontal: 0,
+        // ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -142,18 +139,17 @@ class _MyPurchasesState extends State<MyPurchases> {
                   Container(
                     // color: Colors.black,
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    height: height * 0.65,
+                    height: height * 0.75,
                     child: _myPurchase.isEmpty
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text(
-                                  "No more data to show, tap to refresh",
+                              child: Text("No more data to show, tap to refresh",
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )
                         : ListView.builder(
-                            physics: ClampingScrollPhysics(),
+                            // physics: ClampingScrollPhysics(),
                             shrinkWrap: true,
                             // shrinkWrap: false,
                             itemCount: _filteredMyPurchase.length,
@@ -222,15 +218,13 @@ class PurchaseItem extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        height: 95,
-        // padding: EdgeInsets.all(10),
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
+          border: Border.all(width: 0.1),
           color: Colors.white,
-          border: Border.all(
-            width: 1,
-            color: Colors.grey.withOpacity(0.5),
-          ),
+          boxShadow: [
+            BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+          ],
           borderRadius: BorderRadius.circular(7.5),
         ),
         child: Row(

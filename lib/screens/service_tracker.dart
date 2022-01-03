@@ -13,8 +13,8 @@ class ServiceTracker extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "Service Tracker", hasActions: false),
+      appBar:
+          Helpers.customAppBar(context, _scaffoldKey, title: "Service Tracker", hasActions: false),
       body: Container(
         margin: EdgeInsets.symmetric(
           horizontal: 15,
@@ -53,6 +53,14 @@ class ServiceTracker extends StatelessWidget {
               },
               child: Container(
                 height: height * 0.1,
+                decoration: BoxDecoration(
+                  border: Border.all(width: 0.1),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                  ],
+                  borderRadius: BorderRadius.circular(7.5),
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -60,22 +68,7 @@ class ServiceTracker extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 0.5,
-                              color: Colors.grey,
-                              spreadRadius: 0.5,
-                            ),
-                          ],
-                          // borderRadius: BorderRadius.circular(10),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            topLeft: Radius.circular(10),
-                          ),
+                          // vertical: 10,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -123,9 +116,17 @@ class ServiceTracker extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Container(
               height: height * 0.1,
+              decoration: BoxDecoration(
+                border: Border.all(width: 0.1),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                ],
+                borderRadius: BorderRadius.circular(7.5),
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -134,21 +135,6 @@ class ServiceTracker extends StatelessWidget {
                       padding: EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 0.5,
-                            color: Colors.grey,
-                            spreadRadius: 0.5,
-                          ),
-                        ],
-                        // borderRadius: BorderRadius.circular(10),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                        ),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
