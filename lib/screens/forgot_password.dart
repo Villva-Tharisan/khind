@@ -79,7 +79,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return Container(
         alignment: Alignment.center,
         child: Image(
-            image: AssetImage('assets/images/logo_text_white.png'),
+            image: AssetImage('assets/images/logo_text.png'),
             height: MediaQuery.of(context).size.width * 0.15));
   }
 

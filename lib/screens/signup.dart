@@ -113,7 +113,7 @@ class _SignUpState extends State<SignUp> {
     return Container(
         alignment: Alignment.center,
         child: Image(
-            image: AssetImage('assets/images/logo_text_white.png'),
+            image: AssetImage('assets/images/logo_text.png'),
             height: MediaQuery.of(context).size.width * 0.15));
   }
 
@@ -211,7 +211,7 @@ class _SignUpState extends State<SignUp> {
         child: Form(
             key: _basicFormKey,
             child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Text("Step 1 : Fill in your information", style: TextStyles.textDefaultBold),
+              Text("Step 1 : Fill in your information", style: TextStyles.textSecondaryBold),
               SizedBox(height: 20),
               TextFormField(
                 focusNode: focusEmail,
@@ -410,12 +410,13 @@ class _SignUpState extends State<SignUp> {
                         }),
                     child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: Icon(Icons.arrow_back, color: Colors.blue),
+                        child: Icon(Icons.arrow_back, color: AppColors.tertiery),
                         decoration: BoxDecoration(
                             color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
                 SizedBox(width: 20),
                 Flexible(
-                    child: Text("Step 2 : Fill in your address", style: TextStyles.textDefaultBold))
+                    child:
+                        Text("Step 2 : Fill in your address", style: TextStyles.textSecondaryBold))
               ]),
               SizedBox(height: 20),
               TextFormField(
@@ -580,11 +581,12 @@ class _SignUpState extends State<SignUp> {
                         }),
                     child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: Icon(Icons.arrow_back, color: Colors.blue),
+                        child: Icon(Icons.arrow_back, color: AppColors.tertiery),
                         decoration: BoxDecoration(
                             color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
                 SizedBox(width: 20),
-                Flexible(child: Text("Step 3 : Create password", style: TextStyles.textDefaultBold))
+                Flexible(
+                    child: Text("Step 3 : Create password", style: TextStyles.textSecondaryBold))
               ]),
               SizedBox(height: 20),
               Stack(children: [

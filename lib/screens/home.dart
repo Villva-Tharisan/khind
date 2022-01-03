@@ -73,7 +73,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return AnimatedBottomNavigationBar.builder(
       itemCount: icons.length,
       tabBuilder: (int index, bool isActive) {
-        final color = isActive ? HexColor('#FFA400') : Colors.white;
+        final color = isActive ? AppColors.secondary : AppColors.tertiery;
         return Container(
             child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -128,7 +128,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         child: FloatingActionButton(
           // clipBehavior: Clip.hardEdge,
           elevation: 8,
-          backgroundColor: HexColor('#FFA400'),
+          backgroundColor: AppColors.secondary,
           child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.all(5),

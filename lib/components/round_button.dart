@@ -42,7 +42,7 @@ class RoundButton extends StatelessWidget {
                 height: height,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: color != null ? color : AppColors.primary,
+                  color: color != null ? color : AppColors.secondary,
                   borderRadius: borderRadius != null ? borderRadius : BorderRadius.circular(10),
                   border: customBorder != null
                       ? customBorder

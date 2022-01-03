@@ -96,8 +96,7 @@ class _ProfileState extends State<Profile> {
       };
 
       // print("MAP: $map");
-      final response =
-          await Api.bearerPost('update_user.php', params: jsonEncode(map));
+      final response = await Api.bearerPost('update_user.php', params: jsonEncode(map));
       setState(() {
         isLoading = true;
         errorMsg = "";
@@ -178,8 +177,8 @@ class _ProfileState extends State<Profile> {
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'eg: khind@gmail.com',
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10)),
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
                       )),
                     ])),
                 SizedBox(height: 5),
@@ -206,8 +205,7 @@ class _ProfileState extends State<Profile> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'First Name',
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 10),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         ),
                       ))
                     ])),
@@ -235,8 +233,8 @@ class _ProfileState extends State<Profile> {
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Last Name',
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10)),
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
                       ))
                     ])),
                 SizedBox(height: 5),
@@ -263,8 +261,8 @@ class _ProfileState extends State<Profile> {
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Mobile Number',
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10)),
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
                       ))
                     ])),
                 SizedBox(height: 5),
@@ -287,14 +285,13 @@ class _ProfileState extends State<Profile> {
                           },
                           controller: dobCT,
                           onFieldSubmitted: (val) {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
+                            FocusScope.of(context).requestFocus(new FocusNode());
                           },
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'dd-mm-yyyy',
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10)),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
                         ),
                         Positioned(
                             right: 0,
@@ -324,14 +321,13 @@ class _ProfileState extends State<Profile> {
                           },
                           controller: passwordCT,
                           onFieldSubmitted: (val) {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
+                            FocusScope.of(context).requestFocus(new FocusNode());
                           },
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Password',
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10)),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
                         ),
                         Positioned(
                             right: 15,
@@ -342,9 +338,8 @@ class _ProfileState extends State<Profile> {
                                     showPassword = !showPassword;
                                   });
                                 },
-                                child: Icon(showPassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off)))
+                                child:
+                                    Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
                       ]))
                     ])),
                 SizedBox(height: 5),
@@ -368,14 +363,13 @@ class _ProfileState extends State<Profile> {
                           },
                           controller: confirmPasswordCT,
                           onFieldSubmitted: (val) {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
+                            FocusScope.of(context).requestFocus(new FocusNode());
                           },
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Address',
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10)),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 5, horizontal: 10)),
                         ),
                         Positioned(
                             right: 15,
@@ -386,9 +380,8 @@ class _ProfileState extends State<Profile> {
                                     showConfirmPassword = !showConfirmPassword;
                                   });
                                 },
-                                child: Icon(showConfirmPassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off)))
+                                child: Icon(
+                                    showConfirmPassword ? Icons.visibility : Icons.visibility_off)))
                       ]))
                     ])),
                 SizedBox(height: 5),
@@ -398,7 +391,7 @@ class _ProfileState extends State<Profile> {
           RoundButton(
               title: 'Sign Out',
               height: MediaQuery.of(context).size.height * 0.1,
-              color: Colors.grey[300],
+              color: AppColors.secondary,
               borderRadius: BorderRadius.circular(0),
               titleStyles: TextStyles.textPrimaryBold.copyWith(fontSize: 18),
               onPressed: () async {
@@ -414,8 +407,7 @@ class _ProfileState extends State<Profile> {
                   await storage.delete(key: TOKEN_EXPIRY);
 
                   Navigator.pop(context);
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, 'signin', (route) => false);
+                  Navigator.pushNamedAndRemoveUntil(context, 'signin', (route) => false);
                 });
               })
         ]));

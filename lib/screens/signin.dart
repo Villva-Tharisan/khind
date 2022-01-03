@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:khind/components/bg_painter.dart';
 import 'package:khind/components/round_button.dart';
 import 'package:khind/themes/app_colors.dart';
@@ -106,7 +107,7 @@ class _SignInState extends State<SignIn> {
     return Container(
         alignment: Alignment.center,
         child: Image(
-            image: AssetImage('assets/images/logo_text_white.png'),
+            image: AssetImage('assets/images/logo_text.png'),
             height: MediaQuery.of(context).size.width * 0.15));
   }
 
@@ -202,7 +203,7 @@ class _SignInState extends State<SignIn> {
                       child: Text("In case you forgot password?",
                           textAlign: TextAlign.left,
                           style: TextStyles.textSm
-                              .copyWith(fontWeight: FontWeight.bold, color: AppColors.primary)),
+                              .copyWith(fontWeight: FontWeight.bold, color: AppColors.link)),
                       onTap: () => Navigator.pushNamed(context, 'forgot'))),
               SizedBox(height: 30),
               RoundButton(height: 40, title: "Sign In", onPressed: () => _handleSignIn()),
@@ -219,6 +220,7 @@ class _SignInState extends State<SignIn> {
               ]),
               SizedBox(height: 15),
               RoundButton(
+                  color: AppColors.tertiery,
                   title: "Activate My E-Warranty",
                   onPressed: () {
                     Navigator.of(context).pushNamed('ewarranty');
@@ -243,7 +245,7 @@ class _SignInState extends State<SignIn> {
       Text("Don't have an account?", style: TextStyles.textDefaultBold),
       SizedBox(height: 10),
       InkWell(
-          child: Text("REGISTER", style: TextStyles.textPrimaryBold.copyWith(fontSize: 18)),
+          child: Text("REGISTER", style: TextStyles.textSecondaryBold.copyWith(fontSize: 18)),
           onTap: () {
             setState(() {
               errorMsg = "";

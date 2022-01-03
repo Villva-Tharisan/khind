@@ -20,22 +20,27 @@ class Helpers {
           DialogButton(
             child: Text(
               okTitle != null ? okTitle : "Ok",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
+            color: AppColors.secondary,
             onPressed: () => onPressed(),
-            gradient: LinearGradient(
-                colors: [Color.fromRGBO(116, 116, 191, 1.0), Color.fromRGBO(52, 138, 199, 1.0)]),
+            // gradient: LinearGradient(
+            //     colors: [Color.fromRGBO(116, 116, 191, 1.0), Color.fromRGBO(52, 138, 199, 1.0)]
+            // ),
           ),
           DialogButton(
             child: Text(
               noTitle != null ? noTitle : "Cancel",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
+            border: Border.all(width: 1, color: Colors.grey[300]!),
+            color: Colors.grey[400],
             onPressed: () => Navigator.pop(ctx),
-            gradient: LinearGradient(colors: [
-              Color.fromRGBO(188, 188, 188, 1.0),
-              Color.fromRGBO(209, 209, 209, 1.0),
-            ]),
+            // gradient: LinearGradient(colors: [
+            //   Color.fromRGBO(188, 188, 188, 1.0),
+            //   Color.fromRGBO(209, 209, 209, 1.0),
+            // ]
+            // ),
           )
         ];
       } else {
@@ -82,7 +87,7 @@ class Helpers {
       leadingWidth: isBack ? 50 : 20,
       leading: isBack
           ? IconButton(
-              icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+              icon: Icon(Icons.arrow_back_ios_new, color: AppColors.tertiery, size: 20),
               onPressed: () {
                 if (!isBack) {
                   scaffoldKey.currentState!.openDrawer();
@@ -97,22 +102,19 @@ class Helpers {
       centerTitle: false,
       title: Text(
         title,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(color: AppColors.tertiery, fontWeight: FontWeight.bold),
       ),
       actions: hasActions
           ? [
               new IconButton(
                   color: Colors.transparent,
-                  // iconSize: 10,
                   icon: Image(image: AssetImage('assets/icons/location.png'), height: 22),
                   onPressed: () {
                     Navigator.pushNamed(ctx, 'service_locator');
                   }),
               SizedBox(width: 5),
               new InkWell(
-                  // color: Colors.transparent,
-                  // iconSize: 10,
-                  child: Icon(Icons.account_circle_rounded, size: 25),
+                  child: Icon(Icons.account_circle_rounded, size: 27, color: AppColors.tertiery),
                   onTap: () {
                     Navigator.pushNamed(ctx, 'profile');
                   }),
