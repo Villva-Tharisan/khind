@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:khind/util/key.dart';
 
 final storage = new FlutterSecureStorage();
@@ -11,10 +11,10 @@ class AuthInterceptor implements InterceptorContract {
   @override
   Future<RequestData> interceptRequest({required RequestData data}) async {
     try {
-      String username = dotenv.env["CLIENT_USERNAME"] as String;
-      String password = dotenv.env["CLIENT_PASSWORD"] as String;
+      String username = FlutterConfig.get("CLIENT_USERNAME");
+      String password = FlutterConfig.get("CLIENT_PASSWORD") as String;
       String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
-      print('BasicAuth $basicAuth');
+      // print('BasicAuth $basicAuth');
       data.headers['Content-Type'] = 'application/json';
       data.headers['authorization'] = basicAuth;
     } catch (e) {
@@ -37,7 +37,7 @@ class ApiInterceptor implements InterceptorContract {
       data.headers['Accept'] = 'application/json';
 
       var token = await storage.read(key: TOKEN);
-      print('TOKEN: $token');
+      // print('TOKEN: $token');
       if (token != null) {
         String bearerAuth = 'Bearer $token';
         data.headers['authorization'] = bearerAuth;
@@ -61,7 +61,8 @@ class Api {
   static basicPost(endpoint, {params, isCms = false}) async {
     try {
       final response;
-      String baseUrl = isCms ? dotenv.env["CMS_URL"] as String : dotenv.env["API_URL"] as String;
+      print("MASUK!!");
+      String baseUrl = isCms ? FlutterConfig.get("CMS_URL") : FlutterConfig.get("API_URL");
       String url = '$baseUrl/$endpoint';
       print("Url: $url");
       if (params != null) {
@@ -96,7 +97,7 @@ class Api {
 
       print("#NEWPARAMS: $newParams");
 
-      String baseUrl = isCms ? dotenv.env["CMS_URL"] as String : dotenv.env["API_URL"] as String;
+      String baseUrl = isCms ? FlutterConfig.get("CMS_URL") : FlutterConfig.get("API_URL");
       String url = params != null ? '$baseUrl/$endpoint$newParams' : '$baseUrl/$endpoint';
       print("Url: $url");
       final response = await client.get(url.toUri());
@@ -112,7 +113,7 @@ class Api {
   static bearerPost(endpoint, {params, isCms = false}) async {
     try {
       final response;
-      String baseUrl = isCms ? dotenv.env["CMS_URL"] as String : dotenv.env["API_URL"] as String;
+      String baseUrl = isCms ? FlutterConfig.get("CMS_URL") : FlutterConfig.get("API_URL");
       String url = '$baseUrl/$endpoint';
       print("Url: $url");
       if (params != null) {
