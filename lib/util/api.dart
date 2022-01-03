@@ -37,7 +37,7 @@ class ApiInterceptor implements InterceptorContract {
       data.headers['Accept'] = 'application/json';
 
       var token = await storage.read(key: TOKEN);
-      // print('TOKEN: $token');
+      print('TOKEN: $token');
       if (token != null) {
         String bearerAuth = 'Bearer $token';
         data.headers['authorization'] = bearerAuth;
@@ -95,7 +95,7 @@ class Api {
         });
       }
 
-      print("#NEWPARAMS: $newParams");
+      // print("#NEWPARAMS: $newParams");
 
       String baseUrl = isCms ? FlutterConfig.get("CMS_URL") : FlutterConfig.get("API_URL");
       String url = params != null ? '$baseUrl/$endpoint$newParams' : '$baseUrl/$endpoint';

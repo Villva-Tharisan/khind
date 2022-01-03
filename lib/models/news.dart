@@ -1,4 +1,4 @@
-class New {
+class News {
   int? id;
   int? userId;
   int? categoryId;
@@ -15,8 +15,9 @@ class New {
   List<Tags>? tags;
   Category? category;
   String? pdfFile;
+  String? content;
 
-  New(
+  News(
       {this.id,
       this.userId,
       this.categoryId,
@@ -32,9 +33,10 @@ class New {
       this.commentsCount,
       this.tags,
       this.category,
-      this.pdfFile});
+      this.pdfFile,
+      this.content});
 
-  New.fromJson(Map<String, dynamic> json) {
+  News.fromJson(Map<String, dynamic> json) {
     this.id = json["id"];
     this.userId = json["user_id"];
     this.categoryId = json["category_id"];
@@ -48,12 +50,11 @@ class New {
     this.status = json["status"];
     this.publishStatus = json["publish_status"];
     this.commentsCount = json["comments_count"];
-    this.tags = json["tags"] == null
-        ? null
-        : (json["tags"] as List).map((e) => Tags.fromJson(e)).toList();
-    this.category =
-        json["category"] == null ? null : Category.fromJson(json["category"]);
+    this.tags =
+        json["tags"] == null ? null : (json["tags"] as List).map((e) => Tags.fromJson(e)).toList();
+    this.category = json["category"] == null ? null : Category.fromJson(json["category"]);
     this.pdfFile = json["pdf_file"];
+    this.content = json["content"];
   }
 
   Map<String, dynamic> toJson() {
@@ -71,10 +72,10 @@ class New {
     data["status"] = this.status;
     data["publish_status"] = this.publishStatus;
     data["comments_count"] = this.commentsCount;
-    if (this.tags != null)
-      data["tags"] = this.tags?.map((e) => e.toJson()).toList();
+    if (this.tags != null) data["tags"] = this.tags?.map((e) => e.toJson()).toList();
     if (this.category != null) data["category"] = this.category?.toJson();
     data["pdf_file"] = this.pdfFile;
+    data["content"] = this.content;
     return data;
   }
 }
@@ -87,13 +88,7 @@ class Category {
   dynamic? coverImg;
   dynamic? description;
 
-  Category(
-      {this.id,
-      this.createdAt,
-      this.updatedAt,
-      this.name,
-      this.coverImg,
-      this.description});
+  Category({this.id, this.createdAt, this.updatedAt, this.name, this.coverImg, this.description});
 
   Category.fromJson(Map<String, dynamic> json) {
     this.id = json["id"];

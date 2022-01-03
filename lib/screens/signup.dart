@@ -381,7 +381,7 @@ class _SignUpState extends State<SignUp> {
               ]),
               SizedBox(height: 30),
               RoundButton(
-                  title: "Sign Up",
+                  title: "Next",
                   icon: Icons.arrow_right_alt_rounded,
                   onPressed: () {
                     if (_basicFormKey.currentState!.validate()) {

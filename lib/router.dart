@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:khind/models/news.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
 import 'package:khind/screens/ewarranty_product_manual.dart';
 import 'package:khind/screens/extend_warranty.dart';
-import 'package:khind/screens/news.dart';
+import 'package:khind/screens/news_landing.dart';
+import 'package:khind/screens/news_detail.dart';
 import 'package:khind/screens/product_model.dart';
 import 'package:khind/screens/profile.dart';
 import 'package:khind/screens/request_date.dart';
@@ -41,7 +43,9 @@ class AppRouter {
       case 'home':
         return MaterialPageRoute(builder: (_) => Home());
       case 'news':
-        return MaterialPageRoute(builder: (_) => News());
+        return MaterialPageRoute(builder: (_) => NewsLanding());
+      case 'news_detail':
+        return MaterialPageRoute(builder: (_) => NewsDetail(data: arguments as News));
       case 'service_locator':
         return MaterialPageRoute(builder: (_) => ServiceLocator());
       case 'ewarranty':
@@ -87,9 +91,8 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-            builder: (_) => Scaffold(
-                body: Center(
-                    child: Text('No route defined for ${settings.name}'))));
+            builder: (_) =>
+                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
     }
   }
 
