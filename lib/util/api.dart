@@ -61,7 +61,6 @@ class Api {
   static basicPost(endpoint, {params, isCms = false}) async {
     try {
       final response;
-      print("MASUK!!");
       String baseUrl = isCms ? FlutterConfig.get("CMS_URL") : FlutterConfig.get("API_URL");
       String url = '$baseUrl/$endpoint';
       print("Url: $url");

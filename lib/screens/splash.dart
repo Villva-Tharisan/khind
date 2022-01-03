@@ -19,64 +19,21 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    // Timer(Duration(seconds: 2), () {
-    //   // Navigator.pushNamed(context, 'home');
-    //   // Navigator.pushNamed(context, 'signup');
-    //   Navigator.pushNamed(context, 'signin');
-    // });
-
     Timer(Duration(seconds: 2), () {
-      // Helpers.showAlert(context);
-      _refreshToken();
+      _validateToken();
     });
 
     super.initState();
   }
 
-  _redirect(isAuth) {
-    // Redirect after success
-    if (isAuth) {
+  _validateToken() async {
+    String? token = await storage.read(key: TOKEN);
+
+    if (token != null) {
       Navigator.pushReplacementNamed(context, 'home');
     } else {
       Navigator.pushReplacementNamed(context, 'signin');
     }
-  }
-
-  _refreshToken() async {
-    // _fetchOauth();
-    String? tokenExp = await storage.read(key: TOKEN_EXPIRY);
-
-    if (tokenExp != null) {
-      var expDate = DateTime.fromMillisecondsSinceEpoch(int.parse(tokenExp));
-      // print("TOKEN EXP: $expDate");
-
-      if (expDate.difference(DateTime.now()).inMinutes <= 0) {
-        print("Token Expired: $expDate");
-        _fetchOauth();
-      } else {
-        print("Token Not Expired");
-        _redirect(true);
-      }
-    } else {
-      _fetchOauth();
-    }
-  }
-
-  void _fetchOauth() async {
-    final response = await Api.basicPost('oauth2/token/client_credentials');
-
-    if (response['access_token'] != null) {
-      await storage.write(key: TOKEN, value: response['access_token']);
-
-      if (response['expires_in'] != null) {
-        var curDate = new DateTime.now();
-        var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
-
-        await storage.write(key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
-      }
-    }
-
-    _redirect(false);
   }
 
   Widget _renderHeader() {

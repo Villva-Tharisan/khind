@@ -10,6 +10,7 @@ import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
+import 'package:khind/util/key.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -60,14 +61,14 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    firstNameCT.text = "test1";
-    lastNameCT.text = "khind";
-    mobileNoCT.text = "0156663229";
-    emailCT.text = "test1.khind@gmail.com";
-    passwordCT.text = "p455word";
-    dobCT.text = "01-01-1990";
-    address1CT.text = "No 44 Taman Miharja";
-    confirmPasswordCT.text = "p455word";
+    // firstNameCT.text = "test1";
+    // lastNameCT.text = "khind";
+    // mobileNoCT.text = "0156663229";
+    // emailCT.text = "test1.khind@gmail.com";
+    // passwordCT.text = "p455word";
+    // dobCT.text = "01-01-1990";
+    // address1CT.text = "No 44 Taman Miharja";
+    // confirmPasswordCT.text = "p455word";
     super.initState();
     _fetchStates();
   }
@@ -142,6 +143,28 @@ class _SignUpState extends State<SignUp> {
     confirmPasswordCT.clear();
   }
 
+  validateToken() async {
+    String? token = await storage.read(key: TOKEN);
+
+    if (token != null) {
+      return;
+    } else {
+      final response = await Api.basicPost('oauth2/token/client_credentials');
+
+      if (response['access_token'] != null) {
+        await storage.write(key: TOKEN, value: response['access_token']);
+
+        if (response['expires_in'] != null) {
+          var curDate = new DateTime.now();
+          var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
+
+          await storage.write(
+              key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
+        }
+      }
+    }
+  }
+
   void _handleSignUp() async {
     Helpers.showAlert(context);
     // if (_formKey.currentState!.validate()) {
@@ -161,6 +184,8 @@ class _SignUpState extends State<SignUp> {
     };
 
     // print("MAP: $map");
+    await validateToken();
+
     final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
     setState(() {
       isLoading = true;
@@ -217,8 +242,12 @@ class _SignUpState extends State<SignUp> {
                 focusNode: focusEmail,
                 keyboardType: TextInputType.text,
                 validator: (value) {
+                  var regExp = RegExp(
+                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
                   if (value!.isEmpty) {
                     return 'Please enter email';
+                  } else if (!regExp.hasMatch(value)) {
+                    return 'Invalid email format';
                   }
                   return null;
                 },
@@ -311,10 +340,13 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 5),
               TextFormField(
                 focusNode: focusMobile,
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.number,
                 validator: (value) {
+                  RegExp regExp = new RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
                   if (value!.isEmpty) {
                     return 'Please enter mobile number';
+                  } else if (!regExp.hasMatch(value)) {
+                    return 'Invalid mobile number format';
                   }
                   return null;
                 },
@@ -346,8 +378,12 @@ class _SignUpState extends State<SignUp> {
                   focusNode: focusDob,
                   keyboardType: TextInputType.text,
                   validator: (value) {
+                    RegExp regExp = new RegExp(
+                        r'^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$');
                     if (value!.isEmpty) {
                       return 'Please enter date of birth';
+                    } else if (!regExp.hasMatch(value)) {
+                      return 'Invalid date format';
                     }
                     return null;
                   },
@@ -523,8 +559,11 @@ class _SignUpState extends State<SignUp> {
                 focusNode: focusPostcode,
                 keyboardType: TextInputType.number,
                 validator: (value) {
+                  RegExp regExp = new RegExp(r'^(^[0-9]*$)');
                   if (value!.isEmpty) {
                     return 'Please enter postcode';
+                  } else if (!regExp.hasMatch(value)) {
+                    return 'Invalid postcode format';
                   }
                   return null;
                 },
