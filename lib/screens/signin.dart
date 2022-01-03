@@ -55,6 +55,7 @@ class _SignInState extends State<SignIn> {
         await storage.write(key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
       }
     }
+    return;
   }
 
   _refreshToken() async {
@@ -89,37 +90,43 @@ class _SignInState extends State<SignIn> {
         errorMsg = "";
       });
 
-      if (response['error'] != null) {
-        if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
-          _fetchOauth();
-          final response1 = await Api.bearerPost('login', params: jsonEncode(map));
-          Navigator.pop(context);
+      if (response != null) {
+        if (response['error'] != null) {
+          if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
+            await _fetchOauth();
+            final response1 = await Api.bearerPost('login', params: jsonEncode(map));
+            Navigator.pop(context);
 
-          if (response1['error'] != null) {
+            if (response1['error'] != null) {
+              setState(() {
+                isLoading = false;
+                errorMsg = response1['error']['warning'] != null
+                    ? response1['error']['warning']
+                    : "Either server error or incorrect credentials";
+              });
+            } else {
+              Navigator.pushReplacementNamed(context, 'home');
+            }
+          } else {
             setState(() {
               isLoading = false;
-              errorMsg = response1['error']['warning'] != null
-                  ? response1['error']['warning']
-                  : "Incorrect credentials";
+              errorMsg = response['error']['warning'] != null
+                  ? response['error']['warning']
+                  : "Either server error or incorrect credentials";
+              Navigator.pop(context);
             });
-          } else {
-            Navigator.pushReplacementNamed(context, 'home');
           }
         } else {
-          setState(() {
-            isLoading = false;
-            errorMsg = response['error']['warning'] != null
-                ? response['error']['warning']
-                : "Incorrect credentials";
-            Navigator.pop(context);
-          });
+          Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, 'home');
         }
-      } else {
-        Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, 'home');
       }
     } else {
-      Navigator.pop(context);
+      setState(() {
+        isLoading = false;
+        errorMsg = "Either server error or incorrect credentials";
+        Navigator.pop(context);
+      });
     }
   }
 
