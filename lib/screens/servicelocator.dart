@@ -257,13 +257,16 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                             style: TextStyle(color: Colors.black)),
                       ),
                     )
-                  : ListView.builder(
+                  : LimitedBox(
+                    maxHeight: MediaQuery.of(context).size.height * 0.2,
+                    child: ListView.builder(
+                      shrinkWrap: true,
                       itemCount: _filteredServiceCenters.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ServiceCard(
                             serviceCenter: _filteredServiceCenters[index]);
                       },
-                    ),
+                    )),
             )
           ],
         ),
@@ -286,8 +289,8 @@ class ServiceCard extends StatelessWidget {
         serviceCenter.telephone == null ? "" : serviceCenter.telephone;
 
     return Container(
-      width: double.infinity,
-      height: 140,
+      width: MediaQuery.of(context).size.width,
+      // height: MediaQuery.of(context).size.height * 0.2,
       margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -323,10 +326,11 @@ class ServiceCard extends StatelessWidget {
             height: 5,
           ),
           Row(
+            crossAxisAlignment:CrossAxisAlignment.center,
             children: [
               Text(
-                "Operating Hours",
-                overflow: TextOverflow.visible,
+                "Operating Hours: ",
+                // overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   // height: 2,
                   fontSize: 16,
@@ -335,19 +339,16 @@ class ServiceCard extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: 15,
+                width: 5,
               ),
+              serviceCenter.operatingHours != null && serviceCenter.operatingHours != " " ? 
+              Container(
+                            child: Flexible(child:Text('${serviceCenter.operatingHours!}',
+                                overflow: TextOverflow.ellipsis,
+                                style:
+                                    TextStyle(height: 2, fontSize: 12, color: Colors.black))),
+                          ) : Container(child:Text("-"))
             ],
-          ),
-          Flexible(
-            // padding: EdgeInsets.only(top: 5),
-            child: Container(
-              width: double.infinity,
-              child: Text(serviceCenter.operatingHours!,
-                  overflow: TextOverflow.visible,
-                  style:
-                      TextStyle(height: 2, fontSize: 12, color: Colors.black)),
-            ),
           ),
           SizedBox(
             height: 5,
@@ -365,7 +366,7 @@ class ServiceCard extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: 15,
+                width: 5,
               ),
               Container(
                 padding: EdgeInsets.only(top: 5),
