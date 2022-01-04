@@ -19,21 +19,53 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
+    super.initState();
     Timer(Duration(seconds: 2), () {
       _validateToken();
     });
-
-    super.initState();
   }
 
-  _validateToken() async {
-    String? token = await storage.read(key: TOKEN);
+  _redirect() async {
+    String? isAuth = await storage.read(key: IS_AUTH);
 
-    if (token != null) {
+    if (isAuth != null && isAuth == '1') {
       Navigator.pushReplacementNamed(context, 'home');
     } else {
       Navigator.pushReplacementNamed(context, 'signin');
     }
+  }
+
+  _fetchOauth() async {
+    final response = await Api.basicPost('oauth2/token/client_credentials');
+
+    if (response['access_token'] != null) {
+      await storage.write(key: TOKEN, value: response['access_token']);
+
+      if (response['expires_in'] != null) {
+        var curDate = new DateTime.now();
+        var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
+
+        await storage.write(key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
+      }
+    }
+  }
+
+  _validateToken() async {
+    String? tokenExp = await storage.read(key: TOKEN_EXPIRY);
+
+    if (tokenExp != null) {
+      var expDate = DateTime.fromMillisecondsSinceEpoch(int.parse(tokenExp));
+
+      if (expDate.difference(DateTime.now()).inMinutes <= 0) {
+        print("Token Expired: $expDate");
+        _fetchOauth();
+      } else {
+        print("Token Not Expired");
+      }
+    } else {
+      _fetchOauth();
+    }
+    _redirect();
   }
 
   Widget _renderHeader() {

@@ -403,8 +403,7 @@ class _ProfileState extends State<Profile> {
                     hasAction: true,
                     hasCancel: true, onPressed: () async {
                   await Api.bearerPost('logout');
-                  await storage.delete(key: TOKEN);
-                  await storage.delete(key: TOKEN_EXPIRY);
+                  await storage.delete(key: IS_AUTH);
 
                   Navigator.pop(context);
                   Navigator.pushNamedAndRemoveUntil(context, 'signin', (route) => false);
