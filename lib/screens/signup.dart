@@ -65,10 +65,10 @@ class _SignUpState extends State<SignUp> {
     // lastNameCT.text = "khind";
     // mobileNoCT.text = "0156663229";
     // emailCT.text = "test1.khind@gmail.com";
-    // passwordCT.text = "p455word";
     // dobCT.text = "01-01-1990";
     // address1CT.text = "No 44 Taman Miharja";
     // confirmPasswordCT.text = "p455word";
+    // passwordCT.text = "p455word";
     super.initState();
     _fetchStates();
   }
@@ -252,9 +252,9 @@ class _SignUpState extends State<SignUp> {
                   return null;
                 },
                 controller: emailCT,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
+                // onFieldSubmitted: (val) {
+                //   FocusScope.of(context).requestFocus(new FocusNode());
+                // },
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
@@ -284,9 +284,9 @@ class _SignUpState extends State<SignUp> {
                   return null;
                 },
                 controller: firstNameCT,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
+                // onFieldSubmitted: (val) {
+                //   FocusScope.of(context).requestFocus(new FocusNode());
+                // },
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
@@ -316,9 +316,9 @@ class _SignUpState extends State<SignUp> {
                   return null;
                 },
                 controller: lastNameCT,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
+                // onFieldSubmitted: (val) {
+                //   FocusScope.of(context).requestFocus(new FocusNode());
+                // },
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
@@ -351,9 +351,9 @@ class _SignUpState extends State<SignUp> {
                   return null;
                 },
                 controller: mobileNoCT,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
+                // onFieldSubmitted: (val) {
+                //   FocusScope.of(context).requestFocus(new FocusNode());
+                // },
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
@@ -388,9 +388,9 @@ class _SignUpState extends State<SignUp> {
                     return null;
                   },
                   controller: dobCT,
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
+                  // onFieldSubmitted: (val) {
+                  //   FocusScope.of(context).requestFocus(new FocusNode());
+                  // },
                   style: TextStyles.textDefault,
                   decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
@@ -465,9 +465,10 @@ class _SignUpState extends State<SignUp> {
                   return null;
                 },
                 controller: address1CT,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
+                // onFieldSubmitted: (val) {
+                //   print("onFieldSubmitted");
+                //   FocusScope.of(context).unfocus();
+                // },
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
@@ -489,9 +490,11 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 5),
               states.length > 0
                   ? DropdownButtonFormField(
-                      key: UniqueKey(),
                       hint: Text("Select state"),
                       focusNode: focusState,
+                      // onTap: () {
+                      //   FocusScope.of(context).requestFocus(focusState);
+                      // },
                       style: TextStyles.textDefault,
                       decoration: InputDecoration(
                         focusedBorder: UnderlineInputBorder(
@@ -509,7 +512,6 @@ class _SignUpState extends State<SignUp> {
                       // dropdownColor: Colors.blueAccent,
                       value: state != null ? state : null,
                       onChanged: (val) {
-                        // print("VAL:$val | ${val.runtimeType}");
                         setState(() {
                           state = (val as States);
                           _fetchCity(val.stateId);
@@ -523,7 +525,6 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 5),
               cities.length > 0
                   ? DropdownButtonFormField(
-                      key: UniqueKey(),
                       hint: Text("Select city"),
                       focusNode: focusCity,
                       style: TextStyles.textDefault,
@@ -568,9 +569,9 @@ class _SignUpState extends State<SignUp> {
                   return null;
                 },
                 controller: postcodeCT,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
+                // onFieldSubmitted: (val) {
+                //   FocusScope.of(context).requestFocus(new FocusNode());
+                // },
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
@@ -640,9 +641,9 @@ class _SignUpState extends State<SignUp> {
                     return null;
                   },
                   controller: passwordCT,
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
+                  // onFieldSubmitted: (val) {
+                  //   FocusScope.of(context).requestFocus(new FocusNode());
+                  // },
                   style: TextStyles.textDefault,
                   decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
@@ -687,9 +688,9 @@ class _SignUpState extends State<SignUp> {
                     return null;
                   },
                   controller: confirmPasswordCT,
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
+                  // onFieldSubmitted: (val) {
+                  //   FocusScope.of(context).requestFocus(new FocusNode());
+                  // },
                   style: TextStyles.textDefault,
                   decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
