@@ -82,6 +82,8 @@ class _SignInState extends State<SignIn> {
           Navigator.pop(context);
         });
       }
+    } else {
+      Navigator.of(context).pop();
     }
   }
 
