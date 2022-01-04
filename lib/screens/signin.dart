@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:khind/components/bg_painter.dart';
 import 'package:khind/components/round_button.dart';
@@ -27,13 +27,16 @@ class _SignInState extends State<SignIn> {
   bool isLoading = false;
   bool showPassword = false;
   String errorMsg = "";
+  String version = "";
   final storage = new FlutterSecureStorage();
 
   @override
   void initState() {
     // emailCT.text = 'khindcustomerservice@gmail.com';
     // passwordCT.text = 'Khindanshin118';
+
     super.initState();
+    _loadVersion();
   }
 
   @override
@@ -41,6 +44,15 @@ class _SignInState extends State<SignIn> {
     emailCT.dispose();
     passwordCT.dispose();
     super.dispose();
+  }
+
+  _loadVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String pkgVersion = packageInfo.version;
+
+    setState(() {
+      version = pkgVersion;
+    });
   }
 
   void _handleSignIn() async {
@@ -248,9 +260,7 @@ class _SignInState extends State<SignIn> {
             text: 'Version ',
             style: TextStyles.textDefault,
             children: <TextSpan>[
-              TextSpan(
-                  text: FlutterConfig.get("VERSION"),
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(text: version, style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
         ));
@@ -274,9 +284,8 @@ class _SignInState extends State<SignIn> {
                 _renderForm(),
                 SizedBox(height: 30),
                 _renderBottom(),
-                // SizedBox(height: ),
-                Spacer(),
-                _renderVersion()
+                version != "" ? Spacer() : Container(),
+                version != "" ? _renderVersion() : Container()
               ]))),
     );
   }
