@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:khind/components/bg_painter.dart';
 import 'package:khind/components/round_button.dart';
 import 'package:khind/themes/app_colors.dart';
@@ -239,6 +240,22 @@ class _SignInState extends State<SignIn> {
     ]);
   }
 
+  Widget _renderVersion() {
+    return Container(
+        alignment: Alignment.center,
+        child: RichText(
+          text: TextSpan(
+            text: 'Version ',
+            style: TextStyles.textDefault,
+            children: <TextSpan>[
+              TextSpan(
+                  text: FlutterConfig.get("VERSION"),
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -257,6 +274,9 @@ class _SignInState extends State<SignIn> {
                 _renderForm(),
                 SizedBox(height: 30),
                 _renderBottom(),
+                // SizedBox(height: ),
+                Spacer(),
+                _renderVersion()
               ]))),
     );
   }
