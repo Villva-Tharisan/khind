@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:khind/models/Purchase.dart';
-import 'package:khind/services/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/util/api.dart';
 import 'dart:convert';
 
 import 'package:khind/util/helpers.dart';
@@ -39,7 +39,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     if (status == "All") {
       filter = _myPurchase;
     } else {
-      filter = _myPurchase.where((element) => element.status == status).toList();
+      filter =
+          _myPurchase.where((element) => element.status == status).toList();
     }
     setState(() {
       _filteredMyPurchase = filter;
@@ -49,25 +50,26 @@ class _MyPurchasesState extends State<MyPurchases> {
   Future<void> fetchMyPurchases() async {
     // :TODO get email from storage
     var email = "khindcustomerservice@gmail.com";
-    var url = Uri.parse(Api.endpoint + Api.GET_MY_PURCHASE + "?email=$email");
-    Map<String, String> authHeader = {
-      'Content-Type': 'application/json',
-      'Authorization': Api.defaultToken,
-    };
-    final response = await http.post(
-      url,
-      headers: authHeader,
-    );
+    // var url = Uri.parse(Api.endpoint + Api.GET_MY_PURCHASE + "?email=$email");
+    // Map<String, String> authHeader = {
+    //   'Content-Type': 'application/json',
+    //   'Authorization': Api.defaultToken,
+    // };
+    // final response = await http.post(
+    //   url,
+    //   headers: authHeader,
+    // );
 
-    if (response.statusCode == 200) {
-      Map resp = json.decode(response.body);
-      var purchases = (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+    final response =
+        await Api.basicPost('provider/purchase.php?email=$email', isCms: true);
 
-      setState(() {
-        _myPurchase = purchases;
-        _filteredMyPurchase = purchases;
-      });
-    }
+    var purchases =
+        (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+
+    setState(() {
+      _myPurchase = purchases;
+      _filteredMyPurchase = purchases;
+    });
   }
 
   @override
@@ -75,7 +77,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "My Purchases", hasActions: false),
+      appBar: Helpers.customAppBar(context, _scaffoldKey,
+          title: "My Purchases", hasActions: false),
       body: Container(
         width: double.infinity,
         // height: double.infinity,
@@ -144,7 +147,8 @@ class _MyPurchasesState extends State<MyPurchases> {
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text("No more data to show, tap to refresh",
+                              child: Text(
+                                  "No more data to show, tap to refresh",
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )
@@ -211,10 +215,12 @@ class PurchaseItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          'productModel',
-        );
+        // Navigator.pushNamed(
+        //   context,
+        //   'productModel',
+        // );
+        Navigator.pushNamed(context, 'productModel',
+            arguments: purchase != null ? purchase : null);
       },
       child: Container(
         width: double.infinity,
@@ -223,7 +229,8 @@ class PurchaseItem extends StatelessWidget {
           border: Border.all(width: 0.1),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+            BoxShadow(
+                blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
           ],
           borderRadius: BorderRadius.circular(7.5),
         ),

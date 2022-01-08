@@ -1,20 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/models/Purchase.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceType extends StatefulWidget {
+  Purchase? data;
+  ServiceType({this.data});
+
   @override
   _ServiceTypeState createState() => _ServiceTypeState();
 }
 
 class _ServiceTypeState extends State<ServiceType> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  Purchase? purchase;
   String _selectedType = "";
   List<String> _serviceTypes = [
     'Home Visit',
     'Drop By',
     'Request for pickup service RM 95.00',
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    var formattedDate = DateFormat('dd-MM-yyyy')
+        .format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
+    setState(() {
+      purchase = widget.data;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +73,7 @@ class _ServiceTypeState extends State<ServiceType> {
                       height: 10,
                     ),
                     Text(
-                      'For 1.0L RICE COOKER product',
+                      purchase!.productDescription!,
                       style: TextStyle(
                           // height: 2,
                           fontSize: 16,

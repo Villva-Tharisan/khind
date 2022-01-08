@@ -105,8 +105,8 @@ class NewsCard extends StatelessWidget {
     final thumbnail = news?.thumbnail == null ? "" : news?.thumbnail;
     double width = MediaQuery.of(context).size.width;
     return InkWell(
-        onTap: () =>
-            Navigator.pushNamed(context, 'news_detail', arguments: news != null ? news : null),
+        onTap: () => Navigator.pushNamed(context, 'news_detail',
+            arguments: news != null ? news : null),
         child: Container(
           width: double.infinity,
           margin: EdgeInsets.only(bottom: 10),
@@ -114,7 +114,10 @@ class NewsCard extends StatelessWidget {
             border: Border.all(width: 0.1),
             color: Colors.white,
             boxShadow: [
-              BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+              BoxShadow(
+                  blurRadius: 5,
+                  color: Colors.grey[200]!,
+                  offset: Offset(0, 10)),
             ],
             borderRadius: BorderRadius.circular(7.5),
           ),
@@ -160,10 +163,12 @@ class NewsCard extends StatelessWidget {
                       height: 12,
                     ),
                     Text(
-                      DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd hh:mm:ss')
-                              .parse(news!.createdAt!.toString())) +
+                      DateFormat('dd/MM/yyyy').format(
+                              DateFormat('yyyy-MM-dd hh:mm:ss')
+                                  .parse(news!.createdAt!.toString())) +
                           " | ${category!}",
-                      style: TextStyle(height: 2, fontSize: 12, color: Colors.black),
+                      style: TextStyle(
+                          height: 2, fontSize: 12, color: Colors.black),
                     ),
                   ],
                 ),

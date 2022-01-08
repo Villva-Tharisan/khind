@@ -20,6 +20,7 @@ import 'package:khind/screens/signup.dart';
 import 'package:khind/screens/forgot_password.dart';
 import 'package:khind/screens/home.dart';
 
+import 'models/Purchase.dart';
 import 'screens/request_date_pickup.dart';
 import 'screens/service_type.dart';
 
@@ -45,7 +46,8 @@ class AppRouter {
       case 'news':
         return MaterialPageRoute(builder: (_) => NewsLanding());
       case 'news_detail':
-        return MaterialPageRoute(builder: (_) => NewsDetail(data: arguments as News));
+        return MaterialPageRoute(
+            builder: (_) => NewsDetail(data: arguments as News));
       case 'service_locator':
         return MaterialPageRoute(builder: (_) => ServiceLocator());
       case 'ewarranty':
@@ -68,10 +70,12 @@ class AppRouter {
         );
 
       case 'productModel':
-        return MaterialPageRoute(builder: (_) => ProductModel());
+        return MaterialPageRoute(
+            builder: (_) => ProductModel(data: arguments as Purchase));
 
       case 'serviceType':
-        return MaterialPageRoute(builder: (_) => ServiceType());
+        return MaterialPageRoute(
+            builder: (_) => ServiceType(data: arguments as Purchase));
 
       case 'requestDate':
         return MaterialPageRoute(builder: (_) => RequestDate());
@@ -91,8 +95,9 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-            builder: (_) =>
-                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
+            builder: (_) => Scaffold(
+                body: Center(
+                    child: Text('No route defined for ${settings.name}'))));
     }
   }
 

@@ -42,6 +42,7 @@ class Purchase {
   String? serviceHours;
   dynamic? technicianServiceGroup;
   String? warranty;
+  String? warrantyPeriod;
   String? warrantyDescription;
   String? numPeriods;
   String? periodUnit;
@@ -209,7 +210,12 @@ class Purchase {
     var purchaseDate = DateFormat('yyyy-MM-dd').parse(this.purchaseDate!);
     var warrantyMonth = int.parse(this.warrantyMonths!);
     var warrantyDate = Jiffy(purchaseDate).add(months: warrantyMonth).dateTime;
-
+    var warrantyPeriod = DateFormat('dd-MM-yyyy').format(
+            DateFormat('yyyy-MM-dd').parse(this.purchaseDate!.toString())) +
+        " - " +
+        DateFormat('dd-MM-yyyy').format(warrantyDate);
+    this.warrantyPeriod = warrantyPeriod;
+    // warrantyPeriod += "-" + warrantyDate.
     var today = DateTime.now();
     var diff = warrantyDate.difference(today).inDays;
 
