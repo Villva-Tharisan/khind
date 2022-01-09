@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-class Mall extends StatefulWidget {
-  const Mall({Key? key}) : super(key: key);
+class AppWebview extends StatefulWidget {
+  final String url;
+  const AppWebview({Key? key, required this.url}) : super(key: key);
 
   @override
-  _MallState createState() => _MallState();
+  _AppWebviewState createState() => _AppWebviewState();
 }
 
-class _MallState extends State<Mall> {
+class _AppWebviewState extends State<AppWebview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +26,7 @@ class _MallState extends State<Mall> {
                     );
                   },
                   initialUrlRequest: URLRequest(
-                    url: Uri.parse('https://www.khind.com.my/'),
+                    url: Uri.parse(widget.url),
                   ),
                   initialOptions: InAppWebViewGroupOptions(
                     crossPlatform: InAppWebViewOptions(

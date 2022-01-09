@@ -7,6 +7,8 @@ class TextStyles {
   static TextStyle textDefault = TextStyle(fontSize: 14, color: Colors.black);
   static TextStyle textDefaultBold =
       TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black);
+  static TextStyle textDefaultW500 =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black);
   static TextStyle textTitle =
       TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black);
   static TextStyle textWhite = TextStyle(fontSize: 14, color: Colors.white);
@@ -20,4 +22,5 @@ class TextStyles {
       TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.secondary);
   static TextStyle textGrey = TextStyle(fontSize: 14, color: AppColors.grey);
   static TextStyle textGreyDark = TextStyle(fontSize: 14, color: Colors.grey[700]);
+  static TextStyle textLink = TextStyle(fontSize: 14, color: Colors.blue);
 }

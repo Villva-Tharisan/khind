@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_config/flutter_config.dart';
-import 'package:khind/screens/home.dart';
 import 'package:khind/router.dart';
 
 void main() async {

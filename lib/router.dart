@@ -46,8 +46,7 @@ class AppRouter {
       case 'news':
         return MaterialPageRoute(builder: (_) => NewsLanding());
       case 'news_detail':
-        return MaterialPageRoute(
-            builder: (_) => NewsDetail(data: arguments as News));
+        return MaterialPageRoute(builder: (_) => NewsDetail(data: arguments as News));
       case 'service_locator':
         return MaterialPageRoute(builder: (_) => ServiceLocator());
       case 'ewarranty':
@@ -70,12 +69,10 @@ class AppRouter {
         );
 
       case 'productModel':
-        return MaterialPageRoute(
-            builder: (_) => ProductModel(data: arguments as Purchase));
+        return MaterialPageRoute(builder: (_) => ProductModel(data: arguments as Purchase));
 
       case 'serviceType':
-        return MaterialPageRoute(
-            builder: (_) => ServiceType(data: arguments as Purchase));
+        return MaterialPageRoute(builder: (_) => ServiceType(data: arguments as Purchase));
 
       case 'requestDate':
         return MaterialPageRoute(builder: (_) => RequestDate());
@@ -95,9 +92,8 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-            builder: (_) => Scaffold(
-                body: Center(
-                    child: Text('No route defined for ${settings.name}'))));
+            builder: (_) =>
+                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
     }
   }
 
