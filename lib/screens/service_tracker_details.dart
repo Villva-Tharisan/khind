@@ -3,7 +3,10 @@ import 'package:khind/components/gradient_button.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceTrackerDetails extends StatefulWidget {
-  const ServiceTrackerDetails({Key? key}) : super(key: key);
+  final Map arguments;
+
+  const ServiceTrackerDetails({Key? key, required this.arguments})
+      : super(key: key);
 
   @override
   _ServiceTrackerDetailsState createState() => _ServiceTrackerDetailsState();
@@ -65,10 +68,10 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('AIR COND'),
-                    Text('AC105L (1HP A.COND_IONIZER-I/D)'),
+                    Text(widget.arguments['productName']),
+                    Text(widget.arguments['productModel']),
                     SizedBox(height: 15),
-                    Text('Serial No: A12GHY90'),
+                    Text('Serial No: ${widget.arguments['serialNo']}'),
                     SizedBox(height: 15),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +111,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text('Arif'),
+                          child: Text(widget.arguments['technician']),
                         )
                       ],
                     ),

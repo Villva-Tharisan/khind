@@ -15,4 +15,7 @@ class Api {
   static const GET_CITIES = "provider/city.php";
   static const GET_SERVICE = "provider/service.php";
   static const GET_MY_PURCHASE = "provider/purchase.php";
+  static const GET_PRODUCT_WARRANTY = "provider/product_info.php";
+  static const REGISTER_EWARRANTY = "provider/warranty_registration.php";
+  static const GET_SERVICE_PRODUCT = "provider/service_product.php";
 }
