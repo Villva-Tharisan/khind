@@ -39,8 +39,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     if (status == "All") {
       filter = _myPurchase;
     } else {
-      filter =
-          _myPurchase.where((element) => element.status == status).toList();
+      filter = _myPurchase.where((element) => element.status == status).toList();
     }
     setState(() {
       _filteredMyPurchase = filter;
@@ -60,11 +59,9 @@ class _MyPurchasesState extends State<MyPurchases> {
     //   headers: authHeader,
     // );
 
-    final response =
-        await Api.basicPost('provider/purchase.php?email=$email', isCms: true);
+    final response = await Api.basicPost('provider/purchase.php?email=$email', isCms: true);
 
-    var purchases =
-        (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+    var purchases = (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
 
     setState(() {
       _myPurchase = purchases;
@@ -77,8 +74,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "My Purchases", hasActions: false),
+      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "My Purchases", hasActions: false),
       body: Container(
         width: double.infinity,
         // height: double.infinity,
@@ -147,8 +143,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text(
-                                  "No more data to show, tap to refresh",
+                              child: Text("No more data to show, tap to refresh",
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )
@@ -219,8 +214,7 @@ class PurchaseItem extends StatelessWidget {
         //   context,
         //   'productModel',
         // );
-        Navigator.pushNamed(context, 'productModel',
-            arguments: purchase != null ? purchase : null);
+        Navigator.pushNamed(context, 'productModel', arguments: purchase != null ? purchase : null);
       },
       child: Container(
         width: double.infinity,
@@ -229,8 +223,7 @@ class PurchaseItem extends StatelessWidget {
           border: Border.all(width: 0.1),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(
-                blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+            BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
           ],
           borderRadius: BorderRadius.circular(7.5),
         ),
@@ -293,22 +286,25 @@ class PurchaseItem extends StatelessWidget {
             Expanded(
               child: Container(),
             ),
-            Container(
-              width: width * 0.05,
-              height: 80,
-              padding: EdgeInsets.only(right: 1),
-              decoration: BoxDecoration(
-                color: getColor(),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(7),
-                  bottomRight: Radius.circular(7),
+            Column(children: [
+              Container(
+                width: width * 0.05,
+                height: 100,
+                padding: EdgeInsets.only(right: 1),
+                decoration: BoxDecoration(
+                  color: getColor(),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(7),
+                    bottomRight: Radius.circular(7),
+                  ),
                 ),
-              ),
-              child: Icon(
-                Icons.arrow_right,
-                color: Colors.white,
-              ),
-            )
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.white,
+                  size: 12,
+                ),
+              )
+            ])
           ],
         ),
       ),

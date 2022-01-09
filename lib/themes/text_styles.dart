@@ -23,4 +23,5 @@ class TextStyles {
   static TextStyle textGrey = TextStyle(fontSize: 14, color: AppColors.grey);
   static TextStyle textGreyDark = TextStyle(fontSize: 14, color: Colors.grey[700]);
   static TextStyle textLink = TextStyle(fontSize: 14, color: Colors.blue);
+  static TextStyle textInfo = TextStyle(fontSize: 14, color: Colors.yellow[800]);
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
+import 'package:khind/components/round_button.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceTracker extends StatelessWidget {
@@ -22,29 +24,40 @@ class ServiceTracker extends StatelessWidget {
         ),
         child: Column(
           children: [
+            // Align(
+            //   alignment: Alignment.centerRight,
+            //   child: Container(
+            //     padding: EdgeInsets.symmetric(
+            //       horizontal: 20,
+            //       vertical: 5,
+            //     ),
+            //     decoration: BoxDecoration(
+            //       color: Colors.white,
+            //       boxShadow: [
+            //         BoxShadow(
+            //           blurRadius: 0.5,
+            //           color: Colors.grey,
+            //           spreadRadius: 0.5,
+            //         ),
+            //       ],
+            //       borderRadius: BorderRadius.circular(10),
+            //     ),
+            //     child: Text(
+            //       'Request Service',
+            //       style: TextStyle(color: Colors.black),
+            //     ),
+            //   ),
+            // ),
             Align(
               alignment: Alignment.centerRight,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 0.5,
-                      color: Colors.grey,
-                      spreadRadius: 0.5,
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  'Request Service',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
+              child: RoundButton(
+                  width: MediaQuery.of(context).size.width,
+                  height: 40,
+                  icon: Icons.checklist,
+                  iconLeft: true,
+                  title: "Request Service",
+                  color: AppColors.secondary,
+                  onPressed: () {}),
             ),
             SizedBox(height: 20),
             GestureDetector(
