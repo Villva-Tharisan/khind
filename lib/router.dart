@@ -4,6 +4,7 @@ import 'package:khind/models/news.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
 import 'package:khind/screens/ewarranty_product_manual.dart';
+import 'package:khind/screens/ewarranty_scanner.dart';
 import 'package:khind/screens/extend_warranty.dart';
 import 'package:khind/screens/news_landing.dart';
 import 'package:khind/screens/news_detail.dart';
@@ -46,7 +47,8 @@ class AppRouter {
       case 'news':
         return MaterialPageRoute(builder: (_) => NewsLanding());
       case 'news_detail':
-        return MaterialPageRoute(builder: (_) => NewsDetail(data: arguments as News));
+        return MaterialPageRoute(
+            builder: (_) => NewsDetail(data: arguments as News));
       case 'service_locator':
         return MaterialPageRoute(builder: (_) => ServiceLocator());
       case 'ewarranty':
@@ -87,13 +89,28 @@ class AppRouter {
       case 'ExtendWarranty':
         return MaterialPageRoute(builder: (_) => ExtendWarranty());
 
+      // case 'ServiceTrackerDetails':
+      //   return MaterialPageRoute(builder: (_) => ServiceTrackerDetails());
+
+      case 'EwarrantyScanner':
+        return MaterialPageRoute(builder: (_) => EwarrantyScanner());
+
       case 'ServiceTrackerDetails':
-        return MaterialPageRoute(builder: (_) => ServiceTrackerDetails());
+        if (arguments is Map) {
+          return MaterialPageRoute(
+            builder: (_) => ServiceTrackerDetails(
+              arguments: arguments,
+            ),
+          );
+        } else {
+          return invalidArgument();
+        }
 
       default:
         return MaterialPageRoute(
-            builder: (_) =>
-                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
+            builder: (_) => Scaffold(
+                body: Center(
+                    child: Text('No route defined for ${settings.name}'))));
     }
   }
 
