@@ -13,6 +13,8 @@ import 'package:khind/util/helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import 'package:http/http.dart' as http;
+
 class EwarrantyProduct extends StatefulWidget {
   final Map arguments;
 
@@ -28,6 +30,15 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
   DateTime choosenDate = DateTime.now();
   bool displayDate = false;
 
+  List<String> store = [
+    'Lazada',
+    'Shoppe',
+    'Other Online Platform',
+    'Physical Store',
+  ];
+
+  late String chosenStore;
+
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
@@ -37,6 +48,15 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
     });
 
     print(choosenDate.toString());
+  }
+
+  TextEditingController ref = new TextEditingController();
+
+  @override
+  void initState() {
+    chosenStore = store[0];
+    ref.text = '';
+    super.initState();
   }
 
   @override
@@ -223,6 +243,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                             ),
                           ],
                         ),
+                        SizedBox(height: 15),
                         Row(
                           children: [
                             Container(
@@ -230,7 +251,27 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                               child: Text('Store '),
                             ),
                             Expanded(
-                              child: Text('Khind Marketing SDN. BHD.'),
+                              child: DropdownButton<String>(
+                                items: store.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  );
+                                }).toList(),
+                                isExpanded: true,
+                                value: chosenStore,
+                                onChanged: (value) {
+                                  print(value);
+                                  setState(() {
+                                    chosenStore = value!;
+                                  });
+                                },
+                              ),
                             ),
                           ],
                         ),
@@ -241,7 +282,10 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                               child: Text('Referral Code '),
                             ),
                             Expanded(
-                              child: Text('-'),
+                              child: TextField(
+                                controller: ref,
+                                onChanged: (value) {},
+                              ),
                             ),
                           ],
                         ),
@@ -269,7 +313,9 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                         GestureDetector(
                           onTap: () async {
                             FilePickerResult? result =
-                                await FilePicker.platform.pickFiles();
+                                await FilePicker.platform.pickFiles(
+                              type: FileType.image,
+                            );
 
                             if (result != null) {
                               PlatformFile file = result.files.first;
@@ -329,9 +375,16 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                             purchaseDate: formatDate(
                                 choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
                             referralCode: '',
-                            receiptFile:
-                                base64.encode(receiptFile.readAsBytesSync()),
+                            receiptFile: receiptFile,
                           );
+
+                          // print(ref.text);
+                          // FormData formData = new FormData.from({
+                          //   "name": "wendux",
+                          //   "file1": new UploadFileInfo(
+                          //       new File("./upload.jpg"), "upload1.jpg")
+                          // });
+                          // response = await dio.post("/info", data: formData);
 
                           Alert(
                             context: context,

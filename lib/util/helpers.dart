@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:khind/models/Purchase.dart';
 import 'package:khind/themes/app_colors.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -51,13 +52,20 @@ class Helpers {
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             onPressed: () => onPressed(),
-            gradient: LinearGradient(
-                colors: [Color.fromRGBO(116, 116, 191, 1.0), Color.fromRGBO(52, 138, 199, 1.0)]),
+            gradient: LinearGradient(colors: [
+              Color.fromRGBO(116, 116, 191, 1.0),
+              Color.fromRGBO(52, 138, 199, 1.0)
+            ]),
           )
         ];
       }
 
-      Alert(context: ctx, type: AlertType.warning, title: title, desc: desc, buttons: actionButtons)
+      Alert(
+              context: ctx,
+              type: AlertType.warning,
+              title: title,
+              desc: desc,
+              buttons: actionButtons)
           .show();
     } else {
       AlertDialog alert;
@@ -66,7 +74,8 @@ class Helpers {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(),
-            Container(margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
+            Container(
+                margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
           ],
         ),
       );
@@ -81,13 +90,15 @@ class Helpers {
     }
   }
 
-  static AppBar customAppBar(BuildContext ctx, GlobalKey<ScaffoldState> scaffoldKey,
+  static AppBar customAppBar(
+      BuildContext ctx, GlobalKey<ScaffoldState> scaffoldKey,
       {String title = "", bool isBack = false, hasActions = true}) {
     return AppBar(
       leadingWidth: isBack ? 50 : 20,
       leading: isBack
           ? IconButton(
-              icon: Icon(Icons.arrow_back_ios_new, color: AppColors.tertiery, size: 20),
+              icon: Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.tertiery, size: 20),
               onPressed: () {
                 if (!isBack) {
                   scaffoldKey.currentState!.openDrawer();
@@ -102,19 +113,23 @@ class Helpers {
       centerTitle: false,
       title: Text(
         title,
-        style: TextStyle(color: AppColors.tertiery, fontWeight: FontWeight.bold),
+        style:
+            TextStyle(color: AppColors.tertiery, fontWeight: FontWeight.bold),
       ),
       actions: hasActions
           ? [
               new IconButton(
                   color: Colors.transparent,
-                  icon: Image(image: AssetImage('assets/icons/location.png'), height: 22),
+                  icon: Image(
+                      image: AssetImage('assets/icons/location.png'),
+                      height: 22),
                   onPressed: () {
                     Navigator.pushNamed(ctx, 'service_locator');
                   }),
               SizedBox(width: 5),
               new InkWell(
-                  child: Icon(Icons.account_circle_rounded, size: 27, color: AppColors.tertiery),
+                  child: Icon(Icons.account_circle_rounded,
+                      size: 27, color: AppColors.tertiery),
                   onTap: () {
                     Navigator.pushNamed(ctx, 'profile');
                   }),
@@ -123,4 +138,6 @@ class Helpers {
           : [],
     );
   }
+
+  static Purchase? purchase;
 }

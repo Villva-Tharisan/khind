@@ -39,7 +39,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     if (status == "All") {
       filter = _myPurchase;
     } else {
-      filter = _myPurchase.where((element) => element.status == status).toList();
+      filter =
+          _myPurchase.where((element) => element.status == status).toList();
     }
     setState(() {
       _filteredMyPurchase = filter;
@@ -61,7 +62,8 @@ class _MyPurchasesState extends State<MyPurchases> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var purchases = (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+      var purchases =
+          (resp['data'] as List).map((i) => Purchase.fromJson(i)).toList();
 
       setState(() {
         _myPurchase = purchases;
@@ -75,7 +77,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "My Purchases", hasActions: false),
+      appBar: Helpers.customAppBar(context, _scaffoldKey,
+          title: "My Purchases", hasActions: false),
       body: Container(
         width: double.infinity,
         // height: double.infinity,
@@ -144,7 +147,8 @@ class _MyPurchasesState extends State<MyPurchases> {
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text("No more data to show, tap to refresh",
+                              child: Text(
+                                  "No more data to show, tap to refresh",
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )
@@ -211,6 +215,8 @@ class PurchaseItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        Helpers.purchase = purchase;
+
         Navigator.pushNamed(
           context,
           'productModel',
@@ -223,7 +229,8 @@ class PurchaseItem extends StatelessWidget {
           border: Border.all(width: 0.1),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+            BoxShadow(
+                blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
           ],
           borderRadius: BorderRadius.circular(7.5),
         ),

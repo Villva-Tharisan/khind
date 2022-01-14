@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:khind/cubit/product_group/product_group_cubit.dart';
+import 'package:khind/cubit/product_model/product_model_cubit.dart';
 import 'package:khind/models/news.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
@@ -66,7 +69,17 @@ class AppRouter {
 
       case 'EwarrantyProductManual':
         return MaterialPageRoute(
-          builder: (_) => EwarrantyProductManual(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => ProductGroupCubit(),
+              ),
+              BlocProvider(
+                create: (context) => ProductModelCubit(),
+              ),
+            ],
+            child: EwarrantyProductManual(),
+          ),
         );
 
       case 'productModel':
