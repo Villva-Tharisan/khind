@@ -54,6 +54,9 @@ dependencies:
   flutter_inappwebview: ^5.3.2
   flutter_spinkit: ^5.1.0
   date_format: ^2.0.5
+  dio: ^4.0.4
+  bloc: ^8.0.2
+  flutter_bloc: ^8.0.1
 
 dev_dependencies:
   flutter_test:

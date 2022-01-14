@@ -70,7 +70,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                   Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: 10,
+                      itemCount: serviceProduct.data!.length,
                       itemBuilder: (context, index) {
                         return Column(
                           children: [

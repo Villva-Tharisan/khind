@@ -1,5 +1,8 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/models/Purchase.dart';
+import 'package:khind/services/repositories.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -11,21 +14,26 @@ class ExtendWarranty extends StatefulWidget {
 }
 
 class _ExtendWarrantyState extends State<ExtendWarranty> {
-  List<String> productModel = [
-    'E000001',
-    'E000002',
-    'E000003',
-  ];
-
   late String chosenProductModel;
+
+  late Purchase purchase;
+
+  late DateTime purchaseDate;
 
   @override
   void initState() {
-    chosenProductModel = productModel[0];
+    init();
     super.initState();
   }
 
+  void init() {
+    purchase = Helpers.purchase!;
+    purchaseDate = DateTime.parse(purchase.purchaseDate!);
+  }
+
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  DateTime now = DateTime.now();
 
   Widget build(BuildContext context) {
     // double width = MediaQuery.of(context).size.width;
@@ -71,36 +79,49 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('AIR COND'),
-                  Text('AC105l(1HP A.COND+IONIZER-I/D)'),
+                  Text(purchase.productGroupDescription!),
+                  Text(purchase.modelDescription!),
                   SizedBox(height: 30),
-                  Text('Warranty Period : 12-12-2020 12-12-2021'),
+                  Text('${formatDate(purchaseDate, [
+                        'dd',
+                        '-',
+                        'mm',
+                        '-',
+                        'yyyy'
+                      ])} - ${formatDate(purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365)), [
+                        'dd',
+                        '-',
+                        'mm',
+                        '-',
+                        'yyyy'
+                      ])}'),
                   Row(
                     children: [
                       Text('Serial Number: '),
                       SizedBox(width: 10),
-                      Expanded(
-                        child: DropdownButton<String>(
-                          items: productModel
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                            );
-                          }).toList(),
-                          isExpanded: true,
-                          value: chosenProductModel,
-                          onChanged: (value) {
-                            setState(() {
-                              chosenProductModel = value.toString();
-                            });
-                          },
-                        ),
-                      ),
+                      Text(purchase.serialNo!),
+                      // Expanded(
+                      //   child: DropdownButton<String>(
+                      //     items: productModel
+                      //         .map<DropdownMenuItem<String>>((String value) {
+                      //       return DropdownMenuItem<String>(
+                      //         value: value,
+                      //         child: Text(
+                      //           value,
+                      //           overflow: TextOverflow.ellipsis,
+                      //           maxLines: 2,
+                      //         ),
+                      //       );
+                      //     }).toList(),
+                      //     isExpanded: true,
+                      //     value: chosenProductModel,
+                      //     onChanged: (value) {
+                      //       setState(() {
+                      //         chosenProductModel = value.toString();
+                      //       });
+                      //     },
+                      //   ),
+                      // ),
                     ],
                   )
                 ],
@@ -131,7 +152,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   Row(
                     children: [
                       Text('Purchase Date : '),
-                      Text('10-12-2020'),
+                      Text(formatDate(
+                          purchaseDate, ['dd', '-', 'mm', '-', 'yyyy'])),
                     ],
                   ),
                   Row(
@@ -149,13 +171,30 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             Text('New Extended Warranty'),
             SizedBox(height: 10),
 
-            Text('12-12-2021 12-12-22'),
+            Text(
+              '${formatDate(now, [
+                    'dd',
+                    '-',
+                    'mm',
+                    '-',
+                    'yyyy'
+                  ])} - ${formatDate(now.add(Duration(days: 365)), [
+                    'dd',
+                    '-',
+                    'mm',
+                    '-',
+                    'yyyy'
+                  ])}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             SizedBox(height: 10),
 
             Text('Warranty Cost:-'),
             SizedBox(height: 10),
 
-            Text('RM 15.00'),
+            Text('RM ${purchase.extendedEwarrantyCost}'),
 
             // SizedBox(height: 50),
 
@@ -172,7 +211,11 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                       colors: <Color>[Colors.white, Colors.grey[400]!],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter),
-                  onPressed: () {
+                  onPressed: () async {
+                    await Repositories.sendExtend(
+                      warrantyId: purchase.warrantyRegistrationId,
+                    );
+
                     Alert(
                       context: context,
                       // type: AlertType.info,
