@@ -66,7 +66,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     // );
 
     final response = await Api.basicPost(
-        'provider/purchase.php?email=$email&current_page=$_page',
+        'provider/purchase.php?email=$email&currentpage=$_page',
         isCms: true);
 
     var page = _page;
