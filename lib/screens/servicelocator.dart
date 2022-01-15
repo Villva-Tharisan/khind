@@ -7,6 +7,7 @@ import 'package:khind/models/states.dart';
 import 'dart:convert';
 
 import 'package:khind/services/api.dart';
+import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceLocator extends StatefulWidget {
@@ -29,17 +30,16 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
   List<ServiceCenter> _serviceCenters = [];
   List<ServiceCenter> _filteredServiceCenters = [];
-
   late States state;
   late City city;
+  bool showCity = false;
 
   @override
   void initState() {
-    state = new States(
-        countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    state = new States(countryId: "", state: "All", stateId: "", stateCode: "");
     city = new City(
       stateId: "",
-      city: "--Select--",
+      city: "All",
       cityId: "",
       postcodeId: "",
       postcode: "",
@@ -65,13 +65,9 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var states =
-          (resp['states'] as List).map((i) => States.fromJson(i)).toList();
+      var states = (resp['states'] as List).map((i) => States.fromJson(i)).toList();
 
-      states.insert(
-          0,
-          new States(
-              countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+      states.insert(0, new States(countryId: "", state: "All", stateId: "", stateCode: ""));
 
       setState(() {
         _states = states;
@@ -81,14 +77,9 @@ class _ServiceLocatorState extends State<ServiceLocator> {
   }
 
   Future<void> fetchCities(String stateId) async {
-    // setState(() {
-    //   city = new City(
-    //       stateId: "",
-    //       city: "--Select--",
-    //       cityId: "",
-    //       postcodeId: "",
-    //       postcode: "");
-    // });
+    setState(() {
+      city = new City(stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
+    });
 
     var url = Uri.parse(Api.endpoint + Api.GET_CITIES + "?state_id=$stateId");
     Map<String, String> authHeader = {
@@ -103,19 +94,15 @@ class _ServiceLocatorState extends State<ServiceLocator> {
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
       var cities = (resp['city'] as List).map((i) => City.fromJson(i)).toList();
-
       cities.insert(
-          0,
-          new City(
-              stateId: "",
-              city: "--Select--",
-              cityId: "",
-              postcodeId: "",
-              postcode: ""));
+          0, new City(stateId: "", city: "All", cityId: "", postcodeId: "", postcode: ""));
+
+      var citySet = Set<String>();
+      List<City> newCities = cities.where((e) => citySet.add(e.city!)).toList();
 
       setState(() {
-        _cities = cities;
-        city = cities[0];
+        _cities = newCities;
+        city = newCities[0];
       });
     }
   }
@@ -131,10 +118,13 @@ class _ServiceLocatorState extends State<ServiceLocator> {
       headers: authHeader,
     );
 
+    // print("RESPONSE: $response");
+
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var svcCenters =
-          (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
+      var svcCenters = (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
+
+      print(jsonEncode(svcCenters));
 
       setState(() {
         _serviceCenters = svcCenters;
@@ -144,10 +134,11 @@ class _ServiceLocatorState extends State<ServiceLocator> {
   }
 
   void filterServiceCenter() {
-    var filtered = _serviceCenters;
+    List<ServiceCenter> filtered = List.from(_serviceCenters);
+
+    print("STATE: ${state.state} | ${city.cityId}");
     if (state.stateId != "") {
-      filtered =
-          _serviceCenters.where((e) => e.stateId == state.stateId).toList();
+      filtered = _serviceCenters.where((e) => e.stateId == state.stateId).toList();
     }
 
     if (city.cityId != "") {
@@ -185,63 +176,87 @@ class _ServiceLocatorState extends State<ServiceLocator> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: EdgeInsets.only(left: 10),
-                    width: width * 0.45,
-                    child: DropdownButton<States>(
-                      items: _states.map<DropdownMenuItem<States>>((e) {
-                        return DropdownMenuItem<States>(
-                          child: Text(
-                            e.state!,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                  Expanded(
+                      flex: 1,
+                      child: Container(
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Container(
+                            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                            decoration: BoxDecoration(
+                                color: Colors.yellow[700], borderRadius: BorderRadius.circular(5)),
+                            child: Text("State", style: TextStyles.textWhiteSm)),
+                        Container(
+                          child: DropdownButton<States>(
+                            items: _states.map<DropdownMenuItem<States>>((e) {
+                              return DropdownMenuItem<States>(
+                                child: Text(
+                                  e.state!,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                                value: e,
+                              );
+                            }).toList(),
+                            isExpanded: true,
+                            value: state,
+                            onChanged: (value) {
+                              if (value != null && value.stateId != "") {
+                                setState(() {
+                                  state = value;
+                                  showCity = true;
+                                  _cities = [];
+                                  this.fetchCities(value.stateId!);
+                                });
+                                this.filterServiceCenter();
+                              } else {
+                                setState(() {
+                                  _cities = [];
+                                  showCity = false;
+                                });
+                                this.fetchServiceCenter();
+                              }
+                            },
                           ),
-                          value: e,
-                        );
-                      }).toList(),
-                      isExpanded: true,
-                      value: state,
-                      onChanged: (value) {
-                        if (value != null && value.stateId != "") {
-                          this.fetchCities(value.stateId!);
-                        }
+                        )
+                      ]))),
+                  showCity
+                      ? Expanded(
+                          flex: 1,
+                          child: Container(
+                              padding: EdgeInsets.only(left: 20),
+                              child:
+                                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                    decoration: BoxDecoration(
+                                        color: Colors.yellow[700],
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Text("City", style: TextStyles.textWhiteSm)),
+                                Container(
+                                  child: DropdownButton<City>(
+                                    items: _cities.map<DropdownMenuItem<City>>((City value) {
+                                      return DropdownMenuItem<City>(
+                                        value: value,
+                                        child: Text(
+                                          value.city!,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    isExpanded: true,
+                                    value: city,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        city = value!;
+                                      });
 
-                        setState(() {
-                          state = value!;
-                        });
-
-                        this.filterServiceCenter();
-                      },
-                    ),
-                  ),
-                  // SizedBox(
-                  //   width: 10,
-                  // ),
-                  Container(
-                    padding: EdgeInsets.only(left: 10),
-                    width: width * 0.45,
-                    child: DropdownButton<City>(
-                      items: _cities.map<DropdownMenuItem<City>>((City value) {
-                        return DropdownMenuItem<City>(
-                          value: value,
-                          child: Text(
-                            value.city!,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                        );
-                      }).toList(),
-                      isExpanded: true,
-                      value: city,
-                      onChanged: (value) {
-                        setState(() {
-                          city = value!;
-                        });
-
-                        this.filterServiceCenter();
-                      },
-                    ),
-                  ),
+                                      this.filterServiceCenter();
+                                    },
+                                  ),
+                                )
+                              ])))
+                      : Expanded(flex: 1, child: Container()),
                 ],
               ),
             ),
@@ -258,15 +273,14 @@ class _ServiceLocatorState extends State<ServiceLocator> {
                       ),
                     )
                   : LimitedBox(
-                    maxHeight: MediaQuery.of(context).size.height * 0.2,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _filteredServiceCenters.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ServiceCard(
-                            serviceCenter: _filteredServiceCenters[index]);
-                      },
-                    )),
+                      maxHeight: MediaQuery.of(context).size.height * 0.2,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _filteredServiceCenters.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ServiceCard(serviceCenter: _filteredServiceCenters[index]);
+                        },
+                      )),
             )
           ],
         ),
@@ -285,8 +299,7 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final telephone =
-        serviceCenter.telephone == null ? "" : serviceCenter.telephone;
+    final telephone = serviceCenter.telephone == null ? "" : serviceCenter.telephone;
 
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -326,7 +339,7 @@ class ServiceCard extends StatelessWidget {
             height: 5,
           ),
           Row(
-            crossAxisAlignment:CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "Operating Hours: ",
@@ -341,13 +354,14 @@ class ServiceCard extends StatelessWidget {
               SizedBox(
                 width: 5,
               ),
-              serviceCenter.operatingHours != null && serviceCenter.operatingHours != " " ? 
-              Container(
-                            child: Flexible(child:Text('${serviceCenter.operatingHours!}',
-                                overflow: TextOverflow.ellipsis,
-                                style:
-                                    TextStyle(height: 2, fontSize: 12, color: Colors.black))),
-                          ) : Container(child:Text("-"))
+              serviceCenter.operatingHours != null && serviceCenter.operatingHours != " "
+                  ? Container(
+                      child: Flexible(
+                          child: Text('${serviceCenter.operatingHours!}',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(height: 2, fontSize: 12, color: Colors.black))),
+                    )
+                  : Container(child: Text("-"))
             ],
           ),
           SizedBox(
@@ -371,8 +385,7 @@ class ServiceCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(top: 5),
                 child: Text(telephone!,
-                    style: TextStyle(
-                        height: 1, fontSize: 12, color: Colors.black)),
+                    style: TextStyle(height: 1, fontSize: 12, color: Colors.black)),
               )
             ],
           )

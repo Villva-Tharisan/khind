@@ -79,14 +79,11 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                 Navigator.of(context).pushNamed(
                                   'ServiceTrackerDetails',
                                   arguments: {
-                                    'productName': serviceProduct
-                                        .data![index].productGroupDescription,
-                                    'productModel': serviceProduct
-                                        .data![index].productDescription!,
-                                    'serialNo':
-                                        serviceProduct.data![index].serialNo!,
-                                    'technician': serviceProduct
-                                        .data![index].technicianServiceGroup
+                                    'productName':
+                                        serviceProduct.data![index].productGroupDescription,
+                                    'productModel': serviceProduct.data![index].productDescription!,
+                                    'serialNo': serviceProduct.data![index].serialNo!,
+                                    'technician': serviceProduct.data![index].technicianServiceGroup
                                   },
                                 );
                               },
@@ -106,23 +103,20 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                 child: Row(
                                   children: [
                                     Expanded(
-                                      flex: 6,
+                                      flex: 15,
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
                                           horizontal: 20,
                                           // vertical: 10,
                                         ),
                                         child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                serviceProduct.data![index]
-                                                    .productDescription!,
+                                                serviceProduct.data![index].productDescription!,
                                               ),
                                             ),
                                             SizedBox(height: 10),
@@ -154,7 +148,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                             ),
                                           ],
                                         ),
-                                        child: Icon(Icons.chevron_right),
+                                        child: Icon(Icons.chevron_right, color: Colors.white),
                                       ),
                                     ),
                                   ],

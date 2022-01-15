@@ -14,6 +14,7 @@ class TextStyles {
   static TextStyle textWhite = TextStyle(fontSize: 14, color: Colors.white);
   static TextStyle textWhiteBold =
       TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white);
+  static TextStyle textWhiteSm = TextStyle(fontSize: 12, color: Colors.white);
   static TextStyle textPrimary = TextStyle(fontSize: 14, color: AppColors.primary);
   static TextStyle textPrimaryBold =
       TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary);
