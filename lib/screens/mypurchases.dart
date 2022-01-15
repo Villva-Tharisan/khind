@@ -52,7 +52,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     });
   }
 
-  Future<void> fetchMyPurchases() async {
+  Future<void> fetchMyPurchases({bool isRefresh = false}) async {
     // :TODO get email from storage
     var email = "khindcustomerservice@gmail.com";
     // var url = Uri.parse(Api.endpoint + Api.GET_MY_PURCHASE + "?email=$email");
@@ -64,6 +64,15 @@ class _MyPurchasesState extends State<MyPurchases> {
     //   url,
     //   headers: authHeader,
     // );
+
+    if (isRefresh) {
+      setState(() {
+        _page = 1;
+        _myPurchase = [];
+        _filteredMyPurchase = [];
+        _fetchError = false;
+      });
+    }
 
     final response = await Api.basicPost(
         'provider/purchase.php?email=$email&currentpage=$_page',
@@ -84,9 +93,18 @@ class _MyPurchasesState extends State<MyPurchases> {
       });
     }
 
+    var allPurchase = _myPurchase;
+    allPurchase.addAll(purchases);
+    var filteredPurchase = allPurchase;
+    if (selectedStatus != "All") {
+      filteredPurchase = filteredPurchase
+          .where((element) => element.status! == selectedStatus)
+          .toList();
+    }
+
     setState(() {
-      _myPurchase.addAll(purchases);
-      _filteredMyPurchase = _myPurchase;
+      _myPurchase = allPurchase;
+      _filteredMyPurchase = filteredPurchase;
       _hasMore = purchases.length == PAGE_LIMIT;
       _page += 1;
     });
@@ -174,7 +192,9 @@ class _MyPurchasesState extends State<MyPurchases> {
                           )
                         : RefreshIndicator(
                             key: _refreshKey,
-                            onRefresh: fetchMyPurchases,
+                            onRefresh: () {
+                              return fetchMyPurchases(isRefresh: true);
+                            },
                             child: ListView.builder(
                               // physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
