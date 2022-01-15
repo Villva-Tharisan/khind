@@ -18,8 +18,8 @@ class _ServiceTypeState extends State<ServiceType> {
   String _selectedType = "";
   List<String> _serviceTypes = [
     'Home Visit',
-    'Drop By',
-    'Request for pickup service RM 95.00',
+    'Drop-In',
+    'Request for Pick-up/Delivery',
   ];
 
   @override
@@ -27,6 +27,17 @@ class _ServiceTypeState extends State<ServiceType> {
     // TODO: implement initState
     var formattedDate = DateFormat('dd-MM-yyyy')
         .format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
+
+    if (widget.data!.dropIn == "0") {
+      _serviceTypes.remove('Drop-In');
+    }
+    if (widget.data!.homeVisit == "0") {
+      _serviceTypes.remove('Home Visit');
+    }
+    if (widget.data!.pickUp == "0") {
+      _serviceTypes.remove('Request for Pick-up/Delivery');
+    }
+
     setState(() {
       purchase = widget.data;
     });
@@ -162,10 +173,11 @@ class _ServiceTypeState extends State<ServiceType> {
                     // ];
                     if (_selectedType.isEmpty) return;
                     var path = 'requestDate';
-                    if (_selectedType == "Drop By") {
+                    if (_selectedType == "Drop-In") {
                       path = "requestServiceLocator";
                     }
-                    if (_selectedType.contains("Request for pickup")) {
+                    if (_selectedType
+                        .contains("Request for Pick-up/Delivery")) {
                       path = "requestDatePickup";
                     }
                     Navigator.pushNamed(

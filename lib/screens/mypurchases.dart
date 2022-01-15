@@ -16,6 +16,11 @@ class MyPurchases extends StatefulWidget {
 
 class _MyPurchasesState extends State<MyPurchases> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  var _refreshKey = GlobalKey<RefreshIndicatorState>();
+  static const PAGE_LIMIT = 20;
+  bool _hasMore = false;
+  int _page = 1;
+  bool _fetchError = false;
   List<String> _status = [
     'All',
     'Active',
@@ -39,7 +44,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     if (status == "All") {
       filter = _myPurchase;
     } else {
-      filter = _myPurchase.where((element) => element.status == status).toList();
+      filter =
+          _myPurchase.where((element) => element.status == status).toList();
     }
     setState(() {
       _filteredMyPurchase = filter;
@@ -59,13 +65,30 @@ class _MyPurchasesState extends State<MyPurchases> {
     //   headers: authHeader,
     // );
 
-    final response = await Api.basicPost('provider/purchase.php?email=$email', isCms: true);
+    final response = await Api.basicPost(
+        'provider/purchase.php?email=$email&current_page=$_page',
+        isCms: true);
 
-    var purchases = (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+    var page = _page;
+
+    var purchases =
+        (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+
+    if (purchases.length < PAGE_LIMIT) {
+      setState(() {
+        _fetchError = true;
+      });
+    } else {
+      setState(() {
+        _fetchError = false;
+      });
+    }
 
     setState(() {
-      _myPurchase = purchases;
-      _filteredMyPurchase = purchases;
+      _myPurchase.addAll(purchases);
+      _filteredMyPurchase = _myPurchase;
+      _hasMore = purchases.length == PAGE_LIMIT;
+      _page += 1;
     });
   }
 
@@ -74,7 +97,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "My Purchases", hasActions: false),
+      appBar: Helpers.customAppBar(context, _scaffoldKey,
+          title: "My Purchases", hasActions: false),
       body: Container(
         width: double.infinity,
         // height: double.infinity,
@@ -143,21 +167,54 @@ class _MyPurchasesState extends State<MyPurchases> {
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text("No more data to show, tap to refresh",
+                              child: Text(
+                                  "No more data to show, tap to refresh",
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )
-                        : ListView.builder(
-                            // physics: ClampingScrollPhysics(),
-                            shrinkWrap: true,
-                            // shrinkWrap: false,
-                            itemCount: _filteredMyPurchase.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return PurchaseItem(
-                                width: width,
-                                purchase: _filteredMyPurchase[index],
-                              );
-                            },
+                        : RefreshIndicator(
+                            key: _refreshKey,
+                            onRefresh: fetchMyPurchases,
+                            child: ListView.builder(
+                              // physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              // shrinkWrap: false,
+                              itemCount: _filteredMyPurchase.length +
+                                  (_hasMore ? 1 : 0),
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index == _filteredMyPurchase.length - 1) {
+                                  fetchMyPurchases();
+                                }
+                                if (index == _filteredMyPurchase.length) {
+                                  if (_fetchError) {
+                                    return Center(
+                                        child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _fetchError = false;
+                                          fetchMyPurchases();
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Text(
+                                            "Error while loading photos, tap to try agin"),
+                                      ),
+                                    ));
+                                  } else {
+                                    return Center(
+                                        child: Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: CircularProgressIndicator(),
+                                    ));
+                                  }
+                                }
+                                return PurchaseItem(
+                                  width: width,
+                                  purchase: _filteredMyPurchase[index],
+                                );
+                              },
+                            ),
                           ),
                   ),
                   // SizedBox(
@@ -214,7 +271,8 @@ class PurchaseItem extends StatelessWidget {
         //   context,
         //   'productModel',
         // );
-        Navigator.pushNamed(context, 'productModel', arguments: purchase != null ? purchase : null);
+        Navigator.pushNamed(context, 'productModel',
+            arguments: purchase != null ? purchase : null);
       },
       child: Container(
         width: double.infinity,
@@ -223,7 +281,8 @@ class PurchaseItem extends StatelessWidget {
           border: Border.all(width: 0.1),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+            BoxShadow(
+                blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
           ],
           borderRadius: BorderRadius.circular(7.5),
         ),

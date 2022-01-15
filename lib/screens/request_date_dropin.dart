@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/models/service_problem.dart';
 import 'package:khind/models/states.dart';
-import 'package:khind/services/api.dart';
+import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -18,7 +19,9 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<String> _times = ["8am", "10am", "2pm", "4pm"];
   List<States> _states = [];
+  List<ServiceProblem> _problems = [];
   late States state;
+  late ServiceProblem _problem;
   @override
   void initState() {
     state = new States(
@@ -26,34 +29,37 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
 
     super.initState();
     this.fetchStates();
+    this.fetchProblems();
   }
 
   Future<void> fetchStates() async {
-    var url = Uri.parse(Api.endpoint + Api.GET_STATES);
-    Map<String, String> authHeader = {
-      'Content-Type': 'application/json',
-      'Authorization': Api.defaultToken,
-    };
-    final response = await http.get(
-      url,
-      headers: authHeader,
-    );
+    final response = await Api.bearerGet('provider/state.php', isCms: true);
 
-    if (response.statusCode == 200) {
-      Map resp = json.decode(response.body);
-      var states =
-          (resp['states'] as List).map((i) => States.fromJson(i)).toList();
+    var states =
+        (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-      states.insert(
-          0,
-          new States(
-              countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+    states.insert(
+        0,
+        new States(
+            countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
-      setState(() {
-        _states = states;
-        state = states[0];
-      });
-    }
+    setState(() {
+      _states = states;
+      state = states[0];
+    });
+  }
+
+  Future<void> fetchProblems() async {
+    final response = await Api.bearerGet('provider/problems.php', isCms: true);
+
+    var problems = (response['data'] as List)
+        .map((i) => ServiceProblem.fromJson(i))
+        .toList();
+
+    setState(() {
+      _problems = problems;
+      _problem = problems[0];
+    });
   }
 
   @override
@@ -118,6 +124,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             SizedBox(
               height: 10,
             ),
+            //service centre
             Container(
               width: double.infinity,
               // height: 140,
@@ -182,6 +189,80 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                 ],
               ),
             ),
+            //endof service centre
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              'What are problems are you facing with your product?',
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              width: double.infinity,
+              // height: 140,
+              margin: EdgeInsets.only(bottom: 10),
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                  width: 1,
+                  color: Colors.grey.withOpacity(0.5),
+                ),
+                borderRadius: BorderRadius.circular(7.5),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Problem:",
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                          // height: 2,
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Flexible(
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10),
+                          width: width * 0.45,
+                          child: DropdownButton<ServiceProblem>(
+                            items: _problems
+                                .map<DropdownMenuItem<ServiceProblem>>((e) {
+                              return DropdownMenuItem<ServiceProblem>(
+                                child: Text(
+                                  e.problem!,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                                value: e,
+                              );
+                            }).toList(),
+                            isExpanded: true,
+                            value: _problem,
+                            onChanged: (value) {
+                              setState(() {
+                                _problem = value!;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,

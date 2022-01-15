@@ -342,29 +342,30 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                       ),
                       SizedBox(width: 15),
                       Flexible(
-                          child: Container(
-                        padding: EdgeInsets.only(left: 10),
-                        width: width * 0.45,
-                        child: DropdownButton<States>(
-                          items: _states.map<DropdownMenuItem<States>>((e) {
-                            return DropdownMenuItem<States>(
-                              child: Text(
-                                e.state!,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              value: e,
-                            );
-                          }).toList(),
-                          isExpanded: true,
-                          value: state,
-                          onChanged: (value) {
-                            setState(() {
-                              state = value!;
-                            });
-                          },
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10),
+                          width: width * 0.45,
+                          child: DropdownButton<States>(
+                            items: _states.map<DropdownMenuItem<States>>((e) {
+                              return DropdownMenuItem<States>(
+                                child: Text(
+                                  e.state!,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                                value: e,
+                              );
+                            }).toList(),
+                            isExpanded: true,
+                            value: state,
+                            onChanged: (value) {
+                              setState(() {
+                                state = value!;
+                              });
+                            },
+                          ),
                         ),
-                      )),
+                      ),
                     ],
                   ),
                 ],
