@@ -181,24 +181,6 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  Future<void> _launchInBrowser(String url) async {
-    if (!await launch(
-      url,
-      forceSafariVC: false,
-      forceWebView: false,
-      headers: <String, String>{'my_header_key': 'my_header_value'},
-    )) {
-      throw 'Could not launch $url';
-    }
-  }
-
-  Future<void> _launchInWebViewOrVC(String url) async {
-    if (!await launch(url,
-        forceSafariVC: true, forceWebView: true, enableDomStorage: true, enableJavaScript: true)) {
-      throw 'Could not launch $url';
-    }
-  }
-
   Widget _renderDivider() {
     return Container(height: 1, color: Colors.grey[300], width: double.infinity);
   }
@@ -428,7 +410,8 @@ class _ProfileState extends State<Profile> {
                     SizedBox(height: 30),
                     _renderItemContainer(
                         InkWell(
-                            onTap: () => {_launchInWebViewOrVC('https://www.khind.com.my/blog')},
+                            onTap: () =>
+                                {Helpers.launchInWebViewOrVC('https://www.khind.com.my/blog')},
                             child: _renderLabel("About Us",
                                 padding: EdgeInsets.only(top: 10),
                                 textStyle:
@@ -440,7 +423,8 @@ class _ProfileState extends State<Profile> {
                     _renderItemContainer(
                         InkWell(
                             onTap: () => {
-                                  _launchInWebViewOrVC('https://www.khind.com.my/terms-of-use.html')
+                                  Helpers.launchInWebViewOrVC(
+                                      'https://www.khind.com.my/terms-of-use.html')
                                 },
                             child: _renderLabel("Term of Use",
                                 padding: EdgeInsets.only(top: 10),

@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:khind/components/bg_painter.dart';
 import 'package:khind/components/round_button.dart';
@@ -53,6 +54,7 @@ class _SignUpState extends State<SignUp> {
   DateTime selectedDob = DateTime(DateTime.now().year - 10);
   bool showPwdForm = false;
   bool showAddressForm = false;
+  bool agreeTerm = false;
   late List<States> states = [];
   late List<City> cities = [];
   City? city;
@@ -200,6 +202,7 @@ class _SignUpState extends State<SignUp> {
         _clearTextField();
         setState(() {
           errors = [];
+          agreeTerm = false;
         });
         Navigator.pop(context);
         Navigator.pushReplacementNamed(context, 'home');
@@ -721,11 +724,63 @@ class _SignUpState extends State<SignUp> {
                         },
                         child: Icon(showConfirmPassword ? Icons.visibility : Icons.visibility_off)))
               ]),
+              SizedBox(height: 20),
+              Container(
+                  height: 50,
+                  child: InkWell(
+                      onTap: () => this.setState(() {
+                            this.agreeTerm = !this.agreeTerm;
+                          }),
+                      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              agreeTerm = !agreeTerm;
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: agreeTerm ? AppColors.secondary : Colors.white,
+                                border: Border.all(color: AppColors.primary, width: 1)),
+                            child: Container(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(
+                                  Icons.check_sharp,
+                                  size: 25.0,
+                                  color: Colors.white,
+                                )),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Flexible(
+                            child: RichText(
+                                text: TextSpan(
+                                    style: TextStyle(fontSize: 14, color: Colors.black),
+                                    children: [
+                              TextSpan(text: "I have read and agreed to the "),
+                              TextSpan(
+                                  text: 'Terms of Use',
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Helpers.launchInWebViewOrVC(
+                                          'https://www.khind.com.my/index.php?route=information/information/info&information_id=8');
+                                    },
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue))
+                            ])))
+                      ]))),
               SizedBox(height: 30),
               RoundButton(
                   title: "Sign Up",
                   onPressed: () {
-                    if (_pwdFormKey.currentState!.validate()) {
+                    print("AGREE TERM: $agreeTerm");
+                    if (!agreeTerm) {
+                      Helpers.showAlert(context,
+                          onPressed: () => {Navigator.pop(context)},
+                          hasAction: true,
+                          title: "Warning",
+                          desc: "You must agree Term of Use!");
+                    } else if (_pwdFormKey.currentState!.validate()) {
                       _handleSignUp();
                     }
                   })
