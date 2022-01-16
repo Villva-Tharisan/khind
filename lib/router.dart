@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:khind/cubit/product_group/product_group_cubit.dart';
 import 'package:khind/cubit/product_model/product_model_cubit.dart';
+import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/news.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
@@ -60,8 +61,11 @@ class AppRouter {
       case 'EwarrantyProduct':
         if (arguments is Map) {
           return MaterialPageRoute(
-            builder: (_) => EwarrantyProduct(
-              arguments: arguments,
+            builder: (_) => BlocProvider(
+              create: (context) => StoreCubit(),
+              child: EwarrantyProduct(
+                arguments: arguments,
+              ),
             ),
           );
         } else {
@@ -77,6 +81,9 @@ class AppRouter {
               ),
               BlocProvider(
                 create: (context) => ProductModelCubit(),
+              ),
+              BlocProvider(
+                create: (context) => StoreCubit(),
               ),
             ],
             child: EwarrantyProductManual(),

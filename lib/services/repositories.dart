@@ -5,6 +5,7 @@ import 'package:khind/models/product_group.dart';
 import 'package:khind/models/product_group_model.dart';
 import 'package:khind/models/product_model.dart';
 import 'package:khind/models/product_warranty.dart';
+import 'package:khind/models/store.dart';
 import 'package:khind/services/api.dart';
 import 'package:http/http.dart' as http;
 
@@ -179,5 +180,30 @@ class Repositories {
     );
 
     print(response.body);
+  }
+
+  static Future<Store> getStore() async {
+    // final queryParameters = {
+    //   'email': 'khindcustomerservice@gmail.com',
+    // };
+
+    // String queryString = Uri(queryParameters: queryParameters).query;
+
+    var url = Uri.parse(Api.endpoint + Api.GET_STORE);
+    Map<String, String> authHeader = {
+      'Content-Type': 'application/json',
+      'Authorization': Api.defaultToken,
+    };
+
+    print(url);
+    print('calling product group');
+
+    final response = await http.get(
+      url,
+      headers: authHeader,
+    );
+
+    Store store = storeFromJson(response.body);
+    return store;
   }
 }
