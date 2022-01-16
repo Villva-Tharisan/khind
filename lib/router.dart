@@ -16,6 +16,7 @@ import 'package:khind/screens/profile.dart';
 import 'package:khind/screens/request_date.dart';
 import 'package:khind/screens/request_date_dropin.dart';
 import 'package:khind/screens/request_service_locator.dart';
+import 'package:khind/screens/review.dart';
 import 'package:khind/screens/service_tracker_details.dart';
 import 'package:khind/screens/servicelocator.dart';
 import 'package:khind/screens/splash.dart';
@@ -25,6 +26,7 @@ import 'package:khind/screens/forgot_password.dart';
 import 'package:khind/screens/home.dart';
 
 import 'models/Purchase.dart';
+import 'models/request_service_arguments.dart';
 import 'screens/request_date_pickup.dart';
 import 'screens/service_type.dart';
 
@@ -94,12 +96,24 @@ class AppRouter {
       case 'requestDate':
         return MaterialPageRoute(builder: (_) => RequestDate());
       case 'requestDateDropIn':
-        return MaterialPageRoute(builder: (_) => RequestDateDropIn());
+        return MaterialPageRoute(
+            builder: (_) => RequestDateDropIn(
+                  data: arguments as RequestServiceArgument,
+                ));
       case 'requestDatePickup':
         return MaterialPageRoute(builder: (_) => RequestDatePickup());
 
+      case 'review':
+        return MaterialPageRoute(
+            builder: (_) => Review(
+                  data: arguments as RequestServiceArgument,
+                ));
+
       case 'requestServiceLocator':
-        return MaterialPageRoute(builder: (_) => ServiceRequestLocator());
+        return MaterialPageRoute(
+            builder: (_) => ServiceRequestLocator(
+                  data: arguments as Purchase,
+                ));
 
       case 'ExtendWarranty':
         return MaterialPageRoute(builder: (_) => ExtendWarranty());

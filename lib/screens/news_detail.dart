@@ -42,7 +42,8 @@ class _NewsDetailState extends State<NewsDetail> {
   Widget _renderBody() {
     if (news?.content != null) {
       return Container(
-          padding: EdgeInsets.symmetric(horizontal: 10), child: Html(data: news!.content));
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Html(data: news!.content));
     }
     return Container();
   }
@@ -52,7 +53,9 @@ class _NewsDetailState extends State<NewsDetail> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: news != null ? '${news?.title}' : 'News', isBack: true, hasActions: false),
+          title: news != null ? '${news?.title}' : 'News',
+          isBack: true,
+          hasActions: false),
       body: CustomScrollView(slivers: [
         SliverFillRemaining(
           hasScrollBody: false,

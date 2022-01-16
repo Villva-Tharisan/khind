@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/models/Purchase.dart';
 import 'package:khind/models/ServiceCenter.dart';
 import 'package:khind/models/city.dart';
+import 'package:khind/models/request_service_arguments.dart';
 import 'package:khind/models/states.dart';
 import 'dart:convert';
 
@@ -11,7 +13,8 @@ import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceRequestLocator extends StatefulWidget {
-  const ServiceRequestLocator({Key? key}) : super(key: key);
+  Purchase? data;
+  ServiceRequestLocator({this.data});
 
   @override
   _ServiceRequestLocatorState createState() => _ServiceRequestLocatorState();
@@ -302,6 +305,7 @@ class _ServiceRequestLocatorState extends State<ServiceRequestLocator> {
                         itemCount: _filteredServiceCenters.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ServiceCard(
+                              purchase: widget.data!,
                               serviceCenter: _filteredServiceCenters[index]);
                         },
                       )),
@@ -317,9 +321,11 @@ class ServiceCard extends StatelessWidget {
   const ServiceCard({
     Key? key,
     required this.serviceCenter,
+    required this.purchase,
   }) : super(key: key);
 
   final ServiceCenter serviceCenter;
+  final Purchase purchase;
 
   @override
   Widget build(BuildContext context) {
@@ -328,10 +334,10 @@ class ServiceCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          "requestDateDropIn",
-        );
+        var requestServiceArgs = new RequestServiceArgument(
+            purchase: purchase, serviceCenter: this.serviceCenter);
+        Navigator.pushNamed(context, "requestDateDropIn",
+            arguments: requestServiceArgs != null ? requestServiceArgs : null);
       },
       child: Container(
         width: MediaQuery.of(context).size.width,

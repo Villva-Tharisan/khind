@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/Purchase.dart';
+import 'package:khind/models/request_service_arguments.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceType extends StatefulWidget {
@@ -166,11 +167,6 @@ class _ServiceTypeState extends State<ServiceType> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter),
                   onPressed: () {
-                    //                   [
-                    //   'Home Visit',
-                    //   'Drop By',
-                    //   'Request for pickup service RM 95.00',
-                    // ];
                     if (_selectedType.isEmpty) return;
                     var path = 'requestDate';
                     if (_selectedType == "Drop-In") {
@@ -180,10 +176,9 @@ class _ServiceTypeState extends State<ServiceType> {
                         .contains("Request for Pick-up/Delivery")) {
                       path = "requestDatePickup";
                     }
-                    Navigator.pushNamed(
-                      context,
-                      path,
-                    );
+
+                    Navigator.pushNamed(context, path,
+                        arguments: purchase != null ? purchase : null);
                   },
                 ),
               ),
