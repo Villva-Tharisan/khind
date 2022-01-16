@@ -140,4 +140,5 @@ class Helpers {
   }
 
   static Purchase? purchase;
+  static bool? fromSignIn = false;
 }

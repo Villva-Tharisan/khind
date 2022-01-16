@@ -84,10 +84,12 @@ class AppRouter {
         );
 
       case 'productModel':
-        return MaterialPageRoute(builder: (_) => ProductModel(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => ProductModel(data: arguments as Purchase));
 
       case 'serviceType':
-        return MaterialPageRoute(builder: (_) => ServiceType(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => ServiceType(data: arguments as Purchase));
 
       case 'requestDate':
         return MaterialPageRoute(builder: (_) => RequestDate());

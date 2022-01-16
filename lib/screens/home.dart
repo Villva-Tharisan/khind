@@ -131,12 +131,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.all(5),
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                SizedBox(height: 5),
-                Image(image: AssetImage('assets/images/logo_sm.png')),
-                SizedBox(height: 2),
-                Text("Mall", style: TextStyle(fontSize: 8))
-              ])),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 5),
+                    Image(image: AssetImage('assets/images/logo_sm.png')),
+                    SizedBox(height: 2),
+                    Text("Mall", style: TextStyle(fontSize: 8))
+                  ])),
           onPressed: () {
             setState(() {
               // tabIdx = 5;

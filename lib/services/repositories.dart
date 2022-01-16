@@ -87,7 +87,8 @@ class Repositories {
 
   static Future<String> getServiceProduct() async {
     final queryParameters = {
-      'email': 'khindcustomerservice@gmail.com',
+      // 'email': 'khindcustomerservice@gmail.com',
+      'email': '',
     };
 
     String queryString = Uri(queryParameters: queryParameters).query;
@@ -172,9 +173,11 @@ class Repositories {
     print(url);
     print('calling extend warranty');
 
-    await http.post(
+    final response = await http.post(
       url,
       headers: authHeader,
     );
+
+    print(response.body);
   }
 }
