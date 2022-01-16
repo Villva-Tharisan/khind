@@ -130,7 +130,7 @@ class _SignUpState extends State<SignUp> {
     if (picked != null && picked != selectedDob) {
       setState(() {
         selectedDob = picked;
-        dobCT.text = '${picked.day}-${picked.month}-${picked.year}';
+        dobCT.text = '${picked.day}/${picked.month}/${picked.year}';
       });
     }
   }
