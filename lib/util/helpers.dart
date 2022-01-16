@@ -160,4 +160,6 @@ class Helpers {
       throw 'Could not launch $url';
     }
   }
+
+  static bool? fromSignIn = false;
 }
