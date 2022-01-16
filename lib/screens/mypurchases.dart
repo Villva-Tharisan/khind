@@ -291,6 +291,7 @@ class PurchaseItem extends StatelessWidget {
         //   context,
         //   'productModel',
         // );
+        Helpers.purchase = purchase;
         Navigator.pushNamed(context, 'productModel',
             arguments: purchase != null ? purchase : null);
       },

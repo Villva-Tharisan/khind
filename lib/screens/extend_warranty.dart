@@ -194,7 +194,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             Text('Warranty Cost:-'),
             SizedBox(height: 10),
 
-            Text('RM ${purchase.extendedEwarrantyCost}'),
+            Text('RM ${purchase.extendedEwarrantyCost ?? 95.00}'),
 
             // SizedBox(height: 50),
 
