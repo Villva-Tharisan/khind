@@ -4,9 +4,11 @@ import 'dart:io';
 import 'package:date_format/date_format.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/product_warranty.dart';
 import 'package:khind/services/repositories.dart';
 import 'package:khind/util/helpers.dart';
@@ -30,14 +32,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
   DateTime choosenDate = DateTime.now();
   bool displayDate = false;
 
-  List<String> store = [
-    'Lazada',
-    'Shoppe',
-    'Other Online Platform',
-    'Physical Store',
-  ];
-
-  late String chosenStore;
+  String? chosenStore;
 
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -55,9 +50,10 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
 
   @override
   void initState() {
-    chosenStore = store[0];
     ref.text = '';
     emailTEC.text = '';
+    context.read<StoreCubit>().getStore();
+
     super.initState();
   }
 
@@ -258,28 +254,46 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                 width: width * 0.3,
                                 child: Text('Store '),
                               ),
-                              Expanded(
-                                child: DropdownButton<String>(
-                                  items: store.map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        value,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
+                              BlocBuilder<StoreCubit, StoreState>(
+                                builder: (context, state) {
+                                  if (state is StoreLoaded) {
+                                    return Expanded(
+                                      child: DropdownButton<String>(
+                                        items: state.store.data!.map((e) {
+                                          return DropdownMenuItem(
+                                            child: Text(e.storeName!),
+                                            value: e.storeId,
+                                          );
+                                        }).toList(),
+                                        // items: state.store.data
+                                        //     .map<DropdownMenuItem<String>>(
+                                        //         (String value) {
+                                        //   return DropdownMenuItem<String>(
+                                        //     value: value,
+                                        //     child: Text(
+                                        //       value,
+                                        //       overflow: TextOverflow.ellipsis,
+                                        //       maxLines: 2,
+                                        //     ),
+                                        //   );
+                                        // }).toList(),
+                                        isExpanded: true,
+                                        value: chosenStore,
+                                        onChanged: (value) {
+                                          print(value);
+                                          setState(() {
+                                            chosenStore = value!;
+                                          });
+                                        },
                                       ),
                                     );
-                                  }).toList(),
-                                  isExpanded: true,
-                                  value: chosenStore,
-                                  onChanged: (value) {
-                                    print(value);
-                                    setState(() {
-                                      chosenStore = value!;
-                                    });
-                                  },
-                                ),
+                                  } else {
+                                    return SpinKitFadingCircle(
+                                      color: Colors.black,
+                                      size: 20,
+                                    );
+                                  }
+                                },
                               ),
                             ],
                           ),
