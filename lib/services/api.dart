@@ -21,4 +21,5 @@ class Api {
   static const GET_SERVICE_PRODUCT = "provider/service_product.php";
   static const GET_PRODUCT_GROUP = 'provider/product_group.php';
   static const EXTEND_WARRANTY = 'provider/extend_warranty.php';
+  static const GET_STORE = 'provider/store.php';
 }

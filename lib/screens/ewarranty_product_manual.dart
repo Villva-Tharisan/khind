@@ -9,6 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/cubit/product_group/product_group_cubit.dart';
 import 'package:khind/cubit/product_model/product_model_cubit.dart';
+import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/product_model.dart';
 import 'package:khind/services/repositories.dart';
 import 'package:khind/util/helpers.dart';
@@ -24,14 +25,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
   int quantity = 0;
   String fileName = '';
 
-  List<String> store = [
-    'Lazada',
-    'Shoppe',
-    'Other Online Platform',
-    'Physical Store',
-  ];
-
-  late String chosenStore;
+  String? chosenStore;
 
   String? chosenProductGroup;
   String? chosenProductModel;
@@ -42,10 +36,10 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
   void initState() {
     // chosenProductGroup = productGroup[0];
     // chosenProductModel = productModel[0];
-    chosenStore = store[0];
     ref.text = '';
     emailTEC.text = '';
     context.read<ProductGroupCubit>().getProductGroup();
+    context.read<StoreCubit>().getStore();
 
     super.initState();
   }
@@ -374,28 +368,46 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             width: width * 0.3,
                             child: Text('Store '),
                           ),
-                          Expanded(
-                            child: DropdownButton<String>(
-                              items: store.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
+                          BlocBuilder<StoreCubit, StoreState>(
+                            builder: (context, state) {
+                              if (state is StoreLoaded) {
+                                return Expanded(
+                                  child: DropdownButton<String>(
+                                    items: state.store.data!.map((e) {
+                                      return DropdownMenuItem(
+                                        child: Text(e.storeName!),
+                                        value: e.storeId,
+                                      );
+                                    }).toList(),
+                                    // items: state.store.data
+                                    //     .map<DropdownMenuItem<String>>(
+                                    //         (String value) {
+                                    //   return DropdownMenuItem<String>(
+                                    //     value: value,
+                                    //     child: Text(
+                                    //       value,
+                                    //       overflow: TextOverflow.ellipsis,
+                                    //       maxLines: 2,
+                                    //     ),
+                                    //   );
+                                    // }).toList(),
+                                    isExpanded: true,
+                                    value: chosenStore,
+                                    onChanged: (value) {
+                                      print(value);
+                                      setState(() {
+                                        chosenStore = value!;
+                                      });
+                                    },
                                   ),
                                 );
-                              }).toList(),
-                              isExpanded: true,
-                              value: chosenStore,
-                              onChanged: (value) {
-                                print(value);
-                                setState(() {
-                                  chosenStore = value!;
-                                });
-                              },
-                            ),
+                              } else {
+                                return SpinKitFadingCircle(
+                                  color: Colors.black,
+                                  size: 20,
+                                );
+                              }
+                            },
                           ),
                         ],
                       ),
