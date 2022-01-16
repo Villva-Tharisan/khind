@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/product_model.dart';
 import 'package:khind/screens/ewarranty_product.dart';
@@ -78,7 +79,7 @@ class _EwarrantyScannerState extends State<EwarrantyScanner> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter),
                     onPressed: () {
-                      Navigator.pushNamed(
+                      Navigator.pushReplacementNamed(
                         context,
                         'EwarrantyProductManual',
                       );
@@ -109,28 +110,51 @@ class _EwarrantyScannerState extends State<EwarrantyScanner> {
 
     print(barcode.code!);
 
-    String model = '';
+    String model = barcode.code!;
 
-    if (barcode.code!.contains('{')) {
-      model = barcode.code!.replaceAll('“', '"');
-      model = barcode.code!.replaceAll('“', '"');
-      print(model);
-      ProductModel productModel = productModelFromJson(model);
-      model = productModel.productModel!;
+    print(model);
+
+    if (model.contains('{')) {
+      try {
+        ProductModel productModel = productModelFromJson(model);
+        model = productModel.productModel!;
+        if (model.contains('(')) {
+          model = model.split('(').first;
+          model = model.replaceAll(' ', '');
+        }
+
+        Navigator.pushReplacementNamed(
+          context,
+          'EwarrantyProduct',
+          arguments: {
+            'productModel': model,
+          },
+        );
+      } catch (e) {
+        Fluttertoast.showToast(
+          msg: 'Invalid QR, please proceed to manual registration',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+        );
+        Navigator.pushReplacementNamed(
+          context,
+          'EwarrantyProductManual',
+        );
+      }
     } else {
-      model = barcode.code!;
-    }
+      if (model.contains('(')) {
+        model = model.split('(').first;
+        model = model.replaceAll(' ', '');
+      }
 
-    if (model.contains('(')) {
-      model = model.split('(').first;
-      model = model.replaceAll(' ', '');
+      Navigator.pushReplacementNamed(
+        context,
+        'EwarrantyProduct',
+        arguments: {
+          'productModel': model,
+        },
+      );
     }
-
-    Navigator.pushReplacementNamed(
-      context,
-      'EwarrantyProduct',
-      arguments: {'productModel': model},
-    );
 
     // controller.scannedDataStream.listen((scanData) {
 
