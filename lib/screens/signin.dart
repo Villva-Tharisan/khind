@@ -32,8 +32,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    // emailCT.text = 'khindcustomerservice@gmail.com';
-    // passwordCT.text = 'Khindanshin118';
+    emailCT.text = 'khindcustomerservice@gmail.com';
+    passwordCT.text = 'Khindanshin118';
 
     super.initState();
     _loadVersion();
@@ -66,6 +66,8 @@ class _SignInState extends State<SignIn> {
         errorMsg = "";
       });
 
+      print("RESPONSE: ${jsonEncode(response)}");
+
       if (response?.length > 0) {
         if (response['error'] != null) {
           if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
@@ -85,6 +87,7 @@ class _SignInState extends State<SignIn> {
           }
         } else {
           await storage.write(key: IS_AUTH, value: "1");
+          await storage.write(key: USER, value: jsonEncode(response['data']));
           Navigator.pop(context);
           Navigator.pushReplacementNamed(context, 'home');
         }

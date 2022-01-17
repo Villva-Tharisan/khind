@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:khind/components/round_button.dart';
 import 'package:khind/models/user.dart';
@@ -19,6 +20,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final storage = new FlutterSecureStorage();
   TextEditingController mobileNoCT = new TextEditingController();
   TextEditingController emailCT = new TextEditingController();
   TextEditingController dobCT = new TextEditingController();
@@ -50,17 +52,31 @@ class _ProfileState extends State<Profile> {
     // passwordCT.text = "p455word";
     // dobCT.text = "01-01-1990";
     // confirmPasswordCT.text = "p455word";
-    setState(() {
-      user = User.fromJson({
-        'id': "1",
-        'name': 'Khind',
-        'mobile': '0167332333',
-        'email': 'khindcustomerservice@gmail.com',
-        'address': 'Nu Sentral'
-      });
-    });
+    // setState(() {
+    //   user = User.fromJson({
+    //     'id': "1",
+    //     'name': 'Khind',
+    //     'mobile': '0167332333',
+    //     'email': 'khindcustomerservice@gmail.com',
+    //     'address': 'Nu Sentral'
+    //   });
+    // });
+    _loadUser();
     _loadVersion();
     super.initState();
+  }
+
+  _loadUser() async {
+    var userStorage = await storage.read(key: USER);
+
+    if (userStorage != null) {
+      User userJson = User.fromJson(jsonDecode(userStorage));
+
+      setState(() {
+        user = userJson;
+      });
+      // print("###USER: ${jsonEncode(user)}");
+    }
   }
 
   _loadVersion() async {
@@ -233,6 +249,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget _renderForm() {
+    print("#USER: ${user}");
     return Form(
         key: _formKey,
         child: Column(children: [
@@ -244,7 +261,7 @@ class _ProfileState extends State<Profile> {
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
                       _renderLabel("Name", textStyle: TextStyles.textDefaultBold),
-                      _renderField(val: user?.name)
+                      _renderField(val: '${user?.firstname} ${user?.lastname}')
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
@@ -273,7 +290,7 @@ class _ProfileState extends State<Profile> {
                                   )),
                               Positioned(right: 0, top: 0, child: _renderEditBtn('mobile'))
                             ]))
-                          : _renderField(val: user?.mobile)
+                          : _renderField(val: user?.telephone)
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
@@ -403,7 +420,7 @@ class _ProfileState extends State<Profile> {
                                   )),
                               Positioned(right: 0, top: 0, child: _renderEditBtn('mobile'))
                             ]))
-                          : _renderField(val: user?.mobile)
+                          : _renderField(val: user?.address)
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
