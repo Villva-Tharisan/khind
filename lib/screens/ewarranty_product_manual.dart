@@ -29,6 +29,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
 
   String? chosenProductGroup;
   String? chosenProductModel;
+  String? productModel;
 
   DateTime choosenDate = DateTime.now();
 
@@ -62,7 +63,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
 
   late File receiptFile;
 
-  int index = 0;
+  int? index;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +177,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                     SizedBox(width: 10),
                                     Expanded(
                                       child: DropdownButton<String>(
-                                        items: state.productModel
+                                        items: state.productName
                                             .map<DropdownMenuItem<String>>(
                                                 (String value) {
                                           return DropdownMenuItem<String>(
@@ -194,8 +195,13 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                           print(value);
                                           setState(() {
                                             chosenProductModel = value!;
-                                            index = state.productModel
+                                            index = state.productName
                                                 .indexOf(chosenProductModel!);
+
+                                            productModel =
+                                                state.productModel[index!];
+
+                                            print(productModel);
                                           });
                                         },
                                       ),
@@ -205,9 +211,9 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                 SizedBox(height: 15),
                                 Text('Product Descrption'),
                                 SizedBox(height: 5),
-                                index != 0
+                                index != null
                                     ? Text(
-                                        state.modelDescription[index],
+                                        state.modelDescription[index!],
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       )
@@ -493,7 +499,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             color: Colors.grey.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(7.5),
                           ),
-                          child: Text('Upload File'),
+                          child: Text('Upload Receipt'),
                         ),
                       ),
                       SizedBox(width: 20),
@@ -521,13 +527,14 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                     } else {
                       email = emailTEC.text;
                     }
+
                     await Repositories.registerEwarranty(
                       email: email,
-                      productModel: chosenProductModel!,
+                      productModel: productModel!,
                       quantity: '$quantity',
                       purchaseDate: formatDate(
-                          choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
-                      referralCode: '',
+                          choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                      referralCode: ref.text,
                       receiptFile: receiptFile,
                     );
 

@@ -379,7 +379,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                 color: Colors.grey.withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(7.5),
                               ),
-                              child: Text('Upload File'),
+                              child: Text('Upload Receipt'),
                             ),
                           ),
                           SizedBox(width: 20),
@@ -416,8 +416,8 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                   productWarranty.data![0].productModel!,
                               quantity: '$quantity',
                               purchaseDate: formatDate(
-                                  choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
-                              referralCode: '',
+                                  choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                              referralCode: ref.text,
                               receiptFile: receiptFile,
                             );
 

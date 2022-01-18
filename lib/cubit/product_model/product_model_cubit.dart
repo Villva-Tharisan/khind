@@ -20,6 +20,7 @@ class ProductModelCubit extends Cubit<ProductModelState> {
 
     List<String> productList = [];
     List<String> productDesc = [];
+    List<String> productModel = [];
 
     print(product.data!.length);
 
@@ -27,11 +28,16 @@ class ProductModelCubit extends Cubit<ProductModelState> {
       // print(product.data![i]['product_id']);
       productList.add(product.data![i]['product_description']!);
       productDesc.add(product.data![i]['model_description']!);
+      productModel.add(product.data![i]['product_model']!);
     }
 
     print('length 1 is ${productList.length}');
     print('length 2 is ${productDesc.length}');
 
-    emit(ProductModelLoaded(productList, productDesc));
+    emit(ProductModelLoaded(
+      productList,
+      productDesc,
+      productModel,
+    ));
   }
 }

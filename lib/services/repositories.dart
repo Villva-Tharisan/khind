@@ -43,7 +43,7 @@ class Repositories {
       'product_model': productModel,
       'qty': quantity,
       'purchase_date': purchaseDate,
-      'referral_code': quantity,
+      'referral_code': referralCode,
       // 'receipt_file': receiptFile,
     };
 

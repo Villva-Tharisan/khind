@@ -14,20 +14,24 @@ class ProductModelLoading extends ProductModelState {
 }
 
 class ProductModelLoaded extends ProductModelState {
-  final List<String> productModel;
+  final List<String> productName;
   final List<String> modelDescription;
+  final List<String> productModel;
 
-  ProductModelLoaded(this.productModel, this.modelDescription);
+  ProductModelLoaded(
+      this.productName, this.modelDescription, this.productModel);
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is ProductModelLoaded &&
-        listEquals(other.productModel, productModel) &&
-        listEquals(other.modelDescription, modelDescription);
+        listEquals(other.productName, productName) &&
+        listEquals(other.modelDescription, modelDescription) &&
+        listEquals(other.productModel, productModel);
   }
 
   @override
-  int get hashCode => productModel.hashCode ^ modelDescription.hashCode;
+  int get hashCode =>
+      productName.hashCode ^ modelDescription.hashCode ^ productModel.hashCode;
 }
