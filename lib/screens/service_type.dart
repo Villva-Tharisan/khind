@@ -156,30 +156,44 @@ class _ServiceTypeState extends State<ServiceType> {
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: GradientButton(
-                  height: 40,
-                  child: Text(
-                    "Next",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  gradient: LinearGradient(
-                      colors: <Color>[Colors.white, Colors.grey[400]!],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                  onPressed: () {
-                    if (_selectedType.isEmpty) return;
-                    var path = 'requestDate';
-                    if (_selectedType == "Drop-In") {
-                      path = "requestServiceLocator";
-                    }
-                    if (_selectedType
-                        .contains("Request for Pick-up/Delivery")) {
-                      path = "requestDatePickup";
-                    }
+                child: Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '*Please select service required above',
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      GradientButton(
+                        height: 40,
+                        child: Text(
+                          "Next",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        gradient: LinearGradient(
+                            colors: <Color>[Colors.white, Colors.grey[400]!],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                        onPressed: () {
+                          if (_selectedType.isEmpty) return;
+                          var path = 'requestDate';
+                          if (_selectedType == "Drop-In") {
+                            path = "requestServiceLocator";
+                          }
+                          if (_selectedType
+                              .contains("Request for Pick-up/Delivery")) {
+                            path = "requestDatePickup";
+                          }
 
-                    Navigator.pushNamed(context, path,
-                        arguments: purchase != null ? purchase : null);
-                  },
+                          Navigator.pushNamed(context, path,
+                              arguments: purchase != null ? purchase : null);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -172,12 +172,6 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                     Text(
                       "Time Slot:",
                       overflow: TextOverflow.visible,
-                      style: TextStyle(
-                        // height: 2,
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w800,
-                      ),
                     ),
                     SizedBox(
                       width: 15,
@@ -315,12 +309,6 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                     Text(
                       "Problem:",
                       overflow: TextOverflow.visible,
-                      style: TextStyle(
-                        // height: 2,
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w800,
-                      ),
                     ),
                     SizedBox(
                       width: 15,

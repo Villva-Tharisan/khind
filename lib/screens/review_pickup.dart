@@ -4,29 +4,32 @@ import 'package:khind/models/request_service_arguments.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 
-class Review extends StatefulWidget {
+class ReviewPickup extends StatefulWidget {
   RequestServiceArgument? data;
-  Review({this.data});
+  ReviewPickup({this.data});
 
   @override
-  _ReviewState createState() => _ReviewState();
+  _ReviewPickupState createState() => _ReviewPickupState();
 }
 
-class _ReviewState extends State<Review> {
+class _ReviewPickupState extends State<ReviewPickup> {
   static final GlobalKey<FormState> _basicFormKey = GlobalKey<FormState>();
   TextEditingController remarkCT = new TextEditingController();
   late RequestServiceArgument _requestServiceArgument;
+  String fullAddress = "";
   @override
   void initState() {
     // TODO: implement initState
+    // var { } = _requestServiceArgument;
+
     _requestServiceArgument = widget.data!;
+    fullAddress =
+        "${_requestServiceArgument.address!.addressLine1!} ${_requestServiceArgument.address!.addressLine2!} ${_requestServiceArgument.address!.city!} ${_requestServiceArgument.address!.postcode!} ${_requestServiceArgument.address!.state!}";
     super.initState();
   }
 
   Future<void> createServiceRequest({bool isRefresh = false}) async {
     var payload = {
-      "service_center_id":
-          _requestServiceArgument.serviceCenter!.serviceCenterId,
       "service_type": _requestServiceArgument.serviceType,
       "warranty_registration_id":
           _requestServiceArgument.purchase.warrantyRegistrationId,
@@ -35,8 +38,7 @@ class _ReviewState extends State<Review> {
       "user_id": _requestServiceArgument.purchase.userId,
       "service_request_date": _requestServiceArgument.serviceRequestDate,
       "remarks": remarkCT.text,
-      "delivery_status": 0,
-      "service_request_time": _requestServiceArgument.serviceRequestTime,
+      "delivery_status": 0
     };
 
     var queryParams = "?";
@@ -176,19 +178,6 @@ class _ReviewState extends State<Review> {
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width * 0.3,
-                      child: Text('Book Time Slot'),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.50,
-                      child: Text(_requestServiceArgument.serviceRequestTime!),
-                    )
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.3,
                       child: Text('Service Type'),
                     ),
                     Container(
@@ -220,8 +209,7 @@ class _ReviewState extends State<Review> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.50,
-                      child:
-                          Text(_requestServiceArgument.serviceCenter!.address!),
+                      child: Text(fullAddress),
                     )
                   ],
                 ),

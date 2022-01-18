@@ -18,6 +18,7 @@ import 'package:khind/screens/request_date.dart';
 import 'package:khind/screens/request_date_dropin.dart';
 import 'package:khind/screens/request_service_locator.dart';
 import 'package:khind/screens/review.dart';
+import 'package:khind/screens/review_pickup.dart';
 import 'package:khind/screens/service_tracker_details.dart';
 import 'package:khind/screens/servicelocator.dart';
 import 'package:khind/screens/splash.dart';
@@ -108,11 +109,18 @@ class AppRouter {
                   data: arguments as RequestServiceArgument,
                 ));
       case 'requestDatePickup':
-        return MaterialPageRoute(builder: (_) => RequestDatePickup());
+        return MaterialPageRoute(
+            builder: (_) => RequestDatePickup(data: arguments as Purchase));
 
       case 'review':
         return MaterialPageRoute(
             builder: (_) => Review(
+                  data: arguments as RequestServiceArgument,
+                ));
+
+      case 'reviewPickup':
+        return MaterialPageRoute(
+            builder: (_) => ReviewPickup(
                   data: arguments as RequestServiceArgument,
                 ));
 

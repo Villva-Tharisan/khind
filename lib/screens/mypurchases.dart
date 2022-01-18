@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/models/user.dart';
 import 'package:khind/util/api.dart';
 import 'dart:convert';
 
 import 'package:khind/util/helpers.dart';
+import 'package:khind/util/key.dart';
 
 class MyPurchases extends StatefulWidget {
   const MyPurchases({Key? key}) : super(key: key);
@@ -17,6 +20,7 @@ class MyPurchases extends StatefulWidget {
 class _MyPurchasesState extends State<MyPurchases> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
+  final storage = new FlutterSecureStorage();
   static const PAGE_LIMIT = 20;
   bool _hasMore = false;
   int _page = 1;
@@ -32,11 +36,11 @@ class _MyPurchasesState extends State<MyPurchases> {
 
   List<Purchase> _myPurchase = [];
   List<Purchase> _filteredMyPurchase = [];
-
+  User? user;
   @override
   void initState() {
     super.initState();
-    this.fetchMyPurchases();
+    this._loadUser();
   }
 
   void onSelectStatus(String status) {
@@ -52,9 +56,23 @@ class _MyPurchasesState extends State<MyPurchases> {
     });
   }
 
+  _loadUser() async {
+    var userStorage = await storage.read(key: USER);
+
+    if (userStorage != null) {
+      User userJson = User.fromJson(jsonDecode(userStorage));
+
+      setState(() {
+        user = userJson;
+      });
+
+      this.fetchMyPurchases();
+      // print("###USER: ${jsonEncode(user)}");
+    }
+  }
+
   Future<void> fetchMyPurchases({bool isRefresh = false}) async {
     // :TODO get email from storage
-    var email = "khindcustomerservice@gmail.com";
     // var url = Uri.parse(Api.endpoint + Api.GET_MY_PURCHASE + "?email=$email");
     // Map<String, String> authHeader = {
     //   'Content-Type': 'application/json',
@@ -75,7 +93,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     }
 
     final response = await Api.basicPost(
-        'provider/purchase.php?email=$email&currentpage=$_page',
+        'provider/purchase.php?email=${user!.email!.toLowerCase()}&currentpage=$_page',
         isCms: true);
 
     var page = _page;
@@ -351,14 +369,27 @@ class PurchaseItem extends StatelessWidget {
                   SizedBox(
                     height: 5,
                   ),
-                  Text(
-                    "Warranty Status : ${purchase.status}",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                        // height: 2,
-                        fontSize: 12,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400),
+                  Row(
+                    children: [
+                      Text(
+                        "Warranty Status : ",
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                            // height: 2,
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "${purchase.status}",
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                            // height: 2,
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ],
                   ),
                 ],
               ),
