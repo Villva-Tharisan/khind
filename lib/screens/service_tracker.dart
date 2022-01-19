@@ -35,8 +35,13 @@ class _ServiceTrackerState extends State<ServiceTracker> {
         builder: (context, snapshot) {
           // print("DATA: ${snapshot.data.runtimeType}");
           if (snapshot.hasData && snapshot.data != "[]") {
-            ServiceProduct serviceProduct =
-                ServiceProduct.fromJson(json.decode(snapshot.data.toString()));
+            ServiceProduct serviceProduct;
+            try {
+              serviceProduct = ServiceProduct.fromJson(
+                  json.decode(snapshot.data!.toString()));
+            } catch (e) {
+              serviceProduct = ServiceProduct(data: []);
+            }
 
             return Container(
               margin: EdgeInsets.symmetric(

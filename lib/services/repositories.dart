@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:khind/models/product_group.dart';
 import 'package:khind/models/product_group_model.dart';
-import 'package:khind/models/product_model.dart';
-import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/store.dart';
 import 'package:khind/services/api.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +28,7 @@ class Repositories {
     return response.body;
   }
 
-  static Future<void> registerEwarranty({
+  static Future<bool> registerEwarranty({
     required String email,
     required String productModel,
     required String quantity,
@@ -77,6 +75,12 @@ class Repositories {
     final respStr = await response.stream.bytesToString();
 
     print(respStr);
+
+    if (respStr.contains('false')) {
+      return false;
+    } else {
+      return true;
+    }
 
     // final response = await http.post(
     //   url,
@@ -132,8 +136,13 @@ class Repositories {
       url,
       headers: authHeader,
     );
+    ProductGroup productGroup;
 
-    ProductGroup productGroup = productGroupFromJson(response.body);
+    try {
+      productGroup = productGroupFromJson(response.body);
+    } catch (e) {
+      productGroup = ProductGroup(data: []);
+    }
 
     return productGroup;
   }
@@ -158,11 +167,17 @@ class Repositories {
 
     // log(response.body);
 
-    ProductGroupModel productModel = productGroupModelFromJson(response.body);
+    ProductGroupModel productModel;
+
+    try {
+      productModel = productGroupModelFromJson(response.body);
+    } catch (e) {
+      productModel = ProductGroupModel(data: []);
+    }
     return productModel;
   }
 
-  static Future<void> sendExtend({required String warrantyId}) async {
+  static Future<bool> sendExtend({required String warrantyId}) async {
     var url = Uri.parse(Api.endpoint +
         Api.EXTEND_WARRANTY +
         "?warranty_registration_id=$warrantyId");
@@ -179,7 +194,11 @@ class Repositories {
       headers: authHeader,
     );
 
-    print(response.body);
+    if (response.body.contains('false')) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   static Future<Store> getStore() async {
