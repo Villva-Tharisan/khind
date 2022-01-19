@@ -15,14 +15,21 @@ class TextStyles {
   static TextStyle textWhiteBold =
       TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white);
   static TextStyle textWhiteSm = TextStyle(fontSize: 12, color: Colors.white);
-  static TextStyle textPrimary = TextStyle(fontSize: 14, color: AppColors.primary);
-  static TextStyle textPrimaryBold =
-      TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary);
-  static TextStyle textSecondary = TextStyle(fontSize: 14, color: AppColors.secondary);
-  static TextStyle textSecondaryBold =
-      TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.secondary);
+  static TextStyle textPrimary =
+      TextStyle(fontSize: 14, color: AppColors.primary);
+  static TextStyle textPrimaryBold = TextStyle(
+      fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary);
+  static TextStyle textSecondary =
+      TextStyle(fontSize: 14, color: AppColors.secondary);
+  static TextStyle textSecondaryBold = TextStyle(
+      fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.secondary);
   static TextStyle textGrey = TextStyle(fontSize: 14, color: AppColors.grey);
-  static TextStyle textGreyDark = TextStyle(fontSize: 14, color: Colors.grey[700]);
+  static TextStyle textGreyDark =
+      TextStyle(fontSize: 14, color: Colors.grey[700]);
   static TextStyle textLink = TextStyle(fontSize: 14, color: Colors.blue);
-  static TextStyle textInfo = TextStyle(fontSize: 14, color: Colors.yellow[800]);
+  static TextStyle textInfo =
+      TextStyle(fontSize: 14, color: Colors.yellow[800]);
+  static TextStyle textWarning = TextStyle(fontSize: 12, color: Colors.red);
+  static TextStyle textWarningBold =
+      TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red);
 }

@@ -203,8 +203,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text(
-                                  "No more data to show, tap to refresh",
+                              child: Text("There's no purchase record",
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )

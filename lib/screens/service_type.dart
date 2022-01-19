@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:khind/models/request_service_arguments.dart';
+import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceType extends StatefulWidget {
@@ -22,6 +23,7 @@ class _ServiceTypeState extends State<ServiceType> {
     'Drop-In',
     'Request for Pick-up/Delivery',
   ];
+  bool showError = false;
 
   @override
   void initState() {
@@ -161,9 +163,12 @@ class _ServiceTypeState extends State<ServiceType> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '*Please select service required above',
-                      ),
+                      showError
+                          ? Center(
+                              child: Text(
+                                  '* Please select service required above',
+                                  style: TextStyles.textWarningBold))
+                          : Container(),
                       SizedBox(
                         height: 20,
                       ),
@@ -178,7 +183,16 @@ class _ServiceTypeState extends State<ServiceType> {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter),
                         onPressed: () {
-                          if (_selectedType.isEmpty) return;
+                          setState(() {
+                            showError = false;
+                          });
+                          if (_selectedType.isEmpty) {
+                            setState(() {
+                              showError = true;
+                            });
+
+                            return;
+                          }
                           var path = 'requestDate';
                           if (_selectedType == "Drop-In") {
                             path = "requestServiceLocator";

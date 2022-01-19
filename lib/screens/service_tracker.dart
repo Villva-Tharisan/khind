@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:khind/models/service_product.dart';
 import 'package:khind/services/repositories.dart';
+import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 
 class ServiceTracker extends StatefulWidget {
@@ -32,9 +33,11 @@ class _ServiceTrackerState extends State<ServiceTracker> {
       body: FutureBuilder(
         future: Repositories.getServiceProduct(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          // print("DATA: ${snapshot.data.runtimeType}");
+          if (snapshot.hasData && snapshot.data != "[]") {
             ServiceProduct serviceProduct =
                 ServiceProduct.fromJson(json.decode(snapshot.data.toString()));
+
             return Container(
               margin: EdgeInsets.symmetric(
                 horizontal: 15,
@@ -42,7 +45,8 @@ class _ServiceTrackerState extends State<ServiceTracker> {
               ),
               child: serviceProduct.data!.length == 0
                   ? Center(
-                      child: Text('There is nothing to track'),
+                      child: Text('There is nothing to track',
+                          style: TextStyles.textSecondaryBold),
                     )
                   : Column(
                       children: [
@@ -185,12 +189,15 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                     ),
             );
           } else {
+            // return Center(
+            //   child: SpinKitFadingCircle(
+            //     color: Colors.black,
+            //     size: 30,
+            //   ),
+            // );
             return Center(
-              child: SpinKitFadingCircle(
-                color: Colors.black,
-                size: 30,
-              ),
-            );
+                child: Text('There is nothing to track',
+                    style: TextStyles.textDefault));
           }
           // return Container(
           //   margin: EdgeInsets.symmetric(
