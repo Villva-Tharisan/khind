@@ -33,10 +33,10 @@ class _ProfileState extends State<Profile> {
   DateTime now = DateTime.now();
   DateTime selectedDob = DateTime(DateTime.now().year - 10);
   final textStyle = TextStyle(fontSize: 14);
-  bool disableMobile = false;
-  bool disableEmail = false;
-  bool disableDob = false;
-  bool editAddress = false;
+  bool canEditMobile = false;
+  bool canEditEmail = false;
+  bool canEditDob = false;
+  bool canEditAddress = false;
   String version = "";
   String buildNo = "";
 
@@ -117,13 +117,13 @@ class _ProfileState extends State<Profile> {
   void showEditField(name) {
     setState(() {
       if (name == 'mobile') {
-        disableMobile = true;
+        canEditMobile = true;
       } else if (name == 'email') {
-        disableEmail = true;
+        canEditEmail = true;
       } else if (name == 'dob') {
-        disableDob = true;
+        canEditDob = true;
       } else if (name == 'address') {
-        editAddress = true;
+        canEditAddress = true;
       }
     });
   }
@@ -217,22 +217,33 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget _renderEditBtn(name, {icon}) {
+    Color color = AppColors.secondary;
+
     return InkWell(
         onTap: () {
-          if (name == 'dob') {
-            disableDob = true;
-          } else if (name == 'mobile') {
-            disableMobile = true;
-          } else if (name == 'email') {
-            disableEmail = true;
-          } else if (name == 'address') {
-            editAddress = true;
-          }
+          setState(() {
+            if (name == 'dob') {
+              canEditDob = !this.canEditDob;
+              color = Colors.grey;
+            } else if (name == 'mobile') {
+              canEditMobile = !this.canEditMobile;
+              color = Colors.grey;
+            } else if (name == 'email') {
+              canEditEmail = !this.canEditEmail;
+              color = Colors.grey;
+            } else if (name == 'address') {
+              canEditAddress = !this.canEditAddress;
+              color = Colors.grey;
+            }
+          });
         },
         child: Container(
-            decoration: BoxDecoration(color: AppColors.primary),
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            child: icon != null ? icon : Text("Edit")));
+            decoration: BoxDecoration(
+                color: color, borderRadius: BorderRadius.circular(10)),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: icon != null
+                ? icon
+                : Text("Edit", style: TextStyles.textWhiteSm)));
   }
 
   Widget _renderIcon(IconData icon, {onPressed}) {
@@ -273,22 +284,20 @@ class _ProfileState extends State<Profile> {
                   children: [
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
-                      _renderLabel("Name",
-                          textStyle: TextStyles.textDefaultBold),
+                      _renderLabel("Name", textStyle: TextStyles.textDefault),
                       _renderField(val: '${user?.firstname} ${user?.lastname}')
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
-                      _renderLabel("Mobile",
-                          textStyle: TextStyles.textDefaultW500),
+                      _renderLabel("Mobile", textStyle: TextStyles.textDefault),
                       Flexible(
                           child: Row(children: [
                         Container(
                             width: fieldSize,
                             child: TextFormField(
-                                enabled: !disableMobile,
+                                enabled: canEditMobile,
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
                                   RegExp regExp =
@@ -306,22 +315,35 @@ class _ProfileState extends State<Profile> {
                                   border: InputBorder.none,
                                   hintText: 'eg: 0123456789',
                                 ))),
-                        SizedBox(width: 10),
-                        _renderEditBtn('mobile')
+                        Spacer(),
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                canEditMobile = !this.canEditMobile;
+                              });
+                            },
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.secondary,
+                                    borderRadius: BorderRadius.circular(10)),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                child: Text(canEditMobile ? "View" : "Edit",
+                                    style: TextStyles.textWhiteSm)))
                       ]))
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
-                      _renderLabel("Email",
-                          textStyle: TextStyles.textDefaultW500),
+                      _renderLabel("Email", textStyle: TextStyles.textDefault),
                       Flexible(
                           child: Row(children: [
                         Container(
                             width: fieldSize,
                             child: TextFormField(
                               controller: emailCT,
+                              enabled: canEditEmail,
                               keyboardType: TextInputType.text,
                               validator: (value) {
                                 var regExp = RegExp(
@@ -338,49 +360,73 @@ class _ProfileState extends State<Profile> {
                                   border: InputBorder.none,
                                   hintText: 'eg: khind@gmail.com'),
                             )),
-                        SizedBox(width: 10),
-                        _renderEditBtn('email')
+                        Spacer(),
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                canEditEmail = !this.canEditEmail;
+                              });
+                            },
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.secondary,
+                                    borderRadius: BorderRadius.circular(10)),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                child: Text(canEditEmail ? "View" : "Edit",
+                                    style: TextStyles.textWhiteSm)))
                       ]))
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
-                      _renderLabel("D.O.B",
-                          textStyle: TextStyles.textDefaultW500),
-                      !disableDob
-                          ? Flexible(
-                              child: Stack(children: [
-                              TextFormField(
-                                controller: dobCT,
-                                keyboardType: TextInputType.text,
-                                validator: (value) {
-                                  RegExp regExp = new RegExp(
-                                      r'^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$');
-                                  if (value!.isEmpty) {
-                                    return 'Please enter date of birth';
-                                  } else if (!regExp.hasMatch(value)) {
-                                    return 'Invalid date format';
-                                  }
-                                  return null;
-                                },
-                                // controller: dobCT,
-                                onFieldSubmitted: (val) {},
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'dd-mm-yyyy'),
-                              ),
-                              Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Row(children: [
-                                    _renderIcon(Icons.date_range,
-                                        onPressed: () => _selectDob(context)),
-                                    SizedBox(width: 2),
-                                    _renderEditBtn('dob')
-                                  ]))
+                      _renderLabel("D.O.B", textStyle: TextStyles.textDefault),
+                      Flexible(
+                          child: Stack(children: [
+                        TextFormField(
+                          controller: dobCT,
+                          enabled: canEditDob,
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            RegExp regExp = new RegExp(
+                                r'^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$');
+                            if (value!.isEmpty) {
+                              return 'Please enter date of birth';
+                            } else if (!regExp.hasMatch(value)) {
+                              return 'Invalid date format';
+                            }
+                            return null;
+                          },
+                          // controller: dobCT,
+                          onFieldSubmitted: (val) {},
+                          decoration: InputDecoration(
+                              border: InputBorder.none, hintText: 'dd-mm-yyyy'),
+                        ),
+                        Positioned(
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Row(children: [
+                              _renderIcon(Icons.date_range,
+                                  onPressed: () => _selectDob(context)),
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      canEditDob = !this.canEditDob;
+                                    });
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: AppColors.secondary,
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      child: Text(canEditDob ? "View" : "Edit",
+                                          style: TextStyles.textWhiteSm)))
                             ]))
-                          : _renderField(val: user?.dob)
+                      ]))
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
@@ -389,33 +435,48 @@ class _ProfileState extends State<Profile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _renderLabel("Address",
-                              textStyle: TextStyles.textDefaultW500,
+                              textStyle: TextStyles.textDefault,
                               padding: EdgeInsets.only(top: 10)),
-                          !disableMobile
-                              ? Flexible(
-                                  child: Stack(children: [
-                                  TextFormField(
-                                      keyboardType: TextInputType.text,
-                                      minLines: 3,
-                                      maxLines: null,
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please enter address';
-                                        }
-                                        return null;
-                                      },
-                                      controller: addressCT,
-                                      onFieldSubmitted: (val) {},
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: '',
-                                      )),
-                                  Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: _renderEditBtn('mobile'))
-                                ]))
-                              : _renderField(val: user?.address)
+                          Flexible(
+                              child: Row(
+                                  // crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                Container(
+                                    width: fieldSize,
+                                    child: TextFormField(
+                                        keyboardType: TextInputType.text,
+                                        minLines: 3,
+                                        maxLines: null,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return 'Please enter address';
+                                          }
+                                          return null;
+                                        },
+                                        controller: addressCT,
+                                        onFieldSubmitted: (val) {},
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: '',
+                                        ))),
+                                Spacer(),
+                                InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        canEditAddress = !this.canEditAddress;
+                                      });
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            color: AppColors.secondary,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        child: Text(
+                                            canEditAddress ? "View" : "Edit",
+                                            style: TextStyles.textWhiteSm)))
+                              ]))
                         ])),
                     SizedBox(height: 5),
                     _renderDivider(),
@@ -424,7 +485,7 @@ class _ProfileState extends State<Profile> {
                         InkWell(
                             onTap: () => {
                                   Helpers.launchInWebViewOrVC(
-                                      'https://www.khind.com.my/blog')
+                                      'https://www.khind.com.my/our-team.html')
                                 },
                             child: _renderLabel("About Us",
                                 padding: EdgeInsets.only(top: 10),
@@ -458,10 +519,31 @@ class _ProfileState extends State<Profile> {
                           Spacer(),
                           Text(
                             '$version ($buildNo)',
-                            style: TextStyles.textGrey,
+                            style: TextStyles.textDefault,
                           )
                         ]),
                         align: Alignment.bottomLeft),
+                    SizedBox(height: 20),
+                    _renderItemContainer(Tooltip(
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(10)),
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.all(8.0),
+                        showDuration: const Duration(seconds: 2),
+                        waitDuration: const Duration(seconds: 1),
+                        triggerMode: TooltipTriggerMode.tap,
+                        message:
+                            "We respect your privacy, data share with KHIND is protected under the PDPN.",
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.info_outline_rounded),
+                              SizedBox(width: 5),
+                              Container(
+                                  child: _renderLabel("PDPN",
+                                      textStyle: TextStyles.textDefault))
+                            ]))),
                     SizedBox(height: 20),
                   ])),
           Expanded(child: Container()),
