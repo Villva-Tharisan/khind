@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/cubit/product_group/product_group_cubit.dart';
 import 'package:khind/cubit/product_model/product_model_cubit.dart';
@@ -528,7 +529,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       email = emailTEC.text;
                     }
 
-                    await Repositories.registerEwarranty(
+                    bool response = await Repositories.registerEwarranty(
                       email: email,
                       productModel: productModel!,
                       quantity: '$quantity',
@@ -546,25 +547,34 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                     // });
                     // response = await dio.post("/info", data: formData);
 
-                    Alert(
-                      context: context,
-                      // type: AlertType.info,
-                      title: "Register Product",
-                      desc:
-                          "Your warranty submission  is accepted and you shall be informed  once it approved. Please do checkout your warranty status under My Purchase",
-                      buttons: [
-                        DialogButton(
-                          child: Text(
-                            "Okay",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                          onPressed: () => Navigator.of(context)
-                              .pushNamedAndRemoveUntil(
-                                  'home', (route) => false),
-                          width: 120,
-                        )
-                      ],
-                    ).show();
+                    if (response) {
+                      Alert(
+                        context: context,
+                        // type: AlertType.info,
+                        title: "Register Product",
+                        desc:
+                            "Your warranty submission  is accepted and you shall be informed  once it approved. Please do checkout your warranty status under My Purchase",
+                        buttons: [
+                          DialogButton(
+                            child: Text(
+                              "Okay",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () => Navigator.of(context)
+                                .pushNamedAndRemoveUntil(
+                                    'home', (route) => false),
+                            width: 120,
+                          )
+                        ],
+                      ).show();
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: 'Something went wrong, please try again',
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                      );
+                    }
                   },
                 ),
               ],

@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:khind/services/repositories.dart';
@@ -212,27 +213,36 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter),
                   onPressed: () async {
-                    await Repositories.sendExtend(
+                    bool success = await Repositories.sendExtend(
                       warrantyId: purchase.warrantyRegistrationId,
                     );
 
-                    Alert(
-                      context: context,
-                      // type: AlertType.info,
-                      title: "Warranty Extension Submitted",
-                      desc:
-                          "The result will be notified within 7 days. Payment need to be made after 7 days for approval.",
-                      buttons: [
-                        DialogButton(
-                          child: Text(
-                            "Okay",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                          onPressed: () => Navigator.pop(context),
-                          width: 120,
-                        )
-                      ],
-                    ).show();
+                    if (success) {
+                      Alert(
+                        context: context,
+                        // type: AlertType.info,
+                        title: "Warranty Extension Submitted",
+                        desc:
+                            "The result will be notified within 7 days. Payment need to be made after 7 days for approval.",
+                        buttons: [
+                          DialogButton(
+                            child: Text(
+                              "Okay",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                            width: 120,
+                          )
+                        ],
+                      ).show();
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: 'Something went wrong, please try again',
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                      );
+                    }
                   },
                 ),
               ),
