@@ -27,8 +27,6 @@ class _ProfileState extends State<Profile> {
   TextEditingController passwordCT = new TextEditingController();
   TextEditingController addressCT = new TextEditingController();
   bool isLoading = false;
-  bool showPassword = false;
-  bool showConfirmPassword = false;
   User? user;
   String errorMsg = "";
   List errors = [];
@@ -38,7 +36,6 @@ class _ProfileState extends State<Profile> {
   bool disableMobile = false;
   bool disableEmail = false;
   bool disableDob = false;
-  bool editPassword = false;
   bool editAddress = false;
   String version = "";
   String buildNo = "";
@@ -74,8 +71,20 @@ class _ProfileState extends State<Profile> {
 
       setState(() {
         user = userJson;
+
+        if (userJson.telephone != null) {
+          mobileNoCT.text = userJson.telephone!;
+        }
+
+        if (userJson.telephone != null) {
+          emailCT.text = userJson.email!;
+        }
+
+        if (userJson.dob != null) {
+          dobCT.text = userJson.dob!;
+        }
       });
-      // print("###USER: ${jsonEncode(user)}");
+      print("###USER: ${jsonEncode(user)}");
     }
   }
 
@@ -94,7 +103,6 @@ class _ProfileState extends State<Profile> {
   void dispose() {
     emailCT.dispose();
     mobileNoCT.dispose();
-    passwordCT.dispose();
     addressCT.dispose();
     super.dispose();
   }
@@ -116,8 +124,6 @@ class _ProfileState extends State<Profile> {
         disableDob = true;
       } else if (name == 'address') {
         editAddress = true;
-      } else if (name == 'password') {
-        editPassword = true;
       }
     });
   }
@@ -133,7 +139,8 @@ class _ProfileState extends State<Profile> {
       };
 
       // print("MAP: $map");
-      final response = await Api.bearerPost('update_user.php', params: jsonEncode(map));
+      final response =
+          await Api.bearerPost('update_user.php', params: jsonEncode(map));
       setState(() {
         isLoading = true;
         errorMsg = "";
@@ -198,7 +205,8 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget _renderDivider() {
-    return Container(height: 1, color: Colors.grey[300], width: double.infinity);
+    return Container(
+        height: 1, color: Colors.grey[300], width: double.infinity);
   }
 
   Widget _renderItemContainer(child, {align}) {
@@ -217,8 +225,6 @@ class _ProfileState extends State<Profile> {
             disableMobile = true;
           } else if (name == 'email') {
             disableEmail = true;
-          } else if (name == 'password') {
-            editPassword = true;
           } else if (name == 'address') {
             editAddress = true;
           }
@@ -230,14 +236,16 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget _renderIcon(IconData icon, {onPressed}) {
-    return IconButton(onPressed: onPressed, icon: Icon(icon, size: 20, color: Colors.black));
+    return IconButton(
+        onPressed: onPressed, icon: Icon(icon, size: 20, color: Colors.black));
   }
 
   Widget _renderLabel(title, {padding, textStyle}) {
     return Container(
         padding: padding != null ? padding : EdgeInsets.all(0),
         width: MediaQuery.of(context).size.width * 0.25,
-        child: Text(title, style: textStyle != null ? textStyle : TextStyles.textDefault));
+        child: Text(title,
+            style: textStyle != null ? textStyle : TextStyles.textDefault));
   }
 
   Widget _renderField({val}) {
@@ -245,11 +253,16 @@ class _ProfileState extends State<Profile> {
       return Container(padding: const EdgeInsets.only(top: 25, bottom: 20));
     }
     return Flexible(
-        child: Container(padding: const EdgeInsets.only(top: 25, bottom: 20), child: Text('$val')));
+        child: Container(
+            padding: const EdgeInsets.only(top: 25, bottom: 20),
+            child: Text('$val')));
   }
 
   Widget _renderForm() {
-    print("#USER: ${user}");
+    // print("#USER: ${user}");
+
+    double fieldSize = MediaQuery.of(context).size.width * 0.5;
+
     return Form(
         key: _formKey,
         child: Column(children: [
@@ -260,72 +273,81 @@ class _ProfileState extends State<Profile> {
                   children: [
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
-                      _renderLabel("Name", textStyle: TextStyles.textDefaultBold),
+                      _renderLabel("Name",
+                          textStyle: TextStyles.textDefaultBold),
                       _renderField(val: '${user?.firstname} ${user?.lastname}')
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
-                      _renderLabel("Mobile", textStyle: TextStyles.textDefaultW500),
-                      !disableMobile
-                          ? Flexible(
-                              child: Stack(children: [
-                              TextFormField(
-                                  keyboardType: TextInputType.text,
-                                  validator: (value) {
-                                    RegExp regExp = new RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
-                                    if (value!.isEmpty) {
-                                      return 'Please enter mobile number';
-                                    } else if (!regExp.hasMatch(value)) {
-                                      return 'Invalid mobile number format';
-                                    }
-                                    return null;
-                                  },
-                                  controller: mobileNoCT,
-                                  onFieldSubmitted: (val) {},
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'eg: 0123456789',
-                                  )),
-                              Positioned(right: 0, top: 0, child: _renderEditBtn('mobile'))
-                            ]))
-                          : _renderField(val: user?.telephone)
-                    ])),
-                    SizedBox(height: 5),
-                    _renderDivider(),
-                    SizedBox(height: 10),
-                    _renderItemContainer(Row(children: [
-                      _renderLabel("Email", textStyle: TextStyles.textDefaultW500),
-                      !disableEmail
-                          ? Flexible(
-                              child: Stack(children: [
-                              TextFormField(
-                                controller: emailCT,
+                      _renderLabel("Mobile",
+                          textStyle: TextStyles.textDefaultW500),
+                      Flexible(
+                          child: Row(children: [
+                        Container(
+                            width: fieldSize,
+                            child: TextFormField(
+                                enabled: !disableMobile,
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
-                                  var regExp = RegExp(
-                                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+                                  RegExp regExp =
+                                      new RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
                                   if (value!.isEmpty) {
-                                    return 'Please enter email';
+                                    return 'Please enter mobile number';
                                   } else if (!regExp.hasMatch(value)) {
-                                    return 'Invalid email format';
+                                    return 'Invalid mobile number format';
                                   }
                                   return null;
                                 },
+                                controller: mobileNoCT,
                                 onFieldSubmitted: (val) {},
                                 decoration: InputDecoration(
-                                    border: InputBorder.none, hintText: 'eg: khind@gmail.com'),
-                              ),
-                              Positioned(right: 0, top: 0, child: _renderEditBtn('email'))
-                            ]))
-                          : _renderField(val: user?.email)
+                                  border: InputBorder.none,
+                                  hintText: 'eg: 0123456789',
+                                ))),
+                        SizedBox(width: 10),
+                        _renderEditBtn('mobile')
+                      ]))
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
-                      _renderLabel("D.O.B", textStyle: TextStyles.textDefaultW500),
+                      _renderLabel("Email",
+                          textStyle: TextStyles.textDefaultW500),
+                      Flexible(
+                          child: Row(children: [
+                        Container(
+                            width: fieldSize,
+                            child: TextFormField(
+                              controller: emailCT,
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                var regExp = RegExp(
+                                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+                                if (value!.isEmpty) {
+                                  return 'Please enter email';
+                                } else if (!regExp.hasMatch(value)) {
+                                  return 'Invalid email format';
+                                }
+                                return null;
+                              },
+                              onFieldSubmitted: (val) {},
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'eg: khind@gmail.com'),
+                            )),
+                        SizedBox(width: 10),
+                        _renderEditBtn('email')
+                      ]))
+                    ])),
+                    SizedBox(height: 5),
+                    _renderDivider(),
+                    SizedBox(height: 10),
+                    _renderItemContainer(Row(children: [
+                      _renderLabel("D.O.B",
+                          textStyle: TextStyles.textDefaultW500),
                       !disableDob
                           ? Flexible(
                               child: Stack(children: [
@@ -345,7 +367,8 @@ class _ProfileState extends State<Profile> {
                                 // controller: dobCT,
                                 onFieldSubmitted: (val) {},
                                 decoration: InputDecoration(
-                                    border: InputBorder.none, hintText: 'dd-mm-yyyy'),
+                                    border: InputBorder.none,
+                                    hintText: 'dd-mm-yyyy'),
                               ),
                               Positioned(
                                   right: 0,
@@ -361,78 +384,52 @@ class _ProfileState extends State<Profile> {
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
-                    SizedBox(height: 10),
-                    _renderItemContainer(Row(children: [
-                      _renderLabel("Password", textStyle: TextStyles.textDefaultW500),
-                      Flexible(
-                          child: Stack(children: [
-                        TextFormField(
-                            controller: passwordCT,
-                            keyboardType: TextInputType.text,
-                            obscureText: !showPassword,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Please enter password';
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (val) {},
-                            decoration:
-                                InputDecoration(border: InputBorder.none, hintText: '******')),
-                        Positioned(
-                            right: 15,
-                            top: 10,
-                            child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    showPassword = !showPassword;
-                                  });
-                                },
-                                child:
-                                    Icon(showPassword ? Icons.visibility : Icons.visibility_off)))
-                      ]))
-                    ])),
-                    SizedBox(height: 5),
-                    _renderDivider(),
                     SizedBox(height: 20),
-                    _renderItemContainer(
-                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      _renderLabel("Address",
-                          textStyle: TextStyles.textDefaultW500, padding: EdgeInsets.only(top: 10)),
-                      !disableMobile
-                          ? Flexible(
-                              child: Stack(children: [
-                              TextFormField(
-                                  keyboardType: TextInputType.text,
-                                  minLines: 3,
-                                  maxLines: null,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Please enter address';
-                                    }
-                                    return null;
-                                  },
-                                  controller: mobileNoCT,
-                                  onFieldSubmitted: (val) {},
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'XXXXXXXXXXXXXX',
-                                  )),
-                              Positioned(right: 0, top: 0, child: _renderEditBtn('mobile'))
-                            ]))
-                          : _renderField(val: user?.address)
-                    ])),
+                    _renderItemContainer(Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _renderLabel("Address",
+                              textStyle: TextStyles.textDefaultW500,
+                              padding: EdgeInsets.only(top: 10)),
+                          !disableMobile
+                              ? Flexible(
+                                  child: Stack(children: [
+                                  TextFormField(
+                                      keyboardType: TextInputType.text,
+                                      minLines: 3,
+                                      maxLines: null,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please enter address';
+                                        }
+                                        return null;
+                                      },
+                                      controller: addressCT,
+                                      onFieldSubmitted: (val) {},
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: '',
+                                      )),
+                                  Positioned(
+                                      right: 0,
+                                      top: 0,
+                                      child: _renderEditBtn('mobile'))
+                                ]))
+                              : _renderField(val: user?.address)
+                        ])),
                     SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 30),
                     _renderItemContainer(
                         InkWell(
-                            onTap: () =>
-                                {Helpers.launchInWebViewOrVC('https://www.khind.com.my/blog')},
+                            onTap: () => {
+                                  Helpers.launchInWebViewOrVC(
+                                      'https://www.khind.com.my/blog')
+                                },
                             child: _renderLabel("About Us",
                                 padding: EdgeInsets.only(top: 10),
-                                textStyle:
-                                    TextStyles.textLink.copyWith(fontWeight: FontWeight.w500))),
+                                textStyle: TextStyles.textLink
+                                    .copyWith(fontWeight: FontWeight.w500))),
                         align: Alignment.bottomLeft),
                     SizedBox(height: 20),
                     _renderDivider(),
@@ -445,8 +442,8 @@ class _ProfileState extends State<Profile> {
                                 },
                             child: _renderLabel("Term of Use",
                                 padding: EdgeInsets.only(top: 10),
-                                textStyle:
-                                    TextStyles.textLink.copyWith(fontWeight: FontWeight.w500))),
+                                textStyle: TextStyles.textLink
+                                    .copyWith(fontWeight: FontWeight.w500))),
                         align: Alignment.bottomLeft),
                     SizedBox(height: 20),
                     _renderDivider(),
@@ -486,7 +483,8 @@ class _ProfileState extends State<Profile> {
                   await storage.delete(key: IS_AUTH);
 
                   Navigator.pop(context);
-                  Navigator.pushNamedAndRemoveUntil(context, 'signin', (route) => false);
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, 'signin', (route) => false);
                 });
               })
         ]));
