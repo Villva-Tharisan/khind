@@ -25,6 +25,7 @@ class _MyPurchasesState extends State<MyPurchases> {
   bool _hasMore = false;
   int _page = 1;
   bool _fetchError = false;
+  bool _isRefresh = false;
   List<String> _status = [
     'All',
     'Active',
@@ -89,6 +90,7 @@ class _MyPurchasesState extends State<MyPurchases> {
         _myPurchase = [];
         _filteredMyPurchase = [];
         _fetchError = false;
+        _isRefresh = true;
       });
     }
 
@@ -124,6 +126,7 @@ class _MyPurchasesState extends State<MyPurchases> {
       _myPurchase = allPurchase;
       _filteredMyPurchase = filteredPurchase;
       _hasMore = purchases.length == PAGE_LIMIT;
+      _isRefresh = false;
       _page += 1;
     });
   }
@@ -135,30 +138,12 @@ class _MyPurchasesState extends State<MyPurchases> {
     return Scaffold(
       appBar: Helpers.customAppBar(context, _scaffoldKey,
           title: "My Purchases", hasActions: false),
-      body: Container(
-        width: double.infinity,
-        // height: double.infinity,
-        // padding: const EdgeInsets.symmetric(
-        //   vertical: 20,
-        //   horizontal: 0,
-        // ),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
-              // decoration: BoxDecoration(
-              //   color: Colors.white,
-              //   boxShadow: [
-              //     BoxShadow(
-              //       blurRadius: 0.5,
-              //       color: Colors.grey,
-              //       spreadRadius: 0.5,
-              //       // offset:
-              //     ),
-              //   ],
-              //   borderRadius: BorderRadius.circular(7.5),
-              // ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -199,7 +184,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                     // color: Colors.black,
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     height: height * 0.75,
-                    child: _myPurchase.isEmpty
+                    child: _myPurchase.isEmpty && !_isRefresh
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16),
@@ -239,11 +224,15 @@ class _MyPurchasesState extends State<MyPurchases> {
                                       ),
                                     ));
                                   } else {
-                                    return Center(
-                                        child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: CircularProgressIndicator(),
-                                    ));
+                                    if (!_isRefresh) {
+                                      return Center(
+                                          child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: CircularProgressIndicator(),
+                                      ));
+                                    } else {
+                                      return Container();
+                                    }
                                   }
                                 }
                                 return PurchaseItem(
