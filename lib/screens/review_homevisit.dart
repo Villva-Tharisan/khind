@@ -42,7 +42,7 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
           _requestServiceArgument.purchase.warrantyRegistrationId,
       "product_id": _requestServiceArgument.purchase.productId,
       "problem_id": _requestServiceArgument.serviceProblem!.problemId,
-      "user_id": userJson.id,
+      "user_id": _requestServiceArgument.purchase.userId,
       "service_request_date": _requestServiceArgument.serviceRequestDate,
       "remarks": _requestServiceArgument.remarks,
       "delivery_status": _requestServiceArgument.delivery == "Yes" ? 1 : 0,
@@ -88,7 +88,7 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
 
     return Scaffold(
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "Review HV", hasActions: false, isBack: true),
+          title: "Review", hasActions: false, isBack: true),
       body: CustomScrollView(slivers: [
         SliverFillRemaining(
           hasScrollBody: false,

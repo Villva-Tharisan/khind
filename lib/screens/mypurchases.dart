@@ -291,6 +291,8 @@ class PurchaseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var serialNo =
+        this.purchase.serialNo == null ? "-" : this.purchase.serialNo;
     return GestureDetector(
       onTap: () {
         // Navigator.pushNamed(
@@ -346,7 +348,7 @@ class PurchaseItem extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    "Serial No : ${purchase.serialNo}",
+                    "Serial No : ${serialNo}",
                     overflow: TextOverflow.visible,
                     style: TextStyle(
                         // height: 2,
