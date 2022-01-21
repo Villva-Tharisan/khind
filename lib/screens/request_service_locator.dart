@@ -137,7 +137,7 @@ class _ServiceRequestLocatorState extends State<ServiceRequestLocator> {
       var svcCenters =
           (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
 
-      print(jsonEncode(svcCenters));
+      // print('CENTRES:  ${jsonEncode(svcCenters)}');
 
       setState(() {
         _serviceCenters = svcCenters;
@@ -149,7 +149,7 @@ class _ServiceRequestLocatorState extends State<ServiceRequestLocator> {
   void filterServiceCenter() {
     List<ServiceCenter> filtered = List.from(_serviceCenters);
 
-    print("STATE: ${state.state} | ${city.cityId}");
+    // print("STATE: ${state.state} | ${city.cityId}");
     if (state.stateId != "") {
       filtered =
           _serviceCenters.where((e) => e.stateId == state.stateId).toList();
@@ -178,7 +178,7 @@ class _ServiceRequestLocatorState extends State<ServiceRequestLocator> {
         // width: double.infinity,
         // height: double.infinity,
         padding: const EdgeInsets.symmetric(
-          vertical: 20,
+          vertical: 10,
           horizontal: 15,
         ),
         child: Column(
@@ -190,99 +190,99 @@ class _ServiceRequestLocatorState extends State<ServiceRequestLocator> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                            Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 2),
-                                decoration: BoxDecoration(
-                                    color: Colors.yellow[700],
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Text("State",
-                                    style: TextStyles.textWhiteSm)),
-                            Container(
-                              child: DropdownButton<States>(
-                                items:
-                                    _states.map<DropdownMenuItem<States>>((e) {
-                                  return DropdownMenuItem<States>(
-                                    child: Text(
-                                      e.state!,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
-                                    value: e,
-                                  );
-                                }).toList(),
-                                isExpanded: true,
-                                value: state,
-                                onChanged: (value) {
-                                  if (value != null && value.stateId != "") {
-                                    setState(() {
-                                      state = value;
-                                      showCity = true;
-                                      _cities = [];
-                                      this.fetchCities(value.stateId!);
-                                    });
-                                    this.filterServiceCenter();
-                                  } else {
-                                    setState(() {
-                                      _cities = [];
-                                      showCity = false;
-                                    });
-                                    this.fetchServiceCenter();
-                                  }
-                                },
-                              ),
-                            )
-                          ]))),
-                  showCity
-                      ? Expanded(
-                          flex: 1,
-                          child: Container(
-                              padding: EdgeInsets.only(left: 20),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 5, vertical: 2),
-                                        decoration: BoxDecoration(
-                                            color: Colors.yellow[700],
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: Text("City",
-                                            style: TextStyles.textWhiteSm)),
-                                    Container(
-                                      child: DropdownButton<City>(
-                                        items: _cities
-                                            .map<DropdownMenuItem<City>>(
-                                                (City value) {
-                                          return DropdownMenuItem<City>(
-                                            value: value,
-                                            child: Text(
-                                              value.city!,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
-                                            ),
-                                          );
-                                        }).toList(),
-                                        isExpanded: true,
-                                        value: city,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            city = value!;
-                                          });
+                  // Expanded(
+                  //     flex: 1,
+                  //     child: Container(
+                  //         child: Column(
+                  //             crossAxisAlignment: CrossAxisAlignment.start,
+                  //             children: [
+                  //           Container(
+                  //               padding: EdgeInsets.symmetric(
+                  //                   horizontal: 5, vertical: 2),
+                  //               decoration: BoxDecoration(
+                  //                   color: Colors.yellow[700],
+                  //                   borderRadius: BorderRadius.circular(5)),
+                  //               child: Text("State",
+                  //                   style: TextStyles.textWhiteSm)),
+                  //           Container(
+                  //             child: DropdownButton<States>(
+                  //               items:
+                  //                   _states.map<DropdownMenuItem<States>>((e) {
+                  //                 return DropdownMenuItem<States>(
+                  //                   child: Text(
+                  //                     e.state!,
+                  //                     overflow: TextOverflow.ellipsis,
+                  //                     maxLines: 2,
+                  //                   ),
+                  //                   value: e,
+                  //                 );
+                  //               }).toList(),
+                  //               isExpanded: true,
+                  //               value: state,
+                  //               onChanged: (value) {
+                  //                 if (value != null && value.stateId != "") {
+                  //                   setState(() {
+                  //                     state = value;
+                  //                     showCity = true;
+                  //                     _cities = [];
+                  //                     this.fetchCities(value.stateId!);
+                  //                   });
+                  //                   this.filterServiceCenter();
+                  //                 } else {
+                  //                   setState(() {
+                  //                     _cities = [];
+                  //                     showCity = false;
+                  //                   });
+                  //                   this.fetchServiceCenter();
+                  //                 }
+                  //               },
+                  //             ),
+                  //           )
+                  //         ]))),
+                  // showCity
+                  //     ? Expanded(
+                  //         flex: 1,
+                  //         child: Container(
+                  //             padding: EdgeInsets.only(left: 20),
+                  //             child: Column(
+                  //                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                 children: [
+                  //                   Container(
+                  //                       padding: EdgeInsets.symmetric(
+                  //                           horizontal: 5, vertical: 2),
+                  //                       decoration: BoxDecoration(
+                  //                           color: Colors.yellow[700],
+                  //                           borderRadius:
+                  //                               BorderRadius.circular(5)),
+                  //                       child: Text("City",
+                  //                           style: TextStyles.textWhiteSm)),
+                  //                   Container(
+                  //                     child: DropdownButton<City>(
+                  //                       items: _cities
+                  //                           .map<DropdownMenuItem<City>>(
+                  //                               (City value) {
+                  //                         return DropdownMenuItem<City>(
+                  //                           value: value,
+                  //                           child: Text(
+                  //                             value.city!,
+                  //                             overflow: TextOverflow.ellipsis,
+                  //                             maxLines: 2,
+                  //                           ),
+                  //                         );
+                  //                       }).toList(),
+                  //                       isExpanded: true,
+                  //                       value: city,
+                  //                       onChanged: (value) {
+                  //                         setState(() {
+                  //                           city = value!;
+                  //                         });
 
-                                          this.filterServiceCenter();
-                                        },
-                                      ),
-                                    )
-                                  ])))
-                      : Expanded(flex: 1, child: Container()),
+                  //                         this.filterServiceCenter();
+                  //                       },
+                  //                     ),
+                  //                   )
+                  //                 ])))
+                  //     : Expanded(flex: 1, child: Container()),
                 ],
               ),
             ),
