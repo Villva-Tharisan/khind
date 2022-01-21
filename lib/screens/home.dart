@@ -12,7 +12,8 @@ import 'package:khind/themes/app_colors.dart';
 import 'package:khind/screens/service_tracker.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  int? data = 0;
+  Home({this.data});
 
   @override
   _HomeState createState() => _HomeState();
@@ -43,6 +44,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    if (widget.data != null) {
+      if (widget.data == 2) {
+        page = 3;
+        tabIdx = widget.data!;
+      } else if (widget.data == 3) {
+        page = 4;
+        tabIdx = widget.data!;
+      }
+    }
     super.initState();
     _animationController = AnimationController(
       duration: Duration(seconds: 1),

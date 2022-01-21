@@ -401,7 +401,7 @@ class PurchaseItem extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    "Frequency of Repair : ${purchase.purchaseDateFormat}",
+                    "Frequency of Repair : 1",
                     overflow: TextOverflow.visible,
                     style: TextStyle(
                         // height: 2,
@@ -418,7 +418,7 @@ class PurchaseItem extends StatelessWidget {
             Column(children: [
               Container(
                 width: width * 0.06,
-                height: 100,
+                height: 130,
                 padding: EdgeInsets.only(right: 1),
                 decoration: BoxDecoration(
                   color: getColor(),

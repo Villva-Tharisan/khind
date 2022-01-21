@@ -71,7 +71,7 @@ class _ReviewPickupState extends State<ReviewPickup> {
           title: 'You have successfully request service',
           hasAction: true, onPressed: () {
         Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, 'home');
+        Navigator.pushReplacementNamed(context, 'home', arguments: 2);
       });
     } else {
       Helpers.showAlert(context,

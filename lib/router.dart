@@ -51,7 +51,7 @@ class AppRouter {
       case 'profile':
         return MaterialPageRoute(builder: (_) => Profile());
       case 'home':
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => Home(data: arguments as int));
       case 'news':
         return MaterialPageRoute(builder: (_) => NewsLanding());
       case 'news_detail':
