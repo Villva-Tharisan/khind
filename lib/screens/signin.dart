@@ -93,7 +93,7 @@ class _SignInState extends State<SignIn> {
           await storage.write(key: IS_AUTH, value: "1");
           await storage.write(key: USER, value: jsonEncode(response['data']));
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home');
+          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
         }
       } else {
         setState(() {
