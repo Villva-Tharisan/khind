@@ -36,9 +36,9 @@ class _ServiceTypeState extends State<ServiceType> {
     if (widget.data!.dropIn == "0") {
       _serviceTypes.remove('Drop-In');
     }
-    // if (widget.data!.homeVisit == "0") {
-    //   _serviceTypes.remove('Home Visit');
-    // }
+    if (widget.data!.homeVisit == "0") {
+      _serviceTypes.remove('Home Visit');
+    }
     if (widget.data!.pickUp == "0") {
       _serviceTypes.remove('Request for Pick-up/Delivery');
     }
