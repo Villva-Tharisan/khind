@@ -113,6 +113,10 @@ class _MyPurchasesState extends State<MyPurchases> {
       });
     }
 
+    purchases.sort((a, b) {
+      return a.statusCode!.compareTo(b.statusCode!);
+    });
+
     var allPurchase = _myPurchase;
     allPurchase.addAll(purchases);
     var filteredPurchase = allPurchase;
@@ -283,8 +287,8 @@ class PurchaseItem extends StatelessWidget {
   final Purchase purchase;
 
   Color getColor() {
-    if (this.purchase.statusCode == "0") return Colors.red;
-    if (this.purchase.statusCode == "1") return Colors.green;
+    if (this.purchase.statusCode == "2") return Colors.red;
+    if (this.purchase.statusCode == "0") return Colors.green;
 
     return Colors.orange;
   }
@@ -362,7 +366,7 @@ class PurchaseItem extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "Warranty Status : ",
+                        "Warranty Valid until : ",
                         overflow: TextOverflow.visible,
                         style: TextStyle(
                             // height: 2,
@@ -371,7 +375,7 @@ class PurchaseItem extends StatelessWidget {
                             fontWeight: FontWeight.w400),
                       ),
                       Text(
-                        "${purchase.status}",
+                        "${purchase.warrantyDate}",
                         overflow: TextOverflow.visible,
                         style: TextStyle(
                             // height: 2,
@@ -380,6 +384,30 @@ class PurchaseItem extends StatelessWidget {
                             fontWeight: FontWeight.w700),
                       ),
                     ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "Purchase Date : ${purchase.purchaseDateFormat}",
+                    overflow: TextOverflow.visible,
+                    style: TextStyle(
+                        // height: 2,
+                        fontSize: 12,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "Frequency of Repair : ${purchase.purchaseDateFormat}",
+                    overflow: TextOverflow.visible,
+                    style: TextStyle(
+                        // height: 2,
+                        fontSize: 12,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400),
                   ),
                 ],
               ),

@@ -60,8 +60,8 @@ class _ReviewState extends State<Review> {
     if (_requestServiceArgument.delivery == "Yes") {
       payload["address_line_1"] = _requestServiceArgument.address!.addressLine1;
       payload["address_line_2"] = _requestServiceArgument.address!.addressLine1;
-      payload["city_id"] = _requestServiceArgument.address!.addressLine1;
-      payload["postcode"] = _requestServiceArgument.address!.addressLine1;
+      payload["city_id"] = _requestServiceArgument.address!.cityId;
+      payload["postcode"] = _requestServiceArgument.address!.postcode;
       payload["delivery_status"] = 1;
     }
 

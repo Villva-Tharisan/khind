@@ -10,6 +10,7 @@ class Purchase {
   dynamic? serviceCenterId;
   dynamic? adminApprovalStatusId;
   String? purchaseDate;
+  String? purchaseDateFormat;
   dynamic? referralCode;
   String? receiptFile;
   dynamic? extendedWarrantyId;
@@ -43,6 +44,7 @@ class Purchase {
   dynamic? technicianServiceGroup;
   String? warranty;
   String? warrantyPeriod;
+  String? warrantyDate;
   String? warrantyDescription;
   String? numPeriods;
   String? periodUnit;
@@ -208,6 +210,8 @@ class Purchase {
     this.storeName = json["store_name"];
     this.bpStatus = json["bp_status"];
     var purchaseDate = DateFormat('yyyy-MM-dd').parse(this.purchaseDate!);
+    this.purchaseDateFormat = DateFormat('dd-MM-yyyy')
+        .format(DateFormat('yyyy-MM-dd').parse(this.purchaseDate!.toString()));
     var warrantyMonth = int.parse(this.warrantyMonths!);
     var warrantyDate = Jiffy(purchaseDate).add(months: warrantyMonth).dateTime;
     var warrantyPeriod = DateFormat('dd-MM-yyyy').format(
@@ -215,19 +219,20 @@ class Purchase {
         " - " +
         DateFormat('dd-MM-yyyy').format(warrantyDate);
     this.warrantyPeriod = warrantyPeriod;
+    this.warrantyDate = DateFormat('dd-MM-yyyy').format(warrantyDate);
     // warrantyPeriod += "-" + warrantyDate.
     var today = DateTime.now();
     var diff = warrantyDate.difference(today).inDays;
 
-    this.statusCode = "0";
+    this.statusCode = "2";
     this.status = "Out of warranty";
     if (diff > 0) {
       this.status = "In warranty";
-      this.statusCode = "1";
+      this.statusCode = "0";
     }
     if (diff > 0 && diff < 61) {
       this.status = "Nearing Expiry";
-      this.statusCode = "2";
+      this.statusCode = "1";
     }
   }
 
