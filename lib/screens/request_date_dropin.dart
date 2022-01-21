@@ -7,6 +7,7 @@ import 'package:khind/models/city.dart';
 import 'package:khind/models/request_service_arguments.dart';
 import 'package:khind/models/service_problem.dart';
 import 'package:khind/models/states.dart';
+import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:intl/intl.dart';
@@ -99,7 +100,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             cityId: "",
             postcodeId: "",
             postcode: ""));
-
+    // print("#CITIES: $cities");
     var citySet = Set<String>();
     List<City> newCities = cities.where((e) => citySet.add(e.city!)).toList();
 
@@ -159,16 +160,11 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             height: 5,
           ),
           Text(
-            'Select Date & Time',
-            style: TextStyle(
-              // height: 2,
-              fontSize: 16,
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-            ),
+            'Select Date',
+            style: TextStyles.textDefaultBold,
           ),
           SizedBox(
-            height: 5,
+            height: 10,
           ),
           Container(
             height: MediaQuery.of(context).size.height * 0.3,
@@ -190,22 +186,25 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             ),
             decoration: BoxDecoration(
               color: Colors.white,
+              border: Border.all(
+                width: 0.4,
+                color: Colors.grey.withOpacity(0.5),
+              ),
               boxShadow: [
                 BoxShadow(
-                  blurRadius: 0.5,
-                  color: Colors.grey,
-                  spreadRadius: 0.5,
-                  // offset:
-                ),
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 20,
           ),
           Text(
-            'Select Time Slot',
+            'Select Time',
+            style: TextStyles.textDefaultBold,
           ),
           SizedBox(
             height: 10,
@@ -218,10 +217,16 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
-                width: 1,
+                width: 0.4,
                 color: Colors.grey.withOpacity(0.5),
               ),
               borderRadius: BorderRadius.circular(7.5),
+              boxShadow: [
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,8 +274,10 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ],
             ),
           ),
+          SizedBox(height: 10),
           Text(
-            'Selected Service Center',
+            'Selected Service Centre',
+            style: TextStyles.textDefaultBold,
           ),
           SizedBox(
             height: 10,
@@ -284,10 +291,16 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
-                width: 1,
+                width: 0.5,
                 color: Colors.grey.withOpacity(0.5),
               ),
               borderRadius: BorderRadius.circular(7.5),
+              boxShadow: [
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,6 +354,9 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ],
             ),
           ),
+          SizedBox(
+            height: 10,
+          ),
           Text(
             'What are problems are you facing with your product?',
           ),
@@ -355,10 +371,16 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
-                width: 1,
+                width: 0.4,
                 color: Colors.grey.withOpacity(0.5),
               ),
               borderRadius: BorderRadius.circular(7.5),
+              boxShadow: [
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -444,6 +466,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             ),
           ),
           //delivery opt
+          SizedBox(height: 10),
           Text(
             'Would you like your product be delivered after service',
           ),
@@ -458,10 +481,16 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
-                width: 1,
+                width: 0.4,
                 color: Colors.grey.withOpacity(0.5),
               ),
               borderRadius: BorderRadius.circular(7.5),
+              boxShadow: [
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
+              ],
             ),
             child: Column(
               children: [
@@ -647,18 +676,18 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               Container(
                 padding: EdgeInsets.only(top: 15),
                 width: width * 0.30,
-                child: Text('City'),
+                child: Text('State'),
               ),
               SizedBox(width: 15),
               Flexible(
                 child: Container(
                   padding: EdgeInsets.only(left: 10),
                   width: width * 0.45,
-                  child: DropdownButton<City>(
-                    items: _cities.map<DropdownMenuItem<City>>((e) {
-                      return DropdownMenuItem<City>(
+                  child: DropdownButton<States>(
+                    items: _states.map<DropdownMenuItem<States>>((e) {
+                      return DropdownMenuItem<States>(
                         child: Text(
-                          e.city!,
+                          e.state!,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),
@@ -666,11 +695,11 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                       );
                     }).toList(),
                     isExpanded: true,
-                    value: city,
+                    value: state,
                     onChanged: (value) {
                       setState(() {
-                        city = value!;
-                        this.onSelectCity(value.postcode!);
+                        state = value!;
+                        this.fetchCities(value.stateId!);
                       });
                     },
                   ),
@@ -678,6 +707,45 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ),
             ],
           ),
+          _cities.length > 0
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 15),
+                      width: width * 0.30,
+                      child: Text('City'),
+                    ),
+                    SizedBox(width: 15),
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 10),
+                        width: width * 0.45,
+                        child: DropdownButton<City>(
+                          items: _cities.map<DropdownMenuItem<City>>((e) {
+                            return DropdownMenuItem<City>(
+                              child: Text(
+                                e.city!,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                              value: e,
+                            );
+                          }).toList(),
+                          isExpanded: true,
+                          value: city,
+                          onChanged: (value) {
+                            setState(() {
+                              city = value!;
+                              this.onSelectCity(value.postcode!);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Container(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -705,43 +773,6 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                     hintText: 'eg: 40050',
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 15),
-                width: width * 0.30,
-                child: Text('State'),
-              ),
-              SizedBox(width: 15),
-              Flexible(
-                child: Container(
-                  padding: EdgeInsets.only(left: 10),
-                  width: width * 0.45,
-                  child: DropdownButton<States>(
-                    items: _states.map<DropdownMenuItem<States>>((e) {
-                      return DropdownMenuItem<States>(
-                        child: Text(
-                          e.state!,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                        value: e,
-                      );
-                    }).toList(),
-                    isExpanded: true,
-                    value: state,
-                    onChanged: (value) {
-                      setState(() {
-                        state = value!;
-                        this.fetchCities(value.stateId!);
-                      });
-                    },
                   ),
                 ),
               ),

@@ -27,7 +27,7 @@ class User {
       this.verifyStatus});
 
   User.fromJson(Map<String, dynamic> json) {
-    print("#JSON: $json");
+    // print("#JSON: $json");
     this.id = json["customer_id"];
     this.referreId = json["referrer_id"];
     this.firstname = json["firstname"] ?? null;
