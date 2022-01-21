@@ -532,7 +532,7 @@ class _ProfileState extends State<Profile> {
                         padding: const EdgeInsets.all(8.0),
                         showDuration: const Duration(seconds: 2),
                         waitDuration: const Duration(seconds: 1),
-                        triggerMode: TooltipTriggerMode.tap,
+                        // triggerMode: TooltipTriggerMode.tap,
                         message:
                             "We respect your privacy, data share with KHIND is protected under the PDPN.",
                         child: Row(

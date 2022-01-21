@@ -23,6 +23,8 @@ class _ServiceTypeState extends State<ServiceType> {
     'Drop-In',
     'Request for Pick-up/Delivery',
   ];
+
+  bool isValid = false;
   bool showError = false;
 
   @override
@@ -34,9 +36,9 @@ class _ServiceTypeState extends State<ServiceType> {
     if (widget.data!.dropIn == "0") {
       _serviceTypes.remove('Drop-In');
     }
-    if (widget.data!.homeVisit == "0") {
-      _serviceTypes.remove('Home Visit');
-    }
+    // if (widget.data!.homeVisit == "0") {
+    //   _serviceTypes.remove('Home Visit');
+    // }
     if (widget.data!.pickUp == "0") {
       _serviceTypes.remove('Request for Pick-up/Delivery');
     }
@@ -141,6 +143,22 @@ class _ServiceTypeState extends State<ServiceType> {
             SizedBox(
               height: 20,
             ),
+            !showError
+                ? Container()
+                : Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '*Please choose service type',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  ),
             Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +211,7 @@ class _ServiceTypeState extends State<ServiceType> {
 
                             return;
                           }
-                          var path = 'requestDate';
+                          var path = 'requestDateHomeVisit';
                           if (_selectedType == "Drop-In") {
                             path = "requestServiceLocator";
                           }

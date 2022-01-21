@@ -8,15 +8,15 @@ import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:khind/util/key.dart';
 
-class Review extends StatefulWidget {
+class ReviewHomeVisit extends StatefulWidget {
   RequestServiceArgument? data;
-  Review({this.data});
+  ReviewHomeVisit({this.data});
 
   @override
-  _ReviewState createState() => _ReviewState();
+  _ReviewHomeVisitState createState() => _ReviewHomeVisitState();
 }
 
-class _ReviewState extends State<Review> {
+class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
   static final GlobalKey<FormState> _basicFormKey = GlobalKey<FormState>();
   TextEditingController remarkCT = new TextEditingController();
   late RequestServiceArgument _requestServiceArgument;
@@ -24,11 +24,11 @@ class _ReviewState extends State<Review> {
   @override
   void initState() {
     // TODO: implement initState
+    // var { } = _requestServiceArgument;
+
     _requestServiceArgument = widget.data!;
-    if (_requestServiceArgument.address != null) {
-      fullAddress =
-          "${_requestServiceArgument.address!.addressLine1!} ${_requestServiceArgument.address!.addressLine2!} ${_requestServiceArgument.address!.city!} ${_requestServiceArgument.address!.postcode!} ${_requestServiceArgument.address!.state!}";
-    }
+    fullAddress =
+        "${_requestServiceArgument.address!.addressLine1!} ${_requestServiceArgument.address!.addressLine2!} ${_requestServiceArgument.address!.city!} ${_requestServiceArgument.address!.postcode!} ${_requestServiceArgument.address!.state!}";
     super.initState();
   }
 
@@ -37,33 +37,21 @@ class _ReviewState extends State<Review> {
     User userJson = User.fromJson(jsonDecode(userStorage!));
 
     var payload = {
-      "service_center_id":
-          _requestServiceArgument.serviceCenter!.serviceCenterId,
       "service_type": _requestServiceArgument.serviceType,
       "warranty_registration_id":
           _requestServiceArgument.purchase.warrantyRegistrationId,
-      "product_id": _requestServiceArgument.purchase.productGroupId,
+      "product_id": _requestServiceArgument.purchase.productId,
       "problem_id": _requestServiceArgument.serviceProblem!.problemId,
-      "user_id": _requestServiceArgument.purchase.userId,
+      "user_id": userJson.id,
       "service_request_date": _requestServiceArgument.serviceRequestDate,
       "remarks": _requestServiceArgument.remarks,
-      "delivery_status": 0,
-      // "service_request_time": _requestServiceArgument.serviceRequestTime,
-      // "address_line_1": _requestServiceArgument.address!.addressLine1,
-      // "address_line_2": _requestServiceArgument.address!.addressLine2,
-      // "city_id": _requestServiceArgument.address!.cityId,
-      // "postcode": _requestServiceArgument.address!.postcode,
-      "service_request_time": _requestServiceArgument.serviceRequestTime!,
-      "email": "khindcustomerservice@gmail.com",
+      "delivery_status": _requestServiceArgument.delivery == "Yes" ? 1 : 0,
+      "service_request_time": _requestServiceArgument.serviceRequestTime,
+      "address_line_1": _requestServiceArgument.address!.addressLine1,
+      "address_line_2": _requestServiceArgument.address!.addressLine2,
+      "city_id": _requestServiceArgument.address!.cityId,
+      "postcode": _requestServiceArgument.address!.postcode,
     };
-
-    if (_requestServiceArgument.delivery == "Yes") {
-      payload["address_line_1"] = _requestServiceArgument.address!.addressLine1;
-      payload["address_line_2"] = _requestServiceArgument.address!.addressLine1;
-      payload["city_id"] = _requestServiceArgument.address!.addressLine1;
-      payload["postcode"] = _requestServiceArgument.address!.addressLine1;
-      payload["delivery_status"] = 1;
-    }
 
     var queryParams = "?";
 
@@ -100,7 +88,7 @@ class _ReviewState extends State<Review> {
 
     return Scaffold(
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "Review", hasActions: false, isBack: true),
+          title: "Review HV", hasActions: false, isBack: true),
       body: CustomScrollView(slivers: [
         SliverFillRemaining(
           hasScrollBody: false,
@@ -246,60 +234,26 @@ class _ReviewState extends State<Review> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.50,
-                      child:
-                          Text(_requestServiceArgument.serviceCenter!.address!),
+                      child: Text(fullAddress),
                     )
                   ],
                 ),
                 SizedBox(height: 10),
+                Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      child: Text('Remark'),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Text(_requestServiceArgument.remarks!),
+                    )
+                  ],
+                ),
               ],
             ),
           ),
-          SizedBox(height: 10),
-          Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      blurRadius: 5,
-                      color: Colors.grey[200]!,
-                      offset: Offset(0, 10)),
-                ],
-                borderRadius: BorderRadius.circular(7.5),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        child: Text('Delivery'),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.50,
-                        child: Text(_requestServiceArgument.delivery!),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  _requestServiceArgument.delivery! == "Yes"
-                      ? Row(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: Text('Address'),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.50,
-                              child: Text(fullAddress),
-                            )
-                          ],
-                        )
-                      : Container(),
-                ],
-              )),
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/Purchase.dart';
+import 'package:khind/models/address.dart';
+import 'package:khind/models/city.dart';
 import 'package:khind/models/request_service_arguments.dart';
 import 'package:khind/models/service_problem.dart';
 import 'package:khind/models/states.dart';
@@ -21,21 +24,44 @@ class RequestDateDropIn extends StatefulWidget {
 }
 
 class _RequestDateDropInState extends State<RequestDateDropIn> {
+  static final GlobalKey<FormState> _basicFormKey = GlobalKey<FormState>();
+  static final GlobalKey<FormState> _addressFormKey = GlobalKey<FormState>();
+  TextEditingController remarkCT = new TextEditingController();
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  TextEditingController postCodeCT = new TextEditingController();
+  TextEditingController address1CT = new TextEditingController();
+  TextEditingController address2CT = new TextEditingController();
   List<String> _timesSlot = ["AM", "PM"];
   String _selectedTimeSlot = "AM";
   String _selectedDate = '';
   List<States> _states = [];
+  List<String> _deliveryOptions = ["Yes", "No"];
   List<ServiceProblem> _problems = [];
+  List<City> _cities = [];
   late States state;
+  late City city;
   late ServiceProblem _problem;
+  String _selectedDelivery = "No";
   late RequestServiceArgument requestServiceArgument;
+  late DateTime _maxDate;
   @override
   void initState() {
     requestServiceArgument = widget.data!;
     state = new States(
         countryId: "", state: "--Select--", stateId: "", stateCode: "");
     _selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    city = new City(
+      stateId: "",
+      city: "--Select--",
+      cityId: "",
+      postcodeId: "",
+      postcode: "",
+    );
+
+    var date = new DateTime.now();
+    var firstDayMonth = new DateTime(date.year, date.month, 0);
+    _maxDate = Jiffy(firstDayMonth).add(months: 3).dateTime;
+
     super.initState();
     this.fetchStates();
     this.fetchProblems();
@@ -58,6 +84,31 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
     });
   }
 
+  Future<void> fetchCities(String stateId) async {
+    final response =
+        await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
+
+    var cities =
+        (response['city'] as List).map((i) => City.fromJson(i)).toList();
+
+    cities.insert(
+        0,
+        new City(
+            stateId: "",
+            city: "--Select--",
+            cityId: "",
+            postcodeId: "",
+            postcode: ""));
+
+    var citySet = Set<String>();
+    List<City> newCities = cities.where((e) => citySet.add(e.city!)).toList();
+
+    setState(() {
+      _cities = newCities;
+      city = newCities[0];
+    });
+  }
+
   Future<void> fetchProblems() async {
     final response = await Api.bearerGet('provider/problems.php', isCms: true);
 
@@ -68,6 +119,13 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
     setState(() {
       _problems = problems;
       _problem = problems[0];
+    });
+  }
+
+  void onSelectCity(String postCode) {
+    setState(() {
+      postCode = postCode;
+      postCodeCT.text = postCode;
     });
   }
 
@@ -123,6 +181,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                           .parse(args.value.toString()));
                 });
               },
+              minDate: DateTime.now(),
+              maxDate: _maxDate,
               selectionMode: DateRangePickerSelectionMode.single,
               initialSelectedRange: PickerDateRange(
                   DateTime.now().subtract(const Duration(days: 4)),
@@ -342,7 +402,112 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                       ),
                     )
                   ],
-                )
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Text('Remark:'),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.60,
+                      child: Form(
+                        key: _basicFormKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter remark';
+                                }
+                                return null;
+                              },
+                              controller: remarkCT,
+                              onFieldSubmitted: (val) {
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
+                              },
+                              decoration: InputDecoration(
+                                hintText: '',
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+          //delivery opt
+          Text(
+            'Would you like your product be delivered after service',
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            width: double.infinity,
+            // height: 140,
+            margin: EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                width: 1,
+                color: Colors.grey.withOpacity(0.5),
+              ),
+              borderRadius: BorderRadius.circular(7.5),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Delivery:",
+                      overflow: TextOverflow.visible,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 10),
+                        width: width * 0.45,
+                        child: !_deliveryOptions.isEmpty
+                            ? DropdownButton<String>(
+                                items: _deliveryOptions
+                                    .map<DropdownMenuItem<String>>((e) {
+                                  return DropdownMenuItem<String>(
+                                    child: Text(
+                                      e,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                    value: e,
+                                  );
+                                }).toList(),
+                                isExpanded: true,
+                                value: _selectedDelivery,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedDelivery = value!;
+                                  });
+                                },
+                              )
+                            : Container(),
+                      ),
+                    )
+                  ],
+                ),
+                //address
+                _selectedDelivery == "Yes"
+                    ? renderAddressForm(width, context)
+                    : Container(),
               ],
             ),
           ),
@@ -366,19 +531,221 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                       serviceCenter: requestServiceArgument.serviceCenter,
                       serviceRequestDate: _selectedDate,
                       serviceRequestTime: _selectedTimeSlot,
-                      serviceType: 'Drop-In'
-                      // serviceProblem: _problem
-                      );
+                      serviceType: 'Drop-In',
+                      remarks: remarkCT.text,
+                      address: new Address(
+                        addressLine1: address1CT.text,
+                        addressLine2: address2CT.text,
+                        city: city.city,
+                        cityId: city.cityId,
+                        postcode: postCodeCT.text,
+                        stateId: state.stateId,
+                        state: state.state,
+                      ),
+                      delivery: _selectedDelivery);
 
-                  Navigator.pushNamed(
-                    context,
-                    'review',
-                    arguments:
-                        requestServiceArgs != null ? requestServiceArgs : null,
-                  );
+                  if (_selectedDelivery == "Yes") {
+                    if (_basicFormKey.currentState!.validate() &&
+                        _addressFormKey.currentState!.validate()) {
+                      Navigator.pushNamed(
+                        context,
+                        'review',
+                        arguments: requestServiceArgs != null
+                            ? requestServiceArgs
+                            : null,
+                      );
+                    }
+                  } else {
+                    if (_basicFormKey.currentState!.validate()) {
+                      Navigator.pushNamed(
+                        context,
+                        'review',
+                        arguments: requestServiceArgs != null
+                            ? requestServiceArgs
+                            : null,
+                      );
+                    }
+                  }
                 },
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Form renderAddressForm(double width, BuildContext context) {
+    return Form(
+      key: _addressFormKey,
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                width: width * 0.30,
+                child: Text('Address Line 1'),
+              ),
+              SizedBox(width: 15),
+              Flexible(
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter address 1';
+                    }
+                    return null;
+                  },
+                  controller: address1CT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'eg: No 78 Jalan Mawar',
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                width: width * 0.30,
+                child: Text('Address Line 2'),
+              ),
+              SizedBox(width: 15),
+              Flexible(
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    return null;
+                  },
+                  controller: address2CT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'eg: Puchong Perdana',
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                width: width * 0.30,
+                child: Text('City'),
+              ),
+              SizedBox(width: 15),
+              Flexible(
+                child: Container(
+                  padding: EdgeInsets.only(left: 10),
+                  width: width * 0.45,
+                  child: DropdownButton<City>(
+                    items: _cities.map<DropdownMenuItem<City>>((e) {
+                      return DropdownMenuItem<City>(
+                        child: Text(
+                          e.city!,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                        value: e,
+                      );
+                    }).toList(),
+                    isExpanded: true,
+                    value: city,
+                    onChanged: (value) {
+                      setState(() {
+                        city = value!;
+                        this.onSelectCity(value.postcode!);
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                width: width * 0.30,
+                child: Text('Postcode'),
+              ),
+              SizedBox(width: 15),
+              Flexible(
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter postcode';
+                    }
+                    return null;
+                  },
+                  controller: postCodeCT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'eg: 40050',
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                width: width * 0.30,
+                child: Text('State'),
+              ),
+              SizedBox(width: 15),
+              Flexible(
+                child: Container(
+                  padding: EdgeInsets.only(left: 10),
+                  width: width * 0.45,
+                  child: DropdownButton<States>(
+                    items: _states.map<DropdownMenuItem<States>>((e) {
+                      return DropdownMenuItem<States>(
+                        child: Text(
+                          e.state!,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                        value: e,
+                      );
+                    }).toList(),
+                    isExpanded: true,
+                    value: state,
+                    onChanged: (value) {
+                      setState(() {
+                        state = value!;
+                        this.fetchCities(value.stateId!);
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

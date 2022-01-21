@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/request_service_arguments.dart';
+import 'package:khind/models/user.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
+import 'package:khind/util/key.dart';
 
 class ReviewPickup extends StatefulWidget {
   RequestServiceArgument? data;
@@ -29,16 +33,24 @@ class _ReviewPickupState extends State<ReviewPickup> {
   }
 
   Future<void> createServiceRequest({bool isRefresh = false}) async {
+    var userStorage = await storage.read(key: USER);
+    User userJson = User.fromJson(jsonDecode(userStorage!));
+
     var payload = {
       "service_type": _requestServiceArgument.serviceType,
       "warranty_registration_id":
           _requestServiceArgument.purchase.warrantyRegistrationId,
-      "product_id": _requestServiceArgument.purchase.productGroupId,
+      "product_id": _requestServiceArgument.purchase.productId,
       "problem_id": _requestServiceArgument.serviceProblem!.problemId,
       "user_id": _requestServiceArgument.purchase.userId,
       "service_request_date": _requestServiceArgument.serviceRequestDate,
-      "remarks": remarkCT.text,
-      "delivery_status": 0
+      "remarks": _requestServiceArgument.remarks,
+      "delivery_status": _requestServiceArgument.delivery == "Yes" ? 1 : 0,
+      // "service_request_time": _requestServiceArgument.serviceRequestTime,
+      "address_line_1": _requestServiceArgument.address!.addressLine1,
+      "address_line_2": _requestServiceArgument.address!.addressLine2,
+      "city_id": _requestServiceArgument.address!.cityId,
+      "postcode": _requestServiceArgument.address!.postcode,
     };
 
     var queryParams = "?";
@@ -222,32 +234,7 @@ class _ReviewPickupState extends State<ReviewPickup> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.50,
-                      child: Form(
-                        key: _basicFormKey,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              keyboardType: TextInputType.text,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter serial number';
-                                }
-                                return null;
-                              },
-                              controller: remarkCT,
-                              onFieldSubmitted: (val) {
-                                FocusScope.of(context)
-                                    .requestFocus(new FocusNode());
-                              },
-                              decoration: InputDecoration(
-                                hintText: '',
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 5),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      child: Text(_requestServiceArgument.remarks!),
                     )
                   ],
                 ),

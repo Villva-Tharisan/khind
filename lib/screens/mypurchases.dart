@@ -28,8 +28,8 @@ class _MyPurchasesState extends State<MyPurchases> {
   bool _isRefresh = false;
   List<String> _status = [
     'All',
-    'Active',
-    'Expired',
+    'In warranty',
+    'Out of warranty',
     'Nearing Expiry',
   ];
 
@@ -322,7 +322,7 @@ class PurchaseItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    purchase.productModel!,
+                    purchase.productGroup!,
                     overflow: TextOverflow.visible,
                     style: TextStyle(
                         // height: 2,
@@ -334,7 +334,7 @@ class PurchaseItem extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    purchase.productDescription!,
+                    purchase.productModel!,
                     overflow: TextOverflow.visible,
                     style: TextStyle(
                         // height: 2,

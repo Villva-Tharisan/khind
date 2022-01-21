@@ -15,20 +15,22 @@ import 'package:http/http.dart' as http;
 import 'package:khind/models/states.dart';
 import 'dart:convert';
 
-class RequestDatePickup extends StatefulWidget {
+class RequestDateHomeVisit extends StatefulWidget {
   Purchase? data;
-  RequestDatePickup({this.data});
+  RequestDateHomeVisit({this.data});
   @override
-  _RequestDatePickupState createState() => _RequestDatePickupState();
+  _RequestDateHomeVisitState createState() => _RequestDateHomeVisitState();
 }
 
-class _RequestDatePickupState extends State<RequestDatePickup> {
+class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   static final GlobalKey<FormState> _addressFormKey = GlobalKey<FormState>();
   static final GlobalKey<FormState> _basicFormKey = GlobalKey<FormState>();
 
   TextEditingController remarkCT = new TextEditingController();
   List<String> _times = ["8am", "10am", "2pm", "4pm"];
+  List<String> _timesSlot = ["AM", "PM"];
+  String _selectedTimeSlot = "AM";
   List<States> _states = [];
   List<City> _cities = [];
   List<ServiceProblem> _problems = [];
@@ -209,6 +211,74 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
             height: 10,
           ),
           Text(
+            'Select Time Slot',
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            width: double.infinity,
+            // height: 140,
+            margin: EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                width: 1,
+                color: Colors.grey.withOpacity(0.5),
+              ),
+              borderRadius: BorderRadius.circular(7.5),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Time Slot:",
+                      overflow: TextOverflow.visible,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 10),
+                        width: width * 0.45,
+                        child: !_timesSlot.isEmpty
+                            ? DropdownButton<String>(
+                                items: _timesSlot
+                                    .map<DropdownMenuItem<String>>((e) {
+                                  return DropdownMenuItem<String>(
+                                    child: Text(
+                                      e,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                    value: e,
+                                  );
+                                }).toList(),
+                                isExpanded: true,
+                                value: _selectedTimeSlot,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedTimeSlot = value!;
+                                  });
+                                },
+                              )
+                            : Container(),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
             'What are problems are you facing with your product?',
           ),
           SizedBox(
@@ -310,68 +380,8 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
               ],
             ),
           ),
-          Text(
-            'Would you like your product be delivered after service',
-          ),
           SizedBox(
             height: 10,
-          ),
-          Container(
-            width: double.infinity,
-            // height: 140,
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                width: 1,
-                color: Colors.grey.withOpacity(0.5),
-              ),
-              borderRadius: BorderRadius.circular(7.5),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "Delivery:",
-                      overflow: TextOverflow.visible,
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Flexible(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 10),
-                        width: width * 0.45,
-                        child: !_deliveryOptions.isEmpty
-                            ? DropdownButton<String>(
-                                items: _deliveryOptions
-                                    .map<DropdownMenuItem<String>>((e) {
-                                  return DropdownMenuItem<String>(
-                                    child: Text(
-                                      e,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
-                                    value: e,
-                                  );
-                                }).toList(),
-                                isExpanded: true,
-                                value: _selectedDelivery,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedDelivery = value!;
-                                  });
-                                },
-                              )
-                            : Container(),
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
           ),
           Text(
             'Fill in your home address',
@@ -615,9 +625,10 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                         serviceProblem: _problem,
                         purchase: purchase,
                         // serviceCenter: requestServiceArgument.serviceCenter,
+                        serviceRequestTime: _selectedTimeSlot,
                         serviceRequestDate: _selectedDate,
                         remarks: remarkCT.text,
-                        serviceType: 'Request for Pick-up/Delivery',
+                        serviceType: 'Home Visit',
                         delivery: _selectedDelivery,
                         address: new Address(
                           addressLine1: address1CT.text,
@@ -631,7 +642,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
 
                     Navigator.pushNamed(
                       context,
-                      'reviewPickup',
+                      'reviewHomevisit',
                       arguments: requestServiceArgs != null
                           ? requestServiceArgs
                           : null,

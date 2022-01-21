@@ -14,6 +14,8 @@ class RequestServiceArgument {
     this.serviceRequestTime,
     this.serviceType,
     this.address,
+    this.remarks,
+    this.delivery,
   });
   final Purchase purchase;
   final ServiceCenter? serviceCenter;
@@ -22,4 +24,6 @@ class RequestServiceArgument {
   final String? serviceRequestDate;
   final String? serviceRequestTime;
   final String? serviceType;
+  final String? remarks;
+  final String? delivery;
 }

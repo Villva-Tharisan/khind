@@ -14,10 +14,11 @@ import 'package:khind/screens/news_landing.dart';
 import 'package:khind/screens/news_detail.dart';
 import 'package:khind/screens/product_model.dart';
 import 'package:khind/screens/profile.dart';
-import 'package:khind/screens/request_date.dart';
 import 'package:khind/screens/request_date_dropin.dart';
+import 'package:khind/screens/request_date_homevisit.dart';
 import 'package:khind/screens/request_service_locator.dart';
 import 'package:khind/screens/review.dart';
+import 'package:khind/screens/review_homevisit.dart';
 import 'package:khind/screens/review_pickup.dart';
 import 'package:khind/screens/service_tracker_details.dart';
 import 'package:khind/screens/servicelocator.dart';
@@ -101,8 +102,9 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => ServiceType(data: arguments as Purchase));
 
-      case 'requestDate':
-        return MaterialPageRoute(builder: (_) => RequestDate());
+      case 'requestDateHomeVisit':
+        return MaterialPageRoute(
+            builder: (_) => RequestDateHomeVisit(data: arguments as Purchase));
       case 'requestDateDropIn':
         return MaterialPageRoute(
             builder: (_) => RequestDateDropIn(
@@ -121,6 +123,12 @@ class AppRouter {
       case 'reviewPickup':
         return MaterialPageRoute(
             builder: (_) => ReviewPickup(
+                  data: arguments as RequestServiceArgument,
+                ));
+
+      case 'reviewHomevisit':
+        return MaterialPageRoute(
+            builder: (_) => ReviewHomeVisit(
                   data: arguments as RequestServiceArgument,
                 ));
 

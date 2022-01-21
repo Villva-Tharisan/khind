@@ -120,7 +120,7 @@ class _ServiceRequestLocatorState extends State<ServiceRequestLocator> {
   }
 
   Future<void> fetchServiceCenter() async {
-    var url = Uri.parse(Api.endpoint + Api.GET_SERVICE);
+    var url = Uri.parse(Api.endpoint + Api.GET_REQUEST_SERVICE);
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
       'Authorization': Api.defaultToken,
