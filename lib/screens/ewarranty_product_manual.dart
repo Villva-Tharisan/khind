@@ -210,7 +210,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   ],
                                 ),
                                 SizedBox(height: 15),
-                                Text('Product Descrption'),
+                                Text('Product Description'),
                                 SizedBox(height: 5),
                                 index != null
                                     ? Text(
@@ -232,7 +232,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                         },
                       ),
 
-                      SizedBox(height: 15),
+                      // SizedBox(height: 1),
 
                       //quantity
                       SizedBox(height: 15),
@@ -251,13 +251,13 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                               }
                             },
                             child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                border: Border.all(color: Colors.grey),
-                              ),
+                              // decoration: BoxDecoration(
+                              //   color: Colors.grey.shade300,
+                              //   border: Border.all(color: Colors.grey),
+                              // ),
                               child: Icon(
-                                Icons.remove,
-                                size: 15,
+                                Icons.remove_circle_outline,
+                                size: 30,
                               ),
                             ),
                           ),
@@ -265,21 +265,22 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                           SizedBox(width: 7.5),
                           Text(quantity.toString()),
                           SizedBox(width: 7.5),
-
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                quantity++;
-                              });
+                              if (quantity < 20) {
+                                setState(() {
+                                  quantity++;
+                                });
+                              }
                             },
                             child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                border: Border.all(color: Colors.grey),
-                              ),
+                              // decoration: BoxDecoration(
+                              //   color: Colors.grey.shade300,
+                              //   border: Border.all(color: Colors.grey),
+                              // ),
                               child: Icon(
-                                Icons.add,
-                                size: 15,
+                                Icons.add_circle_outline,
+                                size: 30,
                               ),
                             ),
                           ),
