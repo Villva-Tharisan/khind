@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:date_format/date_format.dart';
@@ -5,15 +6,19 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/cubit/product_group/product_group_cubit.dart';
 import 'package:khind/cubit/product_model/product_model_cubit.dart';
 import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/product_model.dart';
+import 'package:khind/models/user.dart';
 import 'package:khind/services/repositories.dart';
 import 'package:khind/util/helpers.dart';
+import 'package:khind/util/key.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -34,33 +39,44 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
 
   DateTime choosenDate = DateTime.now();
 
+  final storage = new FlutterSecureStorage();
+
   @override
   void initState() {
     // chosenProductGroup = productGroup[0];
     // chosenProductModel = productModel[0];
     ref.text = '';
     emailTEC.text = '';
+    product.text = '';
+    _loadUser();
+
     context.read<ProductGroupCubit>().getProductGroup();
     context.read<StoreCubit>().getStore();
 
     super.initState();
   }
 
-  bool displayDate = false;
+  User? user;
 
-  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    setState(() {
-      choosenDate = args.value;
-      displayDate = false;
-    });
+  _loadUser() async {
+    var userStorage = await storage.read(key: USER);
 
-    print(choosenDate.toString());
+    if (userStorage != null) {
+      User userJson = User.fromJson(jsonDecode(userStorage));
+
+      setState(() {
+        user = userJson;
+      });
+    }
   }
+
+  bool displayDate = false;
 
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   TextEditingController ref = new TextEditingController();
   TextEditingController emailTEC = new TextEditingController();
+  TextEditingController product = new TextEditingController();
 
   late File receiptFile;
 
@@ -81,21 +97,23 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
         appBar: Helpers.customAppBar(
           context,
           _scaffoldKey,
-          title: "E-Warranty",
+          title: "Register New Product",
           hasActions: false,
           isBack: true,
         ),
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 15,
-          ),
           child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              vertical: 20,
+              horizontal: 15,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text('Please provide us with your product information'),
+                SizedBox(height: 20),
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(10),
@@ -177,35 +195,83 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                     ),
                                     SizedBox(width: 10),
                                     Expanded(
-                                      child: DropdownButton<String>(
-                                        items: state.productName
-                                            .map<DropdownMenuItem<String>>(
-                                                (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(
-                                              value,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
-                                            ),
+                                      child: TypeAheadField(
+                                        textFieldConfiguration:
+                                            TextFieldConfiguration(
+                                          controller: product,
+                                          autofocus: true,
+                                          style: DefaultTextStyle.of(context)
+                                              .style
+                                              .copyWith(
+                                                  fontStyle: FontStyle.italic),
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                          ),
+                                        ),
+                                        suggestionsCallback: (pattern) async {
+                                          return await Repositories
+                                              .getProductModelList(
+                                                  state.productName, pattern);
+                                          // return await BackendService
+                                          //     .getSuggestions(pattern);
+                                        },
+                                        itemBuilder: (context, suggestion) {
+                                          // return Text(suggestion.toString());
+                                          return ListTile(
+                                            leading: Icon(Icons.shopping_cart),
+                                            title: Text(suggestion
+                                                .toString()
+                                                .toUpperCase()),
+                                            // subtitle: Text(
+                                            //   '\$${suggestion['price']}',
+                                            // ),
                                           );
-                                        }).toList(),
-                                        isExpanded: true,
-                                        value: chosenProductModel,
-                                        onChanged: (value) {
-                                          print(value);
+                                        },
+                                        onSuggestionSelected: (suggestion) {
+                                          product.text = suggestion.toString();
+                                          print(suggestion.toString());
                                           setState(() {
-                                            chosenProductModel = value!;
+                                            chosenProductModel =
+                                                suggestion.toString();
                                             index = state.productName
                                                 .indexOf(chosenProductModel!);
 
                                             productModel =
                                                 state.productModel[index!];
 
-                                            print(productModel);
+                                            // print(productModel);
                                           });
                                         },
                                       ),
+                                      // child: DropdownButton<String>(
+                                      //   items: state.productName
+                                      //       .map<DropdownMenuItem<String>>(
+                                      //           (String value) {
+                                      //     return DropdownMenuItem<String>(
+                                      //       value: value,
+                                      //       child: Text(
+                                      //         value,
+                                      //         overflow: TextOverflow.ellipsis,
+                                      //         maxLines: 2,
+                                      //       ),
+                                      //     );
+                                      //   }).toList(),
+                                      //   isExpanded: true,
+                                      //   value: chosenProductModel,
+                                      //   onChanged: (value) {
+                                      //     print(value);
+                                      //     setState(() {
+                                      //       chosenProductModel = value!;
+                                      //       index = state.productName
+                                      //           .indexOf(chosenProductModel!);
+
+                                      //       productModel =
+                                      //           state.productModel[index!];
+
+                                      //       print(productModel);
+                                      //     });
+                                      //   },
+                                      // ),
                                     ),
                                   ],
                                 ),
@@ -256,18 +322,23 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                               //   border: Border.all(color: Colors.grey),
                               // ),
                               child: Icon(
-                                Icons.remove_circle_outline,
-                                size: 30,
+                                Icons.remove,
+                                size: 20,
                               ),
                             ),
                           ),
 
                           SizedBox(width: 7.5),
-                          Text(quantity.toString()),
+                          Text(
+                            quantity.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           SizedBox(width: 7.5),
                           GestureDetector(
                             onTap: () {
-                              if (quantity < 20) {
+                              if (quantity < 5) {
                                 setState(() {
                                   quantity++;
                                 });
@@ -279,8 +350,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                               //   border: Border.all(color: Colors.grey),
                               // ),
                               child: Icon(
-                                Icons.add_circle_outline,
-                                size: 30,
+                                Icons.add,
+                                size: 20,
                               ),
                             ),
                           ),
@@ -290,19 +361,22 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       Row(
                         children: [
                           Text('Warranty Period : '),
-                          Text('${formatDate(choosenDate, [
-                                'dd',
-                                '-',
-                                'mm',
-                                '-',
-                                'yyyy'
-                              ])} - ${formatDate(choosenDate.add(Duration(days: 365)), [
-                                'dd',
-                                '-',
-                                'mm',
-                                '-',
-                                'yyyy'
-                              ])}'),
+                          Text(
+                            '${formatDate(choosenDate, [
+                                  'dd',
+                                  '-',
+                                  'mm',
+                                  '-',
+                                  'yyyy'
+                                ])} - ${formatDate(choosenDate.add(Duration(days: 365)), [
+                                  'dd',
+                                  '-',
+                                  'mm',
+                                  '-',
+                                  'yyyy'
+                                ])}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ],
                       ),
                     ],
@@ -327,49 +401,43 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                   child: Column(
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
                             width: width * 0.3,
                             child: Text('Purchase Date '),
                           ),
-                          Expanded(
-                            child: displayDate
-                                ? SfDateRangePicker(
-                                    onSelectionChanged: _onSelectionChanged,
-                                    selectionMode:
-                                        DateRangePickerSelectionMode.single,
-                                    minDate: DateTime.now()
-                                        .subtract(Duration(days: 7)),
-                                    maxDate: DateTime.now(),
-                                    initialDisplayDate: DateTime.now(),
-                                  )
-                                : GestureDetector(
-                                    onTap: () async {
-                                      setState(() {
-                                        displayDate = true;
-                                      });
-                                    },
-                                    child: choosenDate == DateTime.now()
-                                        ? Container(
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                            ),
-                                            child: Text('Choose Date'),
-                                          )
-                                        : Text(formatDate(choosenDate, [
-                                              'dd',
-                                              '-',
-                                              'mm',
-                                              '-',
-                                              'yyyy'
-                                            ]) +
-                                            ' (Click to change date)'),
-                                  ),
+                          Text(
+                            formatDate(
+                                choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.green,
+                            ),
+                            child: Text('Change Date'),
+                            onPressed: () async {
+                              DateTime? chosen = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate:
+                                    DateTime.now().subtract(Duration(days: 30)),
+                                lastDate: DateTime.now(),
+                                initialEntryMode: DatePickerEntryMode.calendar,
+                              );
+
+                              if (chosen != null) {
+                                setState(() {
+                                  choosenDate = chosen;
+                                });
+                              }
+                            },
                           ),
                         ],
                       ),
-                      SizedBox(height: 15),
+                      SizedBox(height: 10),
                       Row(
                         children: [
                           Container(
@@ -449,73 +517,107 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             ),
                           ],
                         ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 15),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 0.5,
-                        color: Colors.grey,
-                        spreadRadius: 0.5,
-                        // offset:
-                      ),
-                    ],
-                    borderRadius: BorderRadius.circular(7.5),
-                  ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          FilePickerResult? result =
-                              await FilePicker.platform.pickFiles(
-                            type: FileType.image,
-                          );
+                      SizedBox(height: 15),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style:
+                                ElevatedButton.styleFrom(primary: Colors.green),
+                            onPressed: () async {
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
+                                type: FileType.custom,
+                                allowedExtensions: [
+                                  'jpg',
+                                  'JPG',
+                                  'jpeg',
+                                  'JPEG',
+                                  'png',
+                                  'PNG',
+                                  'heic',
+                                  'HEIC',
+                                  'pdf',
+                                  'PDF',
+                                ],
+                              );
 
-                          if (result != null) {
-                            PlatformFile file = result.files.first;
+                              if (result != null) {
+                                PlatformFile file = result.files.first;
 
-                            setState(() {
-                              fileName = file.name;
-                              receiptFile = File(file.path!);
-                            });
+                                setState(() {
+                                  fileName = file.name;
+                                  receiptFile = File(file.path!);
+                                });
 
-                            print(file.name);
-                            print(file.bytes);
-                            print(file.size);
-                            print(file.extension);
-                            print(file.path);
-                          } else {
-                            // User canceled the picker
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            // color: Color(0xFFEFF0EF),
-                            color: Colors.grey.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(7.5),
+                                print(file.name);
+                                print(file.bytes);
+                                print(file.size);
+                                print(file.extension);
+                                print(file.path);
+                              } else {
+                                // User canceled the picker
+                              }
+                            },
+                            child: Text('Upload Receipt'),
                           ),
-                          child: Text('Upload Receipt'),
-                        ),
+                          // GestureDetector(
+                          //   onTap: () async {
+                          //     FilePickerResult? result =
+                          //         await FilePicker.platform.pickFiles(
+                          //       type: FileType.custom,
+                          //       allowedExtensions: [
+                          //         'jpg',
+                          //         'JPG',
+                          //         'jpeg',
+                          //         'JPEG',
+                          //         'png',
+                          //         'PNG',
+                          //         'heic',
+                          //         'HEIC',
+                          //         'pdf',
+                          //         'PDF',
+                          //       ],
+                          //     );
+
+                          //     if (result != null) {
+                          //       PlatformFile file = result.files.first;
+
+                          //       setState(() {
+                          //         fileName = file.name;
+                          //         receiptFile = File(file.path!);
+                          //       });
+
+                          //       print(file.name);
+                          //       print(file.bytes);
+                          //       print(file.size);
+                          //       print(file.extension);
+                          //       print(file.path);
+                          //     } else {
+                          //       // User canceled the picker
+                          //     }
+                          //   },
+                          //   child: Container(
+                          //     padding: EdgeInsets.all(5),
+                          //     decoration: BoxDecoration(
+                          //       // color: Color(0xFFEFF0EF),
+                          //       color: Colors.grey.withOpacity(0.5),
+                          //       borderRadius: BorderRadius.circular(7.5),
+                          //     ),
+                          //     child: Text('Upload Receipt'),
+                          //   ),
+                          // ),
+                          SizedBox(width: 20),
+                          Expanded(child: Text(fileName)),
+                        ],
                       ),
-                      SizedBox(width: 20),
-                      Expanded(child: Text(fileName)),
                     ],
                   ),
                 ),
-                SizedBox(height: 15),
-                Text('Please fill in the blanks fields'),
                 SizedBox(height: 30),
                 GradientButton(
                   height: 40,
                   child: Text(
-                    "Apply",
+                    "Save",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   gradient: LinearGradient(
@@ -525,7 +627,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                   onPressed: () async {
                     String email = '';
                     if (emailTEC.text == '') {
-                      email = 'khindcustomerservice@gmail.com';
+                      email = user!.email!.toLowerCase();
                     } else {
                       email = emailTEC.text;
                     }
@@ -553,8 +655,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                         context: context,
                         // type: AlertType.info,
                         title: "Register Product",
-                        desc:
-                            "Your warranty submission  is accepted and you shall be informed  once it approved. Please do checkout your warranty status under My Purchase",
+                        desc: "Your product is registered",
                         buttons: [
                           DialogButton(
                             child: Text(
@@ -562,9 +663,12 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20),
                             ),
-                            onPressed: () => Navigator.of(context)
-                                .pushNamedAndRemoveUntil(
-                                    'home', (route) => false),
+                            onPressed: () =>
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                              'home',
+                              (route) => false,
+                              arguments: 0,
+                            ),
                             width: 120,
                           )
                         ],

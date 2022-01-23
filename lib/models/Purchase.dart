@@ -226,6 +226,7 @@ class Purchase {
 
     this.statusCode = "2";
     this.status = "Out of warranty";
+
     if (diff > 0) {
       this.status = "In warranty";
       this.statusCode = "0";

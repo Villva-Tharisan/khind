@@ -80,25 +80,39 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(purchase.productGroupDescription!),
-                  Text(purchase.modelDescription!),
+                  Text(
+                    purchase.productGroupDescription!,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(purchase.modelDescription!,
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 30),
-                  Text('${formatDate(purchaseDate, [
-                        'dd',
-                        '-',
-                        'mm',
-                        '-',
-                        'yyyy'
-                      ])} - ${formatDate(purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365)), [
-                        'dd',
-                        '-',
-                        'mm',
-                        '-',
-                        'yyyy'
-                      ])}'),
                   Row(
                     children: [
-                      Text('Serial Number: '),
+                      Text('Warranty valid until:'),
+                      SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                            '${formatDate(purchaseDate, [
+                                  'dd',
+                                  '-',
+                                  'mm',
+                                  '-',
+                                  'yyyy'
+                                ])} - ${formatDate(purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365)), [
+                                  'dd',
+                                  '-',
+                                  'mm',
+                                  '-',
+                                  'yyyy'
+                                ])}',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text('Serial Number:'),
                       SizedBox(width: 10),
                       Text(purchase.serialNo!),
                       // Expanded(
@@ -157,11 +171,26 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                           purchaseDate, ['dd', '-', 'mm', '-', 'yyyy'])),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Text('Store : '),
-                      Text('KHIND Marketing SDN BHD'),
-                    ],
+                  SizedBox(height: 10),
+                  Text('New Extended Warranty'),
+                  SizedBox(height: 5),
+                  Text(
+                    '${formatDate(now, [
+                          'dd',
+                          '-',
+                          'mm',
+                          '-',
+                          'yyyy'
+                        ])} - ${formatDate(now.add(Duration(days: 365)), [
+                          'dd',
+                          '-',
+                          'mm',
+                          '-',
+                          'yyyy'
+                        ])}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -169,33 +198,20 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
 
             SizedBox(height: 20),
 
-            Text('New Extended Warranty'),
-            SizedBox(height: 10),
-
-            Text(
-              '${formatDate(now, [
-                    'dd',
-                    '-',
-                    'mm',
-                    '-',
-                    'yyyy'
-                  ])} - ${formatDate(now.add(Duration(days: 365)), [
-                    'dd',
-                    '-',
-                    'mm',
-                    '-',
-                    'yyyy'
-                  ])}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Text('Store : '),
+                Text('KHIND Marketing SDN BHD'),
+              ],
             ),
-            SizedBox(height: 10),
 
+            SizedBox(height: 10),
             Text('Warranty Cost:-'),
+
             SizedBox(height: 10),
 
-            Text('RM ${purchase.extendedEwarrantyCost ?? 95.00}'),
+            Text('RM ${purchase.extendedEwarrantyCost ?? '95.00'}',
+                style: TextStyle(fontWeight: FontWeight.bold)),
 
             // SizedBox(height: 50),
 
@@ -223,7 +239,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                         // type: AlertType.info,
                         title: "Warranty Extension Submitted",
                         desc:
-                            "The result will be notified within 7 days. Payment need to be made after 7 days for approval.",
+                            "You will be notified in 2 days on the approval of the extension. Please ensure that payment is done within 7 days after approval",
                         buttons: [
                           DialogButton(
                             child: Text(
@@ -231,7 +247,12 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20),
                             ),
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () =>
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                              'home',
+                              (route) => false,
+                              arguments: 0,
+                            ),
                             width: 120,
                           )
                         ],

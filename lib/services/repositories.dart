@@ -225,4 +225,16 @@ class Repositories {
     Store store = storeFromJson(response.body);
     return store;
   }
+
+  static Future<List<String>> getProductModelList(
+      List<String> productModel, String pattern) async {
+    List<String> matchedModel = [];
+    for (var i = 0; i < productModel.length; i++) {
+      if (productModel[i].toLowerCase().contains(pattern.toLowerCase())) {
+        matchedModel.add(productModel[i]);
+      }
+    }
+
+    return matchedModel;
+  }
 }

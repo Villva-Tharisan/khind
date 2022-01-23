@@ -284,20 +284,35 @@ class _ProductModelState extends State<ProductModel> {
                       SizedBox(
                         height: 15,
                       ),
-                      GradientButton(
-                        height: 40,
-                        child: Text(
-                          "Extend Warranty",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+
+                      if (Helpers.purchase!.statusCode != '2')
+                        GradientButton(
+                          height: 40,
+                          child: Text(
+                            "Extend Warranty",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          gradient: LinearGradient(
+                              colors: <Color>[Colors.white, Colors.grey[400]!],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter),
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('ExtendWarranty');
+                          },
                         ),
-                        gradient: LinearGradient(
-                            colors: <Color>[Colors.white, Colors.grey[400]!],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('ExtendWarranty');
-                        },
-                      ),
+
+                      if (Helpers.purchase!.statusCode == '2')
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style:
+                                ElevatedButton.styleFrom(primary: Colors.grey),
+                            onPressed: () {},
+                            child: Text(
+                              'Extend Warranty',
+                            ),
+                          ),
+                        ),
                       // Container(
                       //   child: FlatButton(
                       //     child: Text(

@@ -45,15 +45,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     if (widget.data != null) {
-      if (widget.data == 2) {
+      if (widget.data == 0) {
+        page = 1;
+        tabIdx = 1;
+      } else if (widget.data == 1) {
+        page = 2;
+        tabIdx = 2;
+      } else if (widget.data == 2) {
         page = 3;
-        tabIdx = widget.data!;
+        tabIdx = 3;
       } else if (widget.data == 3) {
         page = 4;
-        tabIdx = widget.data!;
+        tabIdx = 4;
       }
     }
     super.initState();
+
     _animationController = AnimationController(
       duration: Duration(seconds: 1),
       vsync: this,
