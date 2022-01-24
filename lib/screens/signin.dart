@@ -32,8 +32,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    emailCT.text = 'khindcustomerservice@gmail.com';
-    passwordCT.text = 'Khindanshin118';
+    // emailCT.text = 'khindcustomerservice@gmail.com';
+    // passwordCT.text = 'Khindanshin118';
 
     super.initState();
     _loadVersion();
