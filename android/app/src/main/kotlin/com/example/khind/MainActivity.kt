@@ -1,4 +1,4 @@
-package com.example.khind
+package com.developer.khind
 
 import io.flutter.embedding.android.FlutterActivity
 

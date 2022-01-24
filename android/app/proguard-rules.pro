@@ -1,1 +1,1 @@
--keep class com.example.khind.BuildConfig { *; }
+-keep class com.developer.khind.BuildConfig { *; }
