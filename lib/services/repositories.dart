@@ -92,8 +92,8 @@ class Repositories {
 
   static Future<String> getServiceProduct() async {
     final queryParameters = {
-      // 'email': 'khindcustomerservice@gmail.com',
-      'email': '',
+      'email': 'khindcustomerservice@gmail.com',
+      // 'email': '',
     };
 
     String queryString = Uri(queryParameters: queryParameters).query;
@@ -112,6 +112,8 @@ class Repositories {
       url,
       headers: authHeader,
     );
+
+    print('result is' + response.body);
 
     return response.body;
   }

@@ -5,6 +5,7 @@ import 'package:khind/cubit/product_group/product_group_cubit.dart';
 import 'package:khind/cubit/product_model/product_model_cubit.dart';
 import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/news.dart';
+import 'package:khind/models/service_product.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
 import 'package:khind/screens/ewarranty_product_manual.dart';
@@ -148,15 +149,11 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => EwarrantyScanner());
 
       case 'ServiceTrackerDetails':
-        if (arguments is Map) {
-          return MaterialPageRoute(
-            builder: (_) => ServiceTrackerDetails(
-              arguments: arguments,
-            ),
-          );
-        } else {
-          return invalidArgument();
-        }
+        return MaterialPageRoute(
+          builder: (_) => ServiceTrackerDetails(
+            serviceProduct: arguments as ServiceProduct,
+          ),
+        );
 
       default:
         return MaterialPageRoute(

@@ -36,12 +36,13 @@ class _ServiceTrackerState extends State<ServiceTracker> {
           // print("DATA: ${snapshot.data.runtimeType}");
           if (snapshot.hasData && snapshot.data != "[]") {
             ServiceProduct serviceProduct;
-            try {
-              serviceProduct = ServiceProduct.fromJson(
-                  json.decode(snapshot.data!.toString()));
-            } catch (e) {
-              serviceProduct = ServiceProduct(data: []);
-            }
+            serviceProduct =
+                ServiceProduct.fromJson(json.decode(snapshot.data!.toString()));
+            // try {
+
+            // } catch (e) {
+            //   serviceProduct = ServiceProduct(data: []);
+            // }
 
             return Container(
               margin: EdgeInsets.symmetric(
@@ -90,21 +91,35 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
+                                      Helpers.productIndex = index;
                                       Navigator.of(context).pushNamed(
-                                        'ServiceTrackerDetails',
-                                        arguments: {
-                                          'productName': serviceProduct
-                                              .data![index]
-                                              .productGroupDescription,
-                                          'productModel': serviceProduct
-                                              .data![index].productDescription!,
-                                          'serialNo': serviceProduct
-                                              .data![index].serialNo!,
-                                          'technician': serviceProduct
-                                              .data![index]
-                                              .technicianServiceGroup
-                                        },
-                                      );
+                                          'ServiceTrackerDetails',
+                                          arguments: serviceProduct
+                                          // arguments: {
+                                          //   'productName':
+                                          //       serviceProduct.data![index]
+                                          //           ['product_group_description'],
+                                          //   'productModel':
+                                          //       serviceProduct.data![index]
+                                          //           ['product_description'],
+                                          //   'serialNo': serviceProduct
+                                          //       .data![index]['serial_no'],
+                                          //   'technician':
+                                          //       serviceProduct.data![index]
+                                          //           ['technician_service_group']
+
+                                          //   // 'productName': serviceProduct
+                                          //   //     .data![index]
+                                          //   //     .productGroupDescription,
+                                          //   // 'productModel': serviceProduct
+                                          //   //     .data![index].productDescription!,
+                                          //   // 'serialNo': serviceProduct
+                                          //   //     .data![index].serialNo!,
+                                          //   // 'technician': serviceProduct
+                                          //   //     .data![index]
+                                          //   //     .technicianServiceGroup
+                                          // },
+                                          );
                                     },
                                     child: Container(
                                       height: height * 0.1,
@@ -138,18 +153,20 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                   Align(
                                                     alignment:
                                                         Alignment.centerLeft,
-                                                    child: Text(
-                                                      serviceProduct
-                                                          .data![index]
-                                                          .productDescription!,
-                                                    ),
+                                                    child: Text(serviceProduct
+                                                            .data![index][
+                                                        'product_description']!),
+                                                    //   serviceProduct
+                                                    //       .data![index]
+                                                    //       .productDescription!,
+                                                    // ),
                                                   ),
                                                   SizedBox(height: 10),
                                                   Align(
                                                     alignment:
                                                         Alignment.centerRight,
                                                     child: Text(
-                                                      'Service Status : Receive',
+                                                      'Service Status : ${serviceProduct.data![index]['service_request_status']!}',
                                                       textAlign:
                                                           TextAlign.right,
                                                     ),
@@ -162,7 +179,12 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                             child: Container(
                                               height: double.infinity,
                                               decoration: BoxDecoration(
-                                                color: Colors.green,
+                                                color: serviceProduct
+                                                                .data![index][
+                                                            'service_request_status'] ==
+                                                        'Pending Collection'
+                                                    ? Colors.green
+                                                    : Colors.grey,
                                                 borderRadius: BorderRadius.only(
                                                   topRight: Radius.circular(10),
                                                   bottomRight:

@@ -69,7 +69,8 @@ class Helpers {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(),
-            Container(margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
+            Container(
+                margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
           ],
         ),
       );
@@ -98,13 +99,15 @@ class Helpers {
     );
   }
 
-  static AppBar customAppBar(BuildContext ctx, GlobalKey<ScaffoldState> scaffoldKey,
+  static AppBar customAppBar(
+      BuildContext ctx, GlobalKey<ScaffoldState> scaffoldKey,
       {String title = "", bool isBack = false, hasActions = true}) {
     return AppBar(
       leadingWidth: isBack ? 50 : 20,
       leading: isBack
           ? IconButton(
-              icon: Icon(Icons.arrow_back_ios_new, color: AppColors.tertiery, size: 20),
+              icon: Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.tertiery, size: 20),
               onPressed: () {
                 if (!isBack) {
                   scaffoldKey.currentState!.openDrawer();
@@ -119,19 +122,23 @@ class Helpers {
       centerTitle: false,
       title: Text(
         title,
-        style: TextStyle(color: AppColors.tertiery, fontWeight: FontWeight.bold),
+        style:
+            TextStyle(color: AppColors.tertiery, fontWeight: FontWeight.bold),
       ),
       actions: hasActions
           ? [
               new IconButton(
                   color: Colors.transparent,
-                  icon: Image(image: AssetImage('assets/icons/location.png'), height: 22),
+                  icon: Image(
+                      image: AssetImage('assets/icons/location.png'),
+                      height: 22),
                   onPressed: () {
                     Navigator.pushNamed(ctx, 'service_locator');
                   }),
               SizedBox(width: 5),
               new InkWell(
-                  child: Icon(Icons.account_circle_rounded, size: 27, color: AppColors.tertiery),
+                  child: Icon(Icons.account_circle_rounded,
+                      size: 27, color: AppColors.tertiery),
                   onTap: () {
                     Navigator.pushNamed(ctx, 'profile');
                   }),
@@ -156,10 +163,14 @@ class Helpers {
 
   static Future<void> launchInWebViewOrVC(String url) async {
     if (!await launch(url,
-        forceSafariVC: true, forceWebView: true, enableDomStorage: true, enableJavaScript: true)) {
+        forceSafariVC: true,
+        forceWebView: true,
+        enableDomStorage: true,
+        enableJavaScript: true)) {
       throw 'Could not launch $url';
     }
   }
 
   static bool? fromSignIn = false;
+  static int? productIndex;
 }
