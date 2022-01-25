@@ -84,8 +84,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                     purchase.productGroupDescription!,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(purchase.modelDescription!,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(purchase.modelDescription!, style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 30),
                   Row(
                     children: [
@@ -110,11 +109,12 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 10),
                   Row(
                     children: [
                       Text('Serial Number:'),
                       SizedBox(width: 10),
-                      Text(purchase.serialNo!),
+                      Text(purchase.serialNo != null ? purchase.serialNo.toString() : "-"),
                       // Expanded(
                       //   child: DropdownButton<String>(
                       //     items: productModel
@@ -167,8 +167,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   Row(
                     children: [
                       Text('Purchase Date : '),
-                      Text(formatDate(
-                          purchaseDate, ['dd', '-', 'mm', '-', 'yyyy'])),
+                      Text(formatDate(purchaseDate, ['dd', '-', 'mm', '-', 'yyyy'])),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -206,7 +205,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             ),
 
             SizedBox(height: 10),
-            Text('Warranty Cost:-'),
+            Text('Warranty Cost: -'),
 
             SizedBox(height: 10),
 
@@ -244,11 +243,9 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                           DialogButton(
                             child: Text(
                               "Okay",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
+                              style: TextStyle(color: Colors.white, fontSize: 20),
                             ),
-                            onPressed: () =>
-                                Navigator.of(context).pushNamedAndRemoveUntil(
+                            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
                               'home',
                               (route) => false,
                               arguments: 0,

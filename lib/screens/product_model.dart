@@ -291,16 +291,31 @@ class _ProductModelState extends State<ProductModel> {
                         ),
 
                       if (Helpers.purchase!.statusCode == '2')
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(primary: Colors.grey),
-                            onPressed: () {},
-                            child: Text(
-                              'Extend Warranty',
-                            ),
+                        GradientButton(
+                          hideShadow: true,
+                          height: 40,
+                          child: Text(
+                            "Extend Warranty",
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                           ),
+                          gradient: LinearGradient(
+                              colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter),
+                          onPressed: () {},
                         ),
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   child: ElevatedButton(
+
+                      //     style: ElevatedButton.styleFrom(primary: Colors.grey[300]),
+                      //     onPressed: () {},
+                      //     child: Text(
+                      //       'Extend Warranty',
+                      //       style: TextStyles.textWhite,
+                      //     ),
+                      //   ),
+                      // ),
                       // Container(
                       //   child: FlatButton(
                       //     child: Text(
