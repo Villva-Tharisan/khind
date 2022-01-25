@@ -49,8 +49,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     if (status == "All") {
       filter = _myPurchase;
     } else {
-      filter =
-          _myPurchase.where((element) => element.status == status).toList();
+      filter = _myPurchase.where((element) => element.status == status).toList();
     }
     setState(() {
       _filteredMyPurchase = filter;
@@ -100,8 +99,7 @@ class _MyPurchasesState extends State<MyPurchases> {
 
     var page = _page;
 
-    var purchases =
-        (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+    var purchases = (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
 
     if (purchases.length < PAGE_LIMIT) {
       setState(() {
@@ -121,9 +119,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     allPurchase.addAll(purchases);
     var filteredPurchase = allPurchase;
     if (selectedStatus != "All") {
-      filteredPurchase = filteredPurchase
-          .where((element) => element.status! == selectedStatus)
-          .toList();
+      filteredPurchase =
+          filteredPurchase.where((element) => element.status! == selectedStatus).toList();
     }
 
     setState(() {
@@ -140,8 +137,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "My Purchases", hasActions: false),
+      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "My Purchases", hasActions: false),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,8 +201,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                               // physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               // shrinkWrap: false,
-                              itemCount: _filteredMyPurchase.length +
-                                  (_hasMore ? 1 : 0),
+                              itemCount: _filteredMyPurchase.length + (_hasMore ? 1 : 0),
                               itemBuilder: (BuildContext context, int index) {
                                 if (index == _filteredMyPurchase.length - 1) {
                                   fetchMyPurchases();
@@ -223,8 +218,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(16),
-                                        child: Text(
-                                            "Error while loading photos, tap to try agin"),
+                                        child: Text("Error while loading photos, tap to try agin"),
                                       ),
                                     ));
                                   } else {
@@ -295,8 +289,7 @@ class PurchaseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var serialNo =
-        this.purchase.serialNo == null ? "-" : this.purchase.serialNo;
+    var serialNo = this.purchase.serialNo == null ? "-" : this.purchase.serialNo;
     return GestureDetector(
       onTap: () {
         // Navigator.pushNamed(
@@ -304,8 +297,9 @@ class PurchaseItem extends StatelessWidget {
         //   'productModel',
         // );
         Helpers.purchase = purchase;
-        Navigator.pushNamed(context, 'productModel',
-            arguments: purchase != null ? purchase : null);
+
+        // print("#PURCHASE: ${jsonEncode(purchase)}");
+        Navigator.pushNamed(context, 'productModel', arguments: purchase != null ? purchase : null);
       },
       child: Container(
         width: double.infinity,
@@ -314,8 +308,7 @@ class PurchaseItem extends StatelessWidget {
           border: Border.all(width: 0.1),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(
-                blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+            BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
           ],
           borderRadius: BorderRadius.circular(7.5),
         ),
