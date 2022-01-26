@@ -2,6 +2,8 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:khind/models/city.dart';
+import 'package:khind/models/states.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:khind/components/round_button.dart';
 import 'package:khind/models/user.dart';
@@ -26,7 +28,9 @@ class _ProfileState extends State<Profile> {
   TextEditingController emailCT = new TextEditingController();
   TextEditingController dobCT = new TextEditingController();
   TextEditingController passwordCT = new TextEditingController();
-  TextEditingController addressCT = new TextEditingController();
+  TextEditingController postCodeCT = new TextEditingController();
+  TextEditingController address1CT = new TextEditingController();
+  TextEditingController address2CT = new TextEditingController();
   bool isLoading = false;
   User? user;
   String errorMsg = "";
@@ -38,8 +42,13 @@ class _ProfileState extends State<Profile> {
   bool canEditEmail = false;
   bool canEditDob = false;
   bool canEditAddress = false;
+  List<City> _cities = [];
+  List<States> _states = [];
+  late States state;
+  late City city;
   String version = "";
   String buildNo = "";
+  String postcode = "";
 
   @override
   void initState() {
@@ -85,8 +94,38 @@ class _ProfileState extends State<Profile> {
           dobCT.text = userJson.dob!;
         }
       });
-      print("###USER: ${jsonEncode(user)}");
+      // print("###USER: ${jsonEncode(user)}");
     }
+  }
+
+  Future<void> fetchStates() async {
+    final response = await Api.bearerGet('provider/state.php', isCms: true);
+
+    var states = (response['states'] as List).map((i) => States.fromJson(i)).toList();
+
+    states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+
+    setState(() {
+      _states = states;
+      state = states[0];
+    });
+  }
+
+  Future<void> fetchCities(String stateId) async {
+    final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
+
+    var cities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
+
+    cities.insert(
+        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
+    // print("#CITIES: $cities");
+    var citySet = Set<String>();
+    List<City> newCities = cities.where((e) => citySet.add(e.city!)).toList();
+
+    setState(() {
+      _cities = newCities;
+      city = newCities[0];
+    });
   }
 
   _loadVersion() async {
@@ -104,7 +143,8 @@ class _ProfileState extends State<Profile> {
   void dispose() {
     emailCT.dispose();
     mobileNoCT.dispose();
-    addressCT.dispose();
+    address1CT.dispose();
+    address2CT.dispose();
     super.dispose();
   }
 
@@ -112,7 +152,8 @@ class _ProfileState extends State<Profile> {
     emailCT.clear();
     mobileNoCT.clear();
     passwordCT.clear();
-    addressCT.clear();
+    address1CT.clear();
+    address2CT.clear();
   }
 
   void showEditField(name) {
@@ -136,7 +177,11 @@ class _ProfileState extends State<Profile> {
         'email': emailCT.text,
         'password': passwordCT.text,
         'telephone': mobileNoCT.text,
-        'address': addressCT.text
+        'address1': address1CT.text,
+        'address2': address1CT.text,
+        'state': state,
+        'city': city,
+        'postcode': postcode,
       };
 
       // print("MAP: $map");
@@ -259,6 +304,184 @@ class _ProfileState extends State<Profile> {
     }
     return Flexible(
         child: Container(padding: const EdgeInsets.only(top: 25, bottom: 20), child: Text('$val')));
+  }
+
+  Widget renderAddress() {
+    double width = MediaQuery.of(context).size.width;
+
+    return Container(
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                width: width * 0.30,
+                child: Text('Address Line 1'),
+              ),
+              SizedBox(width: 15),
+              Flexible(
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter address 1';
+                    }
+                    return null;
+                  },
+                  controller: address1CT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'eg: No 78 Jalan Mawar',
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                width: width * 0.30,
+                child: Text('Address Line 2'),
+              ),
+              SizedBox(width: 15),
+              Flexible(
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    return null;
+                  },
+                  controller: address2CT,
+                  onFieldSubmitted: (val) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'eg: Puchong Perdana',
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                width: width * 0.30,
+                child: Text('State'),
+              ),
+              SizedBox(width: 15),
+              Flexible(
+                child: Container(
+                  padding: EdgeInsets.only(left: 10),
+                  width: width * 0.45,
+                  child: DropdownButton<States>(
+                    items: _states.map<DropdownMenuItem<States>>((e) {
+                      return DropdownMenuItem<States>(
+                        child: Text(
+                          e.state!,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                        value: e,
+                      );
+                    }).toList(),
+                    isExpanded: true,
+                    value: state,
+                    onChanged: (value) {
+                      setState(() {
+                        state = value!;
+                        this.fetchCities(value.stateId!);
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          _cities.length > 0
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 15),
+                      width: width * 0.30,
+                      child: Text('City'),
+                    ),
+                    SizedBox(width: 15),
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 10),
+                        width: width * 0.45,
+                        child: DropdownButton<City>(
+                          items: _cities.map<DropdownMenuItem<City>>((e) {
+                            return DropdownMenuItem<City>(
+                              child: Text(
+                                e.city!,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                              value: e,
+                            );
+                          }).toList(),
+                          isExpanded: true,
+                          value: city,
+                          onChanged: (value) {
+                            setState(() {
+                              city = value!;
+                              // this.onSelectCity(value.postcode!);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Container(),
+          // Row(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   children: [
+          //     Container(
+          //       padding: EdgeInsets.only(top: 15),
+          //       width: width * 0.30,
+          //       child: Text('Postcode'),
+          //     ),
+          //     SizedBox(width: 15),
+          //     Flexible(
+          //       child: TextFormField(
+          //         keyboardType: TextInputType.text,
+          //         validator: (value) {
+          //           if (value!.isEmpty) {
+          //             return 'Please enter postcode';
+          //           }
+          //           return null;
+          //         },
+          //         controller: postCodeCT,
+          //         onFieldSubmitted: (val) {
+          //           FocusScope.of(context).requestFocus(new FocusNode());
+          //         },
+          //         decoration: InputDecoration(
+          //           border: InputBorder.none,
+          //           hintText: 'eg: 40050',
+          //           contentPadding:
+          //               const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+        ],
+      ),
+    );
   }
 
   Widget _renderForm() {
@@ -420,43 +643,44 @@ class _ProfileState extends State<Profile> {
                         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       _renderLabel("Address",
                           textStyle: TextStyles.textDefault, padding: EdgeInsets.only(top: 10)),
-                      Flexible(
-                          child: Row(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                            Container(
-                                width: fieldSize,
-                                child: TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    minLines: 3,
-                                    maxLines: null,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter address';
-                                      }
-                                      return null;
-                                    },
-                                    controller: addressCT,
-                                    onFieldSubmitted: (val) {},
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: '',
-                                    ))),
-                            Spacer(),
-                            InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    canEditAddress = !this.canEditAddress;
-                                  });
-                                },
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColors.secondary,
-                                        borderRadius: BorderRadius.circular(10)),
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    child: Text(canEditAddress ? "View" : "Edit",
-                                        style: TextStyles.textWhiteSm)))
-                          ]))
+                      renderAddress()
+                      // Flexible(
+                      //     child: Row(
+                      //         // crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //       Container(
+                      //           width: fieldSize,
+                      //           child: TextFormField(
+                      //               keyboardType: TextInputType.text,
+                      //               minLines: 3,
+                      //               maxLines: null,
+                      //               validator: (value) {
+                      //                 if (value!.isEmpty) {
+                      //                   return 'Please enter address';
+                      //                 }
+                      //                 return null;
+                      //               },
+                      //               controller: addressCT,
+                      //               onFieldSubmitted: (val) {},
+                      //               decoration: InputDecoration(
+                      //                 border: InputBorder.none,
+                      //                 hintText: '',
+                      //               ))),
+                      //       Spacer(),
+                      //       InkWell(
+                      //           onTap: () {
+                      //             setState(() {
+                      //               canEditAddress = !this.canEditAddress;
+                      //             });
+                      //           },
+                      //           child: Container(
+                      //               decoration: BoxDecoration(
+                      //                   color: AppColors.secondary,
+                      //                   borderRadius: BorderRadius.circular(10)),
+                      //               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      //               child: Text(canEditAddress ? "View" : "Edit",
+                      //                   style: TextStyles.textWhiteSm)))
+                      //     ]))
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
@@ -513,7 +737,7 @@ class _ProfileState extends State<Profile> {
                       showDuration: const Duration(seconds: 2),
                       waitDuration: const Duration(seconds: 1),
                       message:
-                          "We respect your privacy, data share with KHIND is protected under the PDPN.",
+                          "We respect your privacy, data share with KHIND is protected under the PDPA.",
                       child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: () {
@@ -524,7 +748,7 @@ class _ProfileState extends State<Profile> {
                             Icon(Icons.info_outline_rounded),
                             SizedBox(width: 5),
                             Container(
-                                child: _renderLabel("PDPN", textStyle: TextStyles.textDefault))
+                                child: _renderLabel("PDPA", textStyle: TextStyles.textDefault))
                           ])),
                     )),
                     SizedBox(height: 20),
