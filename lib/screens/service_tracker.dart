@@ -36,8 +36,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
           // print("DATA: ${snapshot.data.runtimeType}");
           if (snapshot.hasData && snapshot.data != "[]") {
             ServiceProduct serviceProduct;
-            serviceProduct =
-                ServiceProduct.fromJson(json.decode(snapshot.data!.toString()));
+            serviceProduct = ServiceProduct.fromJson(json.decode(snapshot.data!.toString()));
             // try {
 
             // } catch (e) {
@@ -49,10 +48,9 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                 horizontal: 15,
                 vertical: 20,
               ),
-              child: serviceProduct.data!.length == 0
+              child: serviceProduct.data?.length == 0
                   ? Center(
-                      child: Text('There is nothing to track',
-                          style: TextStyles.textSecondaryBold),
+                      child: Text('There is nothing to track', style: TextStyles.textSecondaryBold),
                     )
                   : Column(
                       children: [
@@ -92,8 +90,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                   GestureDetector(
                                     onTap: () {
                                       Helpers.productIndex = index;
-                                      Navigator.of(context).pushNamed(
-                                          'ServiceTrackerDetails',
+                                      Navigator.of(context).pushNamed('ServiceTrackerDetails',
                                           arguments: serviceProduct
                                           // arguments: {
                                           //   'productName':
@@ -132,8 +129,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                               color: Colors.grey[200]!,
                                               offset: Offset(0, 10)),
                                         ],
-                                        borderRadius:
-                                            BorderRadius.circular(7.5),
+                                        borderRadius: BorderRadius.circular(7.5),
                                       ),
                                       child: Row(
                                         children: [
@@ -145,30 +141,29 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                 // vertical: 10,
                                               ),
                                               child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Text(serviceProduct
-                                                            .data![index][
-                                                        'product_description']!),
-                                                    //   serviceProduct
-                                                    //       .data![index]
-                                                    //       .productDescription!,
-                                                    // ),
-                                                  ),
+                                                  serviceProduct.data != null &&
+                                                          serviceProduct.data?[index]
+                                                                  ['model_description'] !=
+                                                              null
+                                                      ? Align(
+                                                          alignment: Alignment.centerLeft,
+                                                          child: Text(serviceProduct.data![index]
+                                                              ['model_description']!),
+                                                          //   serviceProduct
+                                                          //       .data![index]
+                                                          //       .productDescription!,
+                                                          // ),
+                                                        )
+                                                      : Container(),
                                                   SizedBox(height: 10),
                                                   Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
+                                                    alignment: Alignment.centerRight,
                                                     child: Text(
                                                       'Service Status : ${serviceProduct.data![index]['service_request_status']!}',
-                                                      textAlign:
-                                                          TextAlign.right,
+                                                      textAlign: TextAlign.right,
                                                     ),
                                                   ),
                                                 ],
@@ -179,16 +174,14 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                             child: Container(
                                               height: double.infinity,
                                               decoration: BoxDecoration(
-                                                color: serviceProduct
-                                                                .data![index][
-                                                            'service_request_status'] ==
+                                                color: serviceProduct.data![index]
+                                                            ['service_request_status'] ==
                                                         'Pending Collection'
                                                     ? Colors.green
                                                     : Colors.grey,
                                                 borderRadius: BorderRadius.only(
                                                   topRight: Radius.circular(10),
-                                                  bottomRight:
-                                                      Radius.circular(10),
+                                                  bottomRight: Radius.circular(10),
                                                 ),
                                                 boxShadow: [
                                                   BoxShadow(
@@ -198,8 +191,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                   ),
                                                 ],
                                               ),
-                                              child: Icon(Icons.chevron_right,
-                                                  color: Colors.white),
+                                              child: Icon(Icons.chevron_right, color: Colors.white),
                                             ),
                                           ),
                                         ],
@@ -222,9 +214,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
             //     size: 30,
             //   ),
             // );
-            return Center(
-                child: Text('There is nothing to track',
-                    style: TextStyles.textDefault));
+            return Center(child: Text('There is nothing to track', style: TextStyles.textDefault));
           }
           // return Container(
           //   margin: EdgeInsets.symmetric(

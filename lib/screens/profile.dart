@@ -42,13 +42,14 @@ class _ProfileState extends State<Profile> {
   bool canEditEmail = false;
   bool canEditDob = false;
   bool canEditAddress = false;
-  List<City> _cities = [];
-  List<States> _states = [];
+  List<City> cities = [];
+  List<States> states = [];
+  List<String> postcodes = [];
   late States state;
   late City city;
+  String postcode = "";
   String version = "";
   String buildNo = "";
-  String postcode = "";
 
   @override
   void initState() {
@@ -68,9 +69,22 @@ class _ProfileState extends State<Profile> {
     //     'address': 'Nu Sentral'
     //   });
     // });
+    _init();
     _loadUser();
     _loadVersion();
+    _fetchStates();
     super.initState();
+  }
+
+  _init() {
+    city = new City(
+      stateId: "",
+      city: "--Select--",
+      cityId: "",
+      postcodeId: "",
+      postcode: "",
+    );
+    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
   }
 
   _loadUser() async {
@@ -98,33 +112,48 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  Future<void> fetchStates() async {
+  Future<void> _fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
 
-    var states = (response['states'] as List).map((i) => States.fromJson(i)).toList();
+    var newStates = (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-    states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+    newStates.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
     setState(() {
-      _states = states;
-      state = states[0];
+      states = newStates;
+      state = newStates[0];
     });
   }
 
-  Future<void> fetchCities(String stateId) async {
+  Future<void> _fetchCities(String stateId) async {
+    // setState(() {
+    //   city = new City(stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
+    // });
+
     final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
 
-    var cities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
+    var newCities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
-    cities.insert(
+    newCities.insert(
         0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
     // print("#CITIES: $cities");
     var citySet = Set<String>();
-    List<City> newCities = cities.where((e) => citySet.add(e.city!)).toList();
+    List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
 
+    var postcodeSet = Set<String>();
+    List<String> tempPostcodes = [];
+
+    newCities.forEach((elem) {
+      if (elem.postcode != null) {
+        tempPostcodes.add(elem.postcode!);
+      }
+    });
+    List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
+    print('#newPostcodes:  $newPostcodes');
     setState(() {
-      _cities = newCities;
-      city = newCities[0];
+      cities = tempCities;
+      city = tempCities[0];
+      postcodes = newPostcodes;
     });
   }
 
@@ -181,7 +210,7 @@ class _ProfileState extends State<Profile> {
         'address2': address1CT.text,
         'state': state,
         'city': city,
-        'postcode': postcode,
+        // 'postcode': postcode,
       };
 
       // print("MAP: $map");
@@ -309,6 +338,8 @@ class _ProfileState extends State<Profile> {
   Widget renderAddress() {
     double width = MediaQuery.of(context).size.width;
 
+    print("#RENDER CITY & POSTCODE: $cities | $postcodes");
+
     return Container(
       child: Column(
         children: [
@@ -318,7 +349,7 @@ class _ProfileState extends State<Profile> {
               Container(
                 padding: EdgeInsets.only(top: 15),
                 width: width * 0.30,
-                child: Text('Address Line 1'),
+                child: Text('Address Line 1', style: TextStyles.textDefault),
               ),
               SizedBox(width: 15),
               Flexible(
@@ -349,7 +380,7 @@ class _ProfileState extends State<Profile> {
               Container(
                 padding: EdgeInsets.only(top: 15),
                 width: width * 0.30,
-                child: Text('Address Line 2'),
+                child: Text('Address Line 2', style: TextStyles.textDefault),
               ),
               SizedBox(width: 15),
               Flexible(
@@ -377,7 +408,7 @@ class _ProfileState extends State<Profile> {
               Container(
                 padding: EdgeInsets.only(top: 15),
                 width: width * 0.30,
-                child: Text('State'),
+                child: Text('State', style: TextStyles.textDefault),
               ),
               SizedBox(width: 15),
               Flexible(
@@ -385,7 +416,7 @@ class _ProfileState extends State<Profile> {
                   padding: EdgeInsets.only(left: 10),
                   width: width * 0.45,
                   child: DropdownButton<States>(
-                    items: _states.map<DropdownMenuItem<States>>((e) {
+                    items: states.map<DropdownMenuItem<States>>((e) {
                       return DropdownMenuItem<States>(
                         child: Text(
                           e.state!,
@@ -398,24 +429,35 @@ class _ProfileState extends State<Profile> {
                     isExpanded: true,
                     value: state,
                     onChanged: (value) {
-                      setState(() {
-                        state = value!;
-                        this.fetchCities(value.stateId!);
-                      });
+                      if (value != null && value.stateId != "") {
+                        setState(() {
+                          cities = [];
+                          postcodes = [];
+                          state = value;
+                          city = new City(
+                              stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
+                          postcode = "";
+                          _fetchCities(value.stateId!);
+                        });
+                      } else {
+                        print("MASUK2");
+                        postcodes = [];
+                        cities = [];
+                      }
                     },
                   ),
                 ),
               ),
             ],
           ),
-          _cities.length > 0
+          cities.length > 0
               ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       padding: EdgeInsets.only(top: 15),
                       width: width * 0.30,
-                      child: Text('City'),
+                      child: Text('City', style: TextStyles.textDefault),
                     ),
                     SizedBox(width: 15),
                     Flexible(
@@ -423,7 +465,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(left: 10),
                         width: width * 0.45,
                         child: DropdownButton<City>(
-                          items: _cities.map<DropdownMenuItem<City>>((e) {
+                          items: cities.map<DropdownMenuItem<City>>((e) {
                             return DropdownMenuItem<City>(
                               child: Text(
                                 e.city!,
@@ -447,38 +489,45 @@ class _ProfileState extends State<Profile> {
                   ],
                 )
               : Container(),
-          // Row(
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     Container(
-          //       padding: EdgeInsets.only(top: 15),
-          //       width: width * 0.30,
-          //       child: Text('Postcode'),
-          //     ),
-          //     SizedBox(width: 15),
-          //     Flexible(
-          //       child: TextFormField(
-          //         keyboardType: TextInputType.text,
-          //         validator: (value) {
-          //           if (value!.isEmpty) {
-          //             return 'Please enter postcode';
-          //           }
-          //           return null;
-          //         },
-          //         controller: postCodeCT,
-          //         onFieldSubmitted: (val) {
-          //           FocusScope.of(context).requestFocus(new FocusNode());
-          //         },
-          //         decoration: InputDecoration(
-          //           border: InputBorder.none,
-          //           hintText: 'eg: 40050',
-          //           contentPadding:
-          //               const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
+          postcodes.length > 0
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 15),
+                      width: width * 0.30,
+                      child: Text('Postcode', style: TextStyles.textDefault),
+                    ),
+                    SizedBox(width: 15),
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 10),
+                        width: width * 0.45,
+                        child: DropdownButton<String>(
+                          items: postcodes.map<DropdownMenuItem<String>>((e) {
+                            return DropdownMenuItem<String>(
+                              child: Text(
+                                e,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                              value: e,
+                            );
+                          }).toList(),
+                          isExpanded: true,
+                          value: postcode,
+                          onChanged: (value) {
+                            setState(() {
+                              postcode = value!;
+                              // this.onSelectCity(value.postcode!);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Container(),
         ],
       ),
     );
@@ -549,7 +598,7 @@ class _ProfileState extends State<Profile> {
                     _renderDivider(),
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
-                      _renderLabel("Email", textStyle: TextStyles.textDefault),
+                      _renderLabel("Email Address", textStyle: TextStyles.textDefault),
                       Flexible(
                           child: Row(children: [
                         Container(
@@ -639,49 +688,7 @@ class _ProfileState extends State<Profile> {
                     SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 20),
-                    _renderItemContainer(
-                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      _renderLabel("Address",
-                          textStyle: TextStyles.textDefault, padding: EdgeInsets.only(top: 10)),
-                      renderAddress()
-                      // Flexible(
-                      //     child: Row(
-                      //         // crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //       Container(
-                      //           width: fieldSize,
-                      //           child: TextFormField(
-                      //               keyboardType: TextInputType.text,
-                      //               minLines: 3,
-                      //               maxLines: null,
-                      //               validator: (value) {
-                      //                 if (value!.isEmpty) {
-                      //                   return 'Please enter address';
-                      //                 }
-                      //                 return null;
-                      //               },
-                      //               controller: addressCT,
-                      //               onFieldSubmitted: (val) {},
-                      //               decoration: InputDecoration(
-                      //                 border: InputBorder.none,
-                      //                 hintText: '',
-                      //               ))),
-                      //       Spacer(),
-                      //       InkWell(
-                      //           onTap: () {
-                      //             setState(() {
-                      //               canEditAddress = !this.canEditAddress;
-                      //             });
-                      //           },
-                      //           child: Container(
-                      //               decoration: BoxDecoration(
-                      //                   color: AppColors.secondary,
-                      //                   borderRadius: BorderRadius.circular(10)),
-                      //               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      //               child: Text(canEditAddress ? "View" : "Edit",
-                      //                   style: TextStyles.textWhiteSm)))
-                      //     ]))
-                    ])),
+                    _renderItemContainer(renderAddress()),
                     SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 30),

@@ -136,7 +136,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
   void filterServiceCenter() {
     List<ServiceCenter> filtered = List.from(_serviceCenters);
 
-    print("STATE: ${state.state} | ${city.cityId}");
+    // print("STATE: ${state.state} | ${city.cityId}");
     if (state.stateId != "") {
       filtered = _serviceCenters.where((e) => e.stateId == state.stateId).toList();
     }
