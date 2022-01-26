@@ -53,8 +53,7 @@ class _ReviewState extends State<Review> {
       // "address_line_2": _requestServiceArgument.address!.addressLine2,
       // "city_id": _requestServiceArgument.address!.cityId,
       // "postcode": _requestServiceArgument.address!.postcode,
-      "service_request_time": _requestServiceArgument.serviceRequestTime!,
-      "email": "khindcustomerservice@gmail.com",
+      "service_request_time": _requestServiceArgument.serviceRequestTime!
     };
 
     if (_requestServiceArgument.delivery == "Yes") {
