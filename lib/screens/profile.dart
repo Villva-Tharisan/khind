@@ -320,10 +320,10 @@ class _ProfileState extends State<Profile> {
     return IconButton(onPressed: onPressed, icon: Icon(icon, size: 20, color: Colors.black));
   }
 
-  Widget _renderLabel(title, {padding, textStyle}) {
+  Widget _renderLabel(title, {width, padding, textStyle}) {
     return Container(
         padding: padding != null ? padding : EdgeInsets.all(0),
-        width: MediaQuery.of(context).size.width * 0.25,
+        width: width != null ? width : MediaQuery.of(context).size.width * 0.25,
         child: Text(title, style: textStyle != null ? textStyle : TextStyles.textDefault));
   }
 
@@ -337,13 +337,26 @@ class _ProfileState extends State<Profile> {
 
   Widget renderAddress() {
     double width = MediaQuery.of(context).size.width;
+    const horContentPad = 10.0;
 
     print("#RENDER CITY & POSTCODE: $cities | $postcodes");
 
-    return Container(
-      child: Column(
-        children: [
-          Row(
+    return SingleChildScrollView(
+        child: Column(children: [
+      ClipRRect(
+          borderRadius:
+              BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          child: Container(
+              alignment: Alignment.center,
+              width: width,
+              color: AppColors.secondary,
+              padding: const EdgeInsets.only(bottom: 10, top: 15),
+              child:
+                  Text("UPDATE ADDRESS", style: TextStyles.textWhiteBold.copyWith(fontSize: 18)))),
+      Divider(color: Colors.grey[300]),
+      Container(
+          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -353,28 +366,30 @@ class _ProfileState extends State<Profile> {
               ),
               SizedBox(width: 15),
               Flexible(
-                child: TextFormField(
-                  keyboardType: TextInputType.text,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter address 1';
-                    }
-                    return null;
-                  },
-                  controller: address1CT,
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'eg: No 78 Jalan Mawar',
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                  ),
+                  child: TextFormField(
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter address 1';
+                  }
+                  return null;
+                },
+                controller: address1CT,
+                onFieldSubmitted: (val) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'eg: No 78 Jalan Mawar',
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                 ),
-              ),
+              )),
             ],
-          ),
-          Row(
+          )),
+      SizedBox(height: 10),
+      Container(
+          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -401,8 +416,11 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             ],
-          ),
-          Row(
+          )),
+      SizedBox(height: 10),
+      Container(
+          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -440,7 +458,6 @@ class _ProfileState extends State<Profile> {
                           _fetchCities(value.stateId!);
                         });
                       } else {
-                        print("MASUK2");
                         postcodes = [];
                         cities = [];
                       }
@@ -449,88 +466,91 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             ],
-          ),
-          cities.length > 0
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(top: 15),
-                      width: width * 0.30,
-                      child: Text('City', style: TextStyles.textDefault),
-                    ),
-                    SizedBox(width: 15),
-                    Flexible(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 10),
-                        width: width * 0.45,
-                        child: DropdownButton<City>(
-                          items: cities.map<DropdownMenuItem<City>>((e) {
-                            return DropdownMenuItem<City>(
-                              child: Text(
-                                e.city!,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              value: e,
-                            );
-                          }).toList(),
-                          isExpanded: true,
-                          value: city,
-                          onChanged: (value) {
-                            setState(() {
-                              city = value!;
-                              // this.onSelectCity(value.postcode!);
-                            });
-                          },
-                        ),
+          )),
+      cities.length > 0 ? SizedBox(height: 10) : Container(),
+      cities.length > 0
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 15),
+                    width: width * 0.30,
+                    child: Text('City', style: TextStyles.textDefault),
+                  ),
+                  SizedBox(width: 15),
+                  Flexible(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 10),
+                      width: width * 0.45,
+                      child: DropdownButton<City>(
+                        items: cities.map<DropdownMenuItem<City>>((e) {
+                          return DropdownMenuItem<City>(
+                            child: Text(
+                              e.city!,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                            value: e,
+                          );
+                        }).toList(),
+                        isExpanded: true,
+                        value: city,
+                        onChanged: (value) {
+                          setState(() {
+                            city = value!;
+                            // this.onSelectCity(value.postcode!);
+                          });
+                        },
                       ),
                     ),
-                  ],
-                )
-              : Container(),
-          postcodes.length > 0
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(top: 15),
-                      width: width * 0.30,
-                      child: Text('Postcode', style: TextStyles.textDefault),
-                    ),
-                    SizedBox(width: 15),
-                    Flexible(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 10),
-                        width: width * 0.45,
-                        child: DropdownButton<String>(
-                          items: postcodes.map<DropdownMenuItem<String>>((e) {
-                            return DropdownMenuItem<String>(
-                              child: Text(
-                                e,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              value: e,
-                            );
-                          }).toList(),
-                          isExpanded: true,
-                          value: postcode,
-                          onChanged: (value) {
-                            setState(() {
-                              postcode = value!;
-                              // this.onSelectCity(value.postcode!);
-                            });
-                          },
-                        ),
+                  ),
+                ],
+              ))
+          : Container(),
+      postcodes.length > 0
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 15),
+                    width: width * 0.30,
+                    child: Text('Postcode', style: TextStyles.textDefault),
+                  ),
+                  SizedBox(width: 15),
+                  Flexible(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 10),
+                      width: width * 0.45,
+                      child: DropdownButton<String>(
+                        items: postcodes.map<DropdownMenuItem<String>>((e) {
+                          return DropdownMenuItem<String>(
+                            child: Text(
+                              e,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                            value: e,
+                          );
+                        }).toList(),
+                        isExpanded: true,
+                        value: postcode,
+                        onChanged: (value) {
+                          setState(() {
+                            postcode = value!;
+                            // this.onSelectCity(value.postcode!);
+                          });
+                        },
                       ),
                     ),
-                  ],
-                )
-              : Container(),
-        ],
-      ),
-    );
+                  ),
+                ],
+              ))
+          : Container(),
+    ]));
   }
 
   Widget _renderForm() {
@@ -687,9 +707,34 @@ class _ProfileState extends State<Profile> {
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
+                    SizedBox(height: 10),
+                    _renderItemContainer(
+                        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      InkWell(
+                          onTap: () => {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext ctx) {
+                                      return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(20)),
+                                          child: renderAddress());
+                                    })
+                              },
+                          child: _renderLabel("Update Address",
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              padding: EdgeInsets.only(top: 10),
+                              textStyle:
+                                  TextStyles.textLink.copyWith(fontWeight: FontWeight.w500))),
+                      SizedBox(width: 10),
+                      InkWell(
+                          onTap: () => {},
+                          child: _renderLabel("Change Password",
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              padding: EdgeInsets.only(top: 10),
+                              textStyle: TextStyles.textLink.copyWith(fontWeight: FontWeight.w500)))
+                    ])),
                     SizedBox(height: 20),
-                    _renderItemContainer(renderAddress()),
-                    SizedBox(height: 5),
                     _renderDivider(),
                     SizedBox(height: 30),
                     _renderItemContainer(
