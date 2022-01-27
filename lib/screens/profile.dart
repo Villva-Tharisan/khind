@@ -126,9 +126,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _fetchCities(String stateId) async {
-    // setState(() {
-    //   city = new City(stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
-    // });
+    // print("#MASUK FETCHCITITES");
 
     final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
 
@@ -149,7 +147,7 @@ class _ProfileState extends State<Profile> {
       }
     });
     List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
-    print('#newPostcodes:  $newPostcodes');
+    // print('#newPostcodes:  $newPostcodes');
     setState(() {
       cities = tempCities;
       city = tempCities[0];
@@ -339,7 +337,7 @@ class _ProfileState extends State<Profile> {
     double width = MediaQuery.of(context).size.width;
     const horContentPad = 10.0;
 
-    print("#RENDER CITY & POSTCODE: $cities | $postcodes");
+    // print("#RENDER CITY & POSTCODE: $cities | $postcodes");
 
     return SingleChildScrollView(
         child: Column(children: [
@@ -349,10 +347,9 @@ class _ProfileState extends State<Profile> {
           child: Container(
               alignment: Alignment.center,
               width: width,
-              color: AppColors.secondary,
               padding: const EdgeInsets.only(bottom: 10, top: 15),
-              child:
-                  Text("UPDATE ADDRESS", style: TextStyles.textWhiteBold.copyWith(fontSize: 18)))),
+              child: Text("UPDATE ADDRESS",
+                  style: TextStyles.textSecondaryBold.copyWith(fontSize: 18)))),
       Divider(color: Colors.grey[300]),
       Container(
           padding: const EdgeInsets.symmetric(horizontal: horContentPad),
@@ -550,6 +547,25 @@ class _ProfileState extends State<Profile> {
                 ],
               ))
           : Container(),
+      Container(
+          alignment: Alignment.center,
+          width: width,
+          padding: const EdgeInsets.only(bottom: 10, top: 15),
+          decoration: BoxDecoration(
+              color: AppColors.secondary,
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
+          child: InkWell(
+              onTap: () {
+                setState(() {
+                  canEditMobile = !this.canEditMobile;
+                });
+              },
+              child: Container(
+                  decoration: BoxDecoration(
+                      color: AppColors.secondary, borderRadius: BorderRadius.circular(10)),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Text(canEditMobile ? "View" : "Edit", style: TextStyles.textWhiteSm))))
     ]));
   }
 
