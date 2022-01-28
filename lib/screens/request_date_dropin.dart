@@ -114,7 +114,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
     });
     List<String> newPostcodes =
         tempPostcodes.where((e) => postcodeSet.add(e)).toList();
-    print('#newPostcodes:  $newPostcodes');
+    // print('#newPostcodes:  $newPostcodes');
     setState(() {
       _cities = newCities;
       city = newCities[0];

@@ -32,6 +32,8 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   List<String> _times = ["8am", "10am", "2pm", "4pm"];
   List<States> _states = [];
   List<City> _cities = [];
+  List<String> postcodes = [];
+  String postcode = "";
   List<ServiceProblem> _problems = [];
   List<String> _deliveryOptions = ["Yes", "No"];
   String _selectedDate = '';
@@ -106,11 +108,21 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
             postcode: ""));
 
     var citySet = Set<String>();
+    var postcodeSet = Set<String>();
+    List<String> tempPostcodes = [];
     List<City> newCities = cities.where((e) => citySet.add(e.city!)).toList();
+    newCities.forEach((elem) {
+      if (elem.postcode != null) {
+        tempPostcodes.add(elem.postcode!);
+      }
+    });
+    List<String> newPostcodes =
+        tempPostcodes.where((e) => postcodeSet.add(e)).toList();
 
     setState(() {
       _cities = newCities;
       city = newCities[0];
+      postcodes = newPostcodes;
     });
   }
 
@@ -567,27 +579,31 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                       ),
                       SizedBox(width: 15),
                       Flexible(
-                        child: TextFormField(
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter postcode';
-                            }
-                            return null;
-                          },
-                          controller: postCodeCT,
-                          onFieldSubmitted: (val) {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
-                          },
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'eg: 40050',
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 5),
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10),
+                          width: width * 0.45,
+                          child: DropdownButton<String>(
+                            items: postcodes.map<DropdownMenuItem<String>>((e) {
+                              return DropdownMenuItem<String>(
+                                child: Text(
+                                  e,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                                value: e,
+                              );
+                            }).toList(),
+                            isExpanded: true,
+                            value: postcode,
+                            onChanged: (value) {
+                              setState(() {
+                                postcode = value!;
+                                // this.onSelectCity(value.postcode!);
+                              });
+                            },
                           ),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ],

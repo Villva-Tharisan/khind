@@ -286,9 +286,9 @@ class _ServiceTypeState extends State<ServiceType> {
                         }
                         var path = 'requestDateHomeVisit';
                         if (_selectedType == "Drop-In") {
-                          path = "requestServiceLocator";
+                          path = "requestDateHomeVisit";
                         }
-                        if (_selectedType.contains("Pickup")) {
+                        if (_selectedType.contains("Pick Up")) {
                           path = "requestDatePickup";
                         }
 
