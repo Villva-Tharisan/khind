@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/states.dart';
+import 'package:khind/screens/profile/change_password.dart';
+import 'package:khind/screens/profile/update_address.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:khind/components/round_button.dart';
 import 'package:khind/models/user.dart';
@@ -280,38 +282,11 @@ class _ProfileState extends State<Profile> {
     return Container(height: 1, color: Colors.grey[300], width: double.infinity);
   }
 
-  Widget _renderItemContainer(child, {align}) {
+  Widget _renderItemContainer(child, {align, padding}) {
     return Container(
         alignment: align != null ? align : Alignment.center,
-        padding: const EdgeInsets.only(right: 10, top: 0, bottom: 0),
+        padding: padding != null ? padding : const EdgeInsets.only(right: 10, top: 0, bottom: 0),
         child: child);
-  }
-
-  Widget _renderEditBtn(name, {icon}) {
-    Color color = AppColors.secondary;
-
-    return InkWell(
-        onTap: () {
-          setState(() {
-            if (name == 'dob') {
-              canEditDob = !this.canEditDob;
-              color = Colors.grey;
-            } else if (name == 'mobile') {
-              canEditMobile = !this.canEditMobile;
-              color = Colors.grey;
-            } else if (name == 'email') {
-              canEditEmail = !this.canEditEmail;
-              color = Colors.grey;
-            } else if (name == 'address') {
-              canEditAddress = !this.canEditAddress;
-              color = Colors.grey;
-            }
-          });
-        },
-        child: Container(
-            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child: icon != null ? icon : Text("Edit", style: TextStyles.textWhiteSm)));
   }
 
   Widget _renderIcon(IconData icon, {onPressed}) {
@@ -331,242 +306,6 @@ class _ProfileState extends State<Profile> {
     }
     return Flexible(
         child: Container(padding: const EdgeInsets.only(top: 25, bottom: 20), child: Text('$val')));
-  }
-
-  Widget renderAddress() {
-    double width = MediaQuery.of(context).size.width;
-    const horContentPad = 10.0;
-
-    // print("#RENDER CITY & POSTCODE: $cities | $postcodes");
-
-    return SingleChildScrollView(
-        child: Column(children: [
-      ClipRRect(
-          borderRadius:
-              BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          child: Container(
-              alignment: Alignment.center,
-              width: width,
-              padding: const EdgeInsets.only(bottom: 10, top: 15),
-              child: Text("UPDATE ADDRESS",
-                  style: TextStyles.textSecondaryBold.copyWith(fontSize: 18)))),
-      Divider(color: Colors.grey[300]),
-      Container(
-          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 15),
-                width: width * 0.30,
-                child: Text('Address Line 1', style: TextStyles.textDefault),
-              ),
-              SizedBox(width: 15),
-              Flexible(
-                  child: TextFormField(
-                keyboardType: TextInputType.text,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter address 1';
-                  }
-                  return null;
-                },
-                controller: address1CT,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'eg: No 78 Jalan Mawar',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                ),
-              )),
-            ],
-          )),
-      SizedBox(height: 10),
-      Container(
-          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 15),
-                width: width * 0.30,
-                child: Text('Address Line 2', style: TextStyles.textDefault),
-              ),
-              SizedBox(width: 15),
-              Flexible(
-                child: TextFormField(
-                  keyboardType: TextInputType.text,
-                  validator: (value) {
-                    return null;
-                  },
-                  controller: address2CT,
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'eg: Puchong Perdana',
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                  ),
-                ),
-              ),
-            ],
-          )),
-      SizedBox(height: 10),
-      Container(
-          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 15),
-                width: width * 0.30,
-                child: Text('State', style: TextStyles.textDefault),
-              ),
-              SizedBox(width: 15),
-              Flexible(
-                child: Container(
-                  padding: EdgeInsets.only(left: 10),
-                  width: width * 0.45,
-                  child: DropdownButton<States>(
-                    items: states.map<DropdownMenuItem<States>>((e) {
-                      return DropdownMenuItem<States>(
-                        child: Text(
-                          e.state!,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                        value: e,
-                      );
-                    }).toList(),
-                    isExpanded: true,
-                    value: state,
-                    onChanged: (value) {
-                      if (value != null && value.stateId != "") {
-                        setState(() {
-                          cities = [];
-                          postcodes = [];
-                          state = value;
-                          city = new City(
-                              stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
-                          postcode = "";
-                          _fetchCities(value.stateId!);
-                        });
-                      } else {
-                        postcodes = [];
-                        cities = [];
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ],
-          )),
-      cities.length > 0 ? SizedBox(height: 10) : Container(),
-      cities.length > 0
-          ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 15),
-                    width: width * 0.30,
-                    child: Text('City', style: TextStyles.textDefault),
-                  ),
-                  SizedBox(width: 15),
-                  Flexible(
-                    child: Container(
-                      padding: EdgeInsets.only(left: 10),
-                      width: width * 0.45,
-                      child: DropdownButton<City>(
-                        items: cities.map<DropdownMenuItem<City>>((e) {
-                          return DropdownMenuItem<City>(
-                            child: Text(
-                              e.city!,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                            value: e,
-                          );
-                        }).toList(),
-                        isExpanded: true,
-                        value: city,
-                        onChanged: (value) {
-                          setState(() {
-                            city = value!;
-                            // this.onSelectCity(value.postcode!);
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ))
-          : Container(),
-      postcodes.length > 0
-          ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 15),
-                    width: width * 0.30,
-                    child: Text('Postcode', style: TextStyles.textDefault),
-                  ),
-                  SizedBox(width: 15),
-                  Flexible(
-                    child: Container(
-                      padding: EdgeInsets.only(left: 10),
-                      width: width * 0.45,
-                      child: DropdownButton<String>(
-                        items: postcodes.map<DropdownMenuItem<String>>((e) {
-                          return DropdownMenuItem<String>(
-                            child: Text(
-                              e,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                            value: e,
-                          );
-                        }).toList(),
-                        isExpanded: true,
-                        value: postcode,
-                        onChanged: (value) {
-                          setState(() {
-                            postcode = value!;
-                            // this.onSelectCity(value.postcode!);
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ))
-          : Container(),
-      Container(
-          alignment: Alignment.center,
-          width: width,
-          padding: const EdgeInsets.only(bottom: 10, top: 15),
-          decoration: BoxDecoration(
-              color: AppColors.secondary,
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
-          child: InkWell(
-              onTap: () {
-                setState(() {
-                  canEditMobile = !this.canEditMobile;
-                });
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                      color: AppColors.secondary, borderRadius: BorderRadius.circular(10)),
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Text(canEditMobile ? "View" : "Edit", style: TextStyles.textWhiteSm))))
-    ]));
   }
 
   Widget _renderForm() {
@@ -726,30 +465,41 @@ class _ProfileState extends State<Profile> {
                     SizedBox(height: 10),
                     _renderItemContainer(
                         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      InkWell(
-                          onTap: () => {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext ctx) {
-                                      return Dialog(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(20)),
-                                          child: renderAddress());
-                                    })
-                              },
-                          child: _renderLabel("Update Address",
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              padding: EdgeInsets.only(top: 10),
-                              textStyle:
-                                  TextStyles.textLink.copyWith(fontWeight: FontWeight.w500))),
-                      SizedBox(width: 10),
-                      InkWell(
-                          onTap: () => {},
-                          child: _renderLabel("Change Password",
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              padding: EdgeInsets.only(top: 10),
-                              textStyle: TextStyles.textLink.copyWith(fontWeight: FontWeight.w500)))
-                    ])),
+                          InkWell(
+                              onTap: () => {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext ctx) {
+                                          return Dialog(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(20)),
+                                              child: UpdateAddress());
+                                        })
+                                  },
+                              child: _renderLabel("Update Address",
+                                  width: MediaQuery.of(context).size.width * 0.4,
+                                  padding: EdgeInsets.only(top: 10),
+                                  textStyle: TextStyles.textSecondary
+                                      .copyWith(fontWeight: FontWeight.w500))),
+                          SizedBox(width: 10),
+                          InkWell(
+                              onTap: () => {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext ctx) {
+                                          return Dialog(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(20)),
+                                              child: ChangePassword());
+                                        })
+                                  },
+                              child: _renderLabel("Change Password",
+                                  width: MediaQuery.of(context).size.width * 0.4,
+                                  padding: EdgeInsets.only(top: 10),
+                                  textStyle: TextStyles.textSecondary
+                                      .copyWith(fontWeight: FontWeight.w500)))
+                        ]),
+                        padding: const EdgeInsets.all(0)),
                     SizedBox(height: 20),
                     _renderDivider(),
                     SizedBox(height: 30),
@@ -795,7 +545,7 @@ class _ProfileState extends State<Profile> {
                           )
                         ]),
                         align: Alignment.bottomLeft),
-                    SizedBox(height: 20),
+                    SizedBox(height: 25),
                     _renderItemContainer(Tooltip(
                       key: toolTipKey,
                       decoration: BoxDecoration(
