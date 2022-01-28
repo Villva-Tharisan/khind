@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/product_warranty.dart';
@@ -286,7 +287,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                               children: [
                                 Container(
                                   width: width * 0.3,
-                                  child: Text('Store '),
+                                  child: Text('Purchase from '),
                                 ),
                                 BlocBuilder<StoreCubit, StoreState>(
                                   builder: (context, state) {
@@ -343,6 +344,18 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                     onChanged: (value) {},
                                   ),
                                 ),
+                                SizedBox(width: 5),
+                                Tooltip(
+                                  padding: EdgeInsets.all(10),
+                                  margin: EdgeInsets.all(10),
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  message:
+                                      'Please insert any promo or referral codes obtain you obtain from KHIND promotional material or Authorized Khind Dealers',
+                                  child: Icon(
+                                    FontAwesomeIcons.infoCircle,
+                                    color: Colors.green,
+                                  ),
+                                ),
                               ],
                             ),
                             SizedBox(height: 10),
@@ -351,7 +364,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                 children: [
                                   Container(
                                     width: width * 0.3,
-                                    child: Text('Email'),
+                                    child: Text('Email address'),
                                   ),
                                   Expanded(
                                     child: TextField(
@@ -522,7 +535,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                           child: GradientButton(
                             height: 40,
                             child: Text(
-                              "Save",
+                              "Register Product",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             gradient: LinearGradient(

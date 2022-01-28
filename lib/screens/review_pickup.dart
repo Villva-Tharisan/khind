@@ -247,7 +247,7 @@ class _ReviewPickupState extends State<ReviewPickup> {
               child: GradientButton(
                 height: 40,
                 child: Text(
-                  "Save",
+                  "Confirm",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 gradient: LinearGradient(

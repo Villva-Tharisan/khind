@@ -97,72 +97,75 @@ class Datum {
   String? transportChargeGreater100Km;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        productId: json["product_id"] == null ? null : json["product_id"],
-        productGroupId:
-            json["product_group_id"] == null ? null : json["product_group_id"],
-        productModelId:
-            json["product_model_id"] == null ? null : json["product_model_id"],
-        warrantyId: json["warranty_id"] == null ? null : json["warranty_id"],
-        productCode: json["product_code"] == null ? null : json["product_code"],
+        productId: json["product_id"] == null ? 'null' : json["product_id"],
+        productGroupId: json["product_group_id"] == null
+            ? 'null'
+            : json["product_group_id"],
+        productModelId: json["product_model_id"] == null
+            ? 'null'
+            : json["product_model_id"],
+        warrantyId: json["warranty_id"] == null ? 'null' : json["warranty_id"],
+        productCode:
+            json["product_code"] == null ? 'null' : json["product_code"],
         productDescription: json["product_description"] == null
-            ? null
+            ? 'null'
             : json["product_description"],
         insertedAt: json["inserted_at"] == null
             ? null
             : DateTime.parse(json["inserted_at"]),
         updatedAt: json["updated_at"],
         productGroup:
-            json["product_group"] == null ? null : json["product_group"],
+            json["product_group"] == null ? 'null' : json["product_group"],
         productGroupDescription: json["product_group_description"] == null
-            ? null
+            ? 'null'
             : json["product_group_description"],
         productModel:
-            json["product_model"] == null ? null : json["product_model"],
+            json["product_model"] == null ? 'null' : json["product_model"],
         modelDescription: json["model_description"] == null
-            ? null
+            ? 'null'
             : json["model_description"],
         mapToProductCode: json["map_to_product_code"] == null
-            ? null
+            ? 'null'
             : json["map_to_product_code"],
-        isActive: json["is_active"] == null ? null : json["is_active"],
+        isActive: json["is_active"] == null ? 'null' : json["is_active"],
         specificWarranty: json["specific_warranty"],
-        dropIn: json["drop_in"] == null ? null : json["drop_in"],
-        homeVisit: json["home_visit"] == null ? null : json["home_visit"],
-        pickUp: json["pick_up"] == null ? null : json["pick_up"],
+        dropIn: json["drop_in"] == null ? 'null' : json["drop_in"],
+        homeVisit: json["home_visit"] == null ? 'null' : json["home_visit"],
+        pickUp: json["pick_up"] == null ? 'null' : json["pick_up"],
         serviceHours:
-            json["service_hours"] == null ? null : json["service_hours"],
+            json["service_hours"] == null ? 'null' : json["service_hours"],
         technicianServiceGroup: json["technician_service_group"] == null
-            ? null
+            ? 'null'
             : json["technician_service_group"],
-        rcp: json["rcp"] == null ? null : json["rcp"],
+        rcp: json["rcp"] == null ? 'null' : json["rcp"],
         extendedWarrantyCharge1Yr: json["extended_warranty_charge_1yr"] == null
-            ? null
+            ? 'null'
             : json["extended_warranty_charge_1yr"],
         repairWithPartRepChargeIndoor:
             json["repair_with_part_rep_charge_indoor"] == null
-                ? null
+                ? 'null'
                 : json["repair_with_part_rep_charge_indoor"],
         checkingAdjChargeIndoor: json["checking_adj_charge_indoor"] == null
-            ? null
+            ? 'null'
             : json["checking_adj_charge_indoor"],
         checkingAdjChargeOutdoor: json["checking_adj_charge_outdoor"] == null
-            ? null
+            ? 'null'
             : json["checking_adj_charge_outdoor"],
         repairWithPartRepChargeOutdoor:
             json["repair_with_part_rep_charge_outdoor"] == null
-                ? null
+                ? 'null'
                 : json["repair_with_part_rep_charge_outdoor"],
-        grrCharge: json["grr_charge"] == null ? null : json["grr_charge"],
+        grrCharge: json["grr_charge"] == null ? 'null' : json["grr_charge"],
         transportChargeLess50Km: json["transport_charge_less_50km"] == null
-            ? null
+            ? 'null'
             : json["transport_charge_less_50km"],
         transportChargeBetween50Km100Km:
             json["transport_charge_between_50km_100km"] == null
-                ? null
+                ? 'null'
                 : json["transport_charge_between_50km_100km"],
         transportChargeGreater100Km:
             json["transport_charge_greater_100km"] == null
-                ? null
+                ? 'null'
                 : json["transport_charge_greater_100km"],
       );
 

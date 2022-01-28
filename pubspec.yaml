@@ -59,6 +59,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   fluttertoast: ^8.0.8
   flutter_typeahead: ^3.2.4
+  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:
   flutter_test:

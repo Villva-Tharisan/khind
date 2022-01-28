@@ -260,7 +260,7 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
               child: GradientButton(
                 height: 40,
                 child: Text(
-                  "Save",
+                  "Confirm",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 gradient: LinearGradient(
