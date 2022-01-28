@@ -30,6 +30,7 @@ class EwarrantyProduct extends StatefulWidget {
 }
 
 class _EwarrantyProductState extends State<EwarrantyProduct> {
+  final toolTipKey = GlobalKey<State<Tooltip>>();
   int quantity = 0;
   String fileName = '';
   late File receiptFile;
@@ -107,8 +108,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
             ),
             height: height,
             child: FutureBuilder(
-              future: Repositories.getProduct(
-                  productModel: widget.arguments['productModel']),
+              future: Repositories.getProduct(productModel: widget.arguments['productModel']),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   ProductWarranty productWarranty =
@@ -252,8 +252,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                   child: Text('Purchase Date '),
                                 ),
                                 Text(
-                                  formatDate(choosenDate,
-                                      ['dd', '-', 'mm', '-', 'yyyy']),
+                                  formatDate(choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(width: 10),
@@ -266,11 +265,9 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                     DateTime? chosen = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
-                                      firstDate: DateTime.now()
-                                          .subtract(Duration(days: 30)),
+                                      firstDate: DateTime.now().subtract(Duration(days: 30)),
                                       lastDate: DateTime.now(),
-                                      initialEntryMode:
-                                          DatePickerEntryMode.calendar,
+                                      initialEntryMode: DatePickerEntryMode.calendar,
                                     );
 
                                     if (chosen != null) {
@@ -346,16 +343,32 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                 ),
                                 SizedBox(width: 5),
                                 Tooltip(
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.all(10),
-                                  triggerMode: TooltipTriggerMode.tap,
-                                  message:
-                                      'Please insert any promo or referral codes obtain you obtain from KHIND promotional material or Authorized Khind Dealers',
-                                  child: Icon(
-                                    FontAwesomeIcons.infoCircle,
-                                    color: Colors.green,
-                                  ),
-                                ),
+                                    key: toolTipKey,
+                                    padding: EdgeInsets.all(10),
+                                    margin: EdgeInsets.all(10),
+                                    message:
+                                        'Please insert any promo or referral codes obtain you obtain from KHIND promotional material or Authorized Khind Dealers',
+                                    child: GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap: () {
+                                          final dynamic _toolTip = toolTipKey.currentState;
+                                          _toolTip.ensureTooltipVisible();
+                                        },
+                                        child: Icon(
+                                          FontAwesomeIcons.infoCircle,
+                                          color: Colors.green,
+                                        ))),
+                                // Tooltip(
+                                //   padding: EdgeInsets.all(10),
+                                //   margin: EdgeInsets.all(10),
+                                //   triggerMode: TooltipTriggerMode.tap,
+                                //   message:
+                                //       'Please insert any promo or referral codes obtain you obtain from KHIND promotional material or Authorized Khind Dealers',
+                                //   child: Icon(
+                                //     FontAwesomeIcons.infoCircle,
+                                //     color: Colors.green,
+                                //   ),
+                                // ),
                               ],
                             ),
                             SizedBox(height: 10),
@@ -378,11 +391,9 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                             Row(
                               children: [
                                 ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.green),
+                                  style: ElevatedButton.styleFrom(primary: Colors.green),
                                   onPressed: () async {
-                                    FilePickerResult? result =
-                                        await FilePicker.platform.pickFiles(
+                                    FilePickerResult? result = await FilePicker.platform.pickFiles(
                                       type: FileType.custom,
                                       allowedExtensions: [
                                         'jpg',
@@ -552,11 +563,10 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                               }
                               await Repositories.registerEwarranty(
                                 email: email,
-                                productModel:
-                                    productWarranty.data![0].productModel!,
+                                productModel: productWarranty.data![0].productModel!,
                                 quantity: '$quantity',
-                                purchaseDate: formatDate(choosenDate,
-                                    ['yyyy', '-', 'mm', '-', 'dd']),
+                                purchaseDate:
+                                    formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
                                 referralCode: ref.text,
                                 receiptFile: receiptFile,
                               );
@@ -578,11 +588,9 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                   DialogButton(
                                     child: Text(
                                       "Okay",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 20),
+                                      style: TextStyle(color: Colors.white, fontSize: 20),
                                     ),
-                                    onPressed: () => Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
+                                    onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
                                       'home',
                                       (route) => false,
                                       arguments: 0,
