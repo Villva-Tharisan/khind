@@ -90,6 +90,11 @@ class _ProductModelState extends State<ProductModel> {
 
   @override
   Widget build(BuildContext context) {
+    var storeId = '-';
+    if (purchase!.storeId != null) {
+      storeId = purchase!.storeId;
+    }
+
     return Scaffold(
       appBar: Helpers.customAppBar(context, _scaffoldKey,
           title: "Product Model", hasActions: false, isBack: true),
@@ -116,7 +121,7 @@ class _ProductModelState extends State<ProductModel> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        purchase!.productModel!,
+                        purchase!.productGroupDescription!,
                         overflow: TextOverflow.visible,
                         style: TextStyle(
                             // height: 2,
@@ -127,7 +132,11 @@ class _ProductModelState extends State<ProductModel> {
                       SizedBox(
                         height: 5,
                       ),
-                      Text(widget.data!.productDescription!),
+                      Text(widget.data!.productModel!),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(widget.data!.modelDescription!),
                       SizedBox(
                         height: 13,
                       ),
@@ -159,12 +168,16 @@ class _ProductModelState extends State<ProductModel> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text("Purchase From: $storeId"),
+                      SizedBox(
+                        height: 5,
+                      ),
                       Text("Purchase Date: ${purchaseDate!}"),
                       SizedBox(
                         height: 13,
                       ),
                       Text(
-                        "Warranty Period: ${purchase!.warrantyPeriod}",
+                        "Warranty Valid until: ${purchase!.warrantyPeriod}",
                         overflow: TextOverflow.visible,
                         style: TextStyle(
                             // height: 2,

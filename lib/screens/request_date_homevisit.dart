@@ -175,8 +175,8 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
           Container(
             height: MediaQuery.of(context).size.height * 0.3,
             child: SfDateRangePicker(
-              initialSelectedDate: DateTime.now(),
-              minDate: DateTime.now(),
+              initialSelectedDate: DateTime.now().add(Duration(days: 2)),
+              minDate: DateTime.now().add(Duration(days: 2)),
               maxDate: _maxDate,
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
@@ -366,9 +366,6 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                             TextFormField(
                               keyboardType: TextInputType.text,
                               validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter remark';
-                                }
                                 return null;
                               },
                               controller: remarkCT,

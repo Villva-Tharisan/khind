@@ -21,7 +21,7 @@ class _ServiceTypeState extends State<ServiceType> {
   List<String> _serviceTypes = [
     'Home Visit',
     'Drop-In',
-    'Request for Pick-up/Delivery',
+    'Pick Up',
   ];
 
   bool isValid = false;
@@ -40,7 +40,7 @@ class _ServiceTypeState extends State<ServiceType> {
       _serviceTypes.remove('Home Visit');
     }
     if (widget.data!.pickUp == "0") {
-      _serviceTypes.remove('Request for Pick-up/Delivery');
+      _serviceTypes.remove('Pick Up');
     }
 
     setState(() {
@@ -288,8 +288,7 @@ class _ServiceTypeState extends State<ServiceType> {
                         if (_selectedType == "Drop-In") {
                           path = "requestServiceLocator";
                         }
-                        if (_selectedType
-                            .contains("Request for Pick-up/Delivery")) {
+                        if (_selectedType.contains("Pickup")) {
                           path = "requestDatePickup";
                         }
 
