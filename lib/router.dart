@@ -150,9 +150,7 @@ class AppRouter {
 
       case 'ServiceTrackerDetails':
         return MaterialPageRoute(
-          builder: (_) => ServiceTrackerDetails(
-            serviceProduct: arguments as ServiceProduct,
-          ),
+          builder: (_) => ServiceTrackerDetails(),
         );
 
       default:

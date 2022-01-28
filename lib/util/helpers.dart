@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:khind/models/Purchase.dart';
+import 'package:khind/models/product_warranty.dart';
+import 'package:khind/models/service_product.dart';
 import 'package:khind/themes/app_colors.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -172,5 +174,9 @@ class Helpers {
   }
 
   static bool? fromSignIn = false;
+
+  //service tracker global var
+  static ProductWarranty? productWarranty;
+  static ServiceProduct? serviceProduct;
   static int? productIndex;
 }

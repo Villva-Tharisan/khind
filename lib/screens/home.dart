@@ -3,7 +3,9 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:khind/cubit/tracker/tracker_cubit.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/mall.dart';
 import 'package:khind/screens/mypurchases.dart';
@@ -24,7 +26,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     const NewsLanding(),
     const MyPurchases(),
     const Ewarranty(),
-    const ServiceTracker(),
+    BlocProvider(
+      create: (context) => TrackerCubit(),
+      child: ServiceTracker(),
+    ),
     const Mall()
   ];
   final autoSizeGroup = AutoSizeGroup();

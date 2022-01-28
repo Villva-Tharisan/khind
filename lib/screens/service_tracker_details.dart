@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/service_product.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ServiceTrackerDetails extends StatefulWidget {
-  final ServiceProduct serviceProduct;
-
-  const ServiceTrackerDetails({Key? key, required this.serviceProduct})
-      : super(key: key);
-
   @override
   _ServiceTrackerDetailsState createState() => _ServiceTrackerDetailsState();
 }
@@ -23,8 +19,13 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
   @override
   void initState() {
     index = Helpers.productIndex!;
+    serviceProduct = Helpers.serviceProduct!;
+    productWarranty = Helpers.productWarranty!;
     super.initState();
   }
+
+  late ServiceProduct serviceProduct;
+  late ProductWarranty productWarranty;
 
   @override
   Widget build(BuildContext context) {
@@ -53,15 +54,14 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                   Container(
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: widget.serviceProduct.data![index]
+                      color: serviceProduct.data![index]
                                   ['service_request_status'] ==
                               'Pending Collection'
                           ? Colors.green
                           : Colors.grey,
                     ),
                     child: Text(
-                      widget.serviceProduct.data![index]
-                          ['service_request_status']!,
+                      serviceProduct.data![index]['service_request_status']!,
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -86,24 +86,23 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.serviceProduct.data![index]
-                        ['product_group_description']!),
-                    Text(widget.serviceProduct.data![index]
-                        ['product_description']!),
+                    Text(productWarranty.data![0].productGroupDescription!),
+                    Text(productWarranty.data![0].productDescription!),
                     SizedBox(height: 15),
                     Text(
-                        'Serial No: ${widget.serviceProduct.data![index]['serial_no'] ?? 'null'}'),
+                        'Serial No: ${serviceProduct.data![index]['serial_no']}'),
                     SizedBox(height: 15),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
                           width: width * 0.2,
-                          child: Text('Drop Off'),
+                          child: Text('Service Type'),
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text('XXXXXXXXX'),
+                          child:
+                              Text(serviceProduct.data![index]['serial_no']!),
                         )
                       ],
                     ),
@@ -118,7 +117,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         SizedBox(width: 30),
                         Expanded(
                           child: Text(
-                              'No. 2, Jalan Astaka U8/82, Bukit Jelutong, 40150 Shah Alam, Malaysia'),
+                              '${serviceProduct.data![index]['street']!}, ${serviceProduct.data![index]['address_2']!}'),
                         )
                       ],
                     ),
@@ -132,8 +131,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(widget.serviceProduct.data![index]
-                              ['technician_service_group']!),
+                          child: Text(
+                              productWarranty.data![0].technicianServiceGroup!),
                         )
                       ],
                     ),
@@ -153,8 +152,9 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.black),
                             ),
-                            child: Text(
-                                widget.serviceProduct.data![index]['remarks']!),
+                            child: Text(serviceProduct.data![index]
+                                    ['remarks'] ??
+                                'null'),
                           ),
                         )
                       ],
@@ -194,8 +194,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                 ),
               ),
               SizedBox(height: 30),
-              if (widget.serviceProduct.data![index]
-                      ['service_request_status']! ==
+              if (serviceProduct.data![index]['service_request_status']! ==
                   'Pending Collection')
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -253,8 +252,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                     },
                   ),
                 ),
-              if (widget.serviceProduct.data![index]
-                      ['service_request_status']! !=
+              if (serviceProduct.data![index]['service_request_status']! !=
                   'Pending Collection')
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:khind/models/product_group.dart';
 import 'package:khind/models/product_group_model.dart';
+import 'package:khind/models/service_product.dart';
 import 'package:khind/models/store.dart';
 import 'package:khind/services/api.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +26,7 @@ class Repositories {
       headers: authHeader,
     );
 
+    print('product is ' + response.body);
     return response.body;
   }
 
@@ -90,7 +92,7 @@ class Repositories {
     // print(response.body);
   }
 
-  static Future<String> getServiceProduct() async {
+  static Future<ServiceProduct> getServiceProduct() async {
     final queryParameters = {
       'email': 'khindcustomerservice@gmail.com',
       // 'email': '',
@@ -113,9 +115,10 @@ class Repositories {
       headers: authHeader,
     );
 
-    print('result is' + response.body);
+    print('result get service product' + response.body);
 
-    return response.body;
+    ServiceProduct serviceProduct = serviceProductFromJson(response.body);
+    return serviceProduct;
   }
 
   static Future<ProductGroup> getProductGroup() async {
