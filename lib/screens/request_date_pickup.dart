@@ -188,6 +188,13 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
               initialSelectedDate: DateTime.now(),
               minDate: DateTime.now(),
               maxDate: _maxDate,
+              selectableDayPredicate: (DateTime date) {
+                if (date.weekday == DateTime.saturday ||
+                    date.weekday == DateTime.sunday) {
+                  return false;
+                }
+                return true;
+              },
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
                   _selectedDate = DateFormat('yyyy-MM-dd').format(
