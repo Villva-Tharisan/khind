@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:khind/components/custom_card.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:http/http.dart' as http;
 import 'package:khind/models/user.dart';
+import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'dart:convert';
 
@@ -26,14 +28,20 @@ class _MyPurchasesState extends State<MyPurchases> {
   int _page = 1;
   bool _fetchError = false;
   bool _isRefresh = false;
+  // List<String> _status = [
+  //   'All',
+  //   'In warranty',
+  //   'Out of warranty',
+  //   'Nearing Expiry',
+  // ];
+
   List<String> _status = [
-    'All',
     'In warranty',
-    'Out of warranty',
-    'Nearing Expiry',
+    'Warranty Expiring',
+    'Out of Warranty',
   ];
 
-  String selectedStatus = "All";
+  String selectedStatus = "In warranty";
 
   List<Purchase> _myPurchase = [];
   List<Purchase> _filteredMyPurchase = [];
@@ -49,8 +57,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     if (status == "All") {
       filter = _myPurchase;
     } else {
-      filter =
-          _myPurchase.where((element) => element.status == status).toList();
+      filter = _myPurchase.where((element) => element.status == status).toList();
     }
     setState(() {
       _filteredMyPurchase = filter;
@@ -100,8 +107,7 @@ class _MyPurchasesState extends State<MyPurchases> {
 
     var page = _page;
 
-    var purchases =
-        (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+    var purchases = (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
 
     if (purchases.length < PAGE_LIMIT) {
       setState(() {
@@ -121,9 +127,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     allPurchase.addAll(purchases);
     var filteredPurchase = allPurchase;
     if (selectedStatus != "All") {
-      filteredPurchase = filteredPurchase
-          .where((element) => element.status! == selectedStatus)
-          .toList();
+      filteredPurchase =
+          filteredPurchase.where((element) => element.status! == selectedStatus).toList();
     }
 
     setState(() {
@@ -140,8 +145,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "My Purchases", hasActions: false),
+      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "My Purchases", hasActions: false),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,8 +209,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                               // physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               // shrinkWrap: false,
-                              itemCount: _filteredMyPurchase.length +
-                                  (_hasMore ? 1 : 0),
+                              itemCount: _filteredMyPurchase.length + (_hasMore ? 1 : 0),
                               itemBuilder: (BuildContext context, int index) {
                                 if (index == _filteredMyPurchase.length - 1) {
                                   fetchMyPurchases();
@@ -223,8 +226,7 @@ class _MyPurchasesState extends State<MyPurchases> {
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(16),
-                                        child: Text(
-                                            "Error while loading photos, tap to try agin"),
+                                        child: Text("Error while loading photos, tap to try agin"),
                                       ),
                                     ));
                                   } else {
@@ -295,8 +297,7 @@ class PurchaseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var serialNo =
-        this.purchase.serialNo == null ? "-" : this.purchase.serialNo;
+    var serialNo = this.purchase.serialNo == null ? "" : this.purchase.serialNo;
     return GestureDetector(
       onTap: () {
         // Navigator.pushNamed(
@@ -306,8 +307,7 @@ class PurchaseItem extends StatelessWidget {
         Helpers.purchase = purchase;
 
         // print("#PURCHASE: ${jsonEncode(purchase)}");
-        Navigator.pushNamed(context, 'productModel',
-            arguments: purchase != null ? purchase : null);
+        Navigator.pushNamed(context, 'productModel', arguments: purchase != null ? purchase : null);
       },
       child: Container(
         width: double.infinity,
@@ -316,8 +316,7 @@ class PurchaseItem extends StatelessWidget {
           border: Border.all(width: 0.1),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(
-                blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+            BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
           ],
           borderRadius: BorderRadius.circular(7.5),
         ),
@@ -336,7 +335,7 @@ class PurchaseItem extends StatelessWidget {
                         // height: 2,
                         fontSize: 14,
                         color: Colors.black,
-                        fontWeight: FontWeight.w400),
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 5,
@@ -365,15 +364,35 @@ class PurchaseItem extends StatelessWidget {
                   SizedBox(
                     height: 5,
                   ),
-                  Text(
-                    "Serial No : ${serialNo}",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                        // height: 2,
-                        fontSize: 12,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400),
-                  ),
+                  Row(children: [
+                    // CustomCard(label: "Serial No"),
+                    Text(
+                      "Serial No. : ",
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(
+                          // height: 2,
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(width: 5),
+                    // Text(
+                    //   serialNo!,
+                    //   overflow: TextOverflow.visible,
+                    //   style: TextStyle(
+                    //       // height: 2,
+                    //       fontSize: 12,
+                    //       color: Colors.black,
+                    //       fontWeight: FontWeight.w400),
+                    // )
+                    serialNo != null && serialNo != ""
+                        ? CustomCard(
+                            label: serialNo!,
+                            textStyle: TextStyles.textDefaultBold.copyWith(fontSize: 10),
+                            color: Colors.grey[300],
+                            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5))
+                        : Text("-"),
+                  ]),
                   SizedBox(
                     height: 5,
                   ),
@@ -383,46 +402,56 @@ class PurchaseItem extends StatelessWidget {
                         "Warranty Valid until : ",
                         overflow: TextOverflow.visible,
                         style: TextStyle(
-                            // height: 2,
-                            fontSize: 12,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400),
+                            fontSize: 12, color: Colors.black, fontWeight: FontWeight.w400),
                       ),
-                      Text(
-                        "${purchase.warrantyDate}",
-                        overflow: TextOverflow.visible,
-                        style: TextStyle(
-                            // height: 2,
-                            fontSize: 12,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700),
-                      ),
+                      CustomCard(
+                          label: purchase.warrantyDate,
+                          textStyle: TextStyles.textDefaultBold.copyWith(fontSize: 10),
+                          color: Colors.grey[300],
+                          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5)),
+
+                      // Text(
+                      //   "${purchase.warrantyDate}",
+                      //   overflow: TextOverflow.visible,
+                      //   style: TextStyle(
+                      //       // height: 2,
+                      //       fontSize: 12,
+                      //       color: Colors.black,
+                      //       fontWeight: FontWeight.w700),
+                      // ),
                     ],
                   ),
                   SizedBox(
                     height: 5,
                   ),
-                  Text(
-                    "Purchase Date : ${purchase.purchaseDateFormat}",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                        // height: 2,
-                        fontSize: 12,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "Frequency of Repair : 1",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                        // height: 2,
-                        fontSize: 12,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400),
-                  ),
+                  Row(children: [
+                    Text(
+                      "Purchase Date : ${purchase.purchaseDateFormat}",
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(
+                          // height: 2,
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text("|", style: TextStyle(color: Colors.grey)),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Row(children: [
+                      Text(
+                        "Frequency of Repair : ",
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                            fontSize: 12, color: Colors.black, fontWeight: FontWeight.w400),
+                      ),
+                      CustomCard(label: "1", color: Colors.yellow[800], width: 20, height: 20),
+                      SizedBox(width: 5),
+                    ]),
+                  ]),
                 ],
               ),
             ),
@@ -432,7 +461,7 @@ class PurchaseItem extends StatelessWidget {
             Column(children: [
               Container(
                 width: width * 0.06,
-                height: 130,
+                height: 150,
                 padding: EdgeInsets.only(right: 1),
                 decoration: BoxDecoration(
                   color: getColor(),
