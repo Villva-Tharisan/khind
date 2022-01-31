@@ -77,6 +77,89 @@ class _ServiceTypeState extends State<ServiceType> {
 
   Container _renderBody(
       Color getColor(Set<MaterialState> states), BuildContext context) {
+    List<Widget> getDescription() {
+      if (_selectedType == "Drop-In") {
+        return [
+          Text('*Drop In :-'),
+          SizedBox(
+            height: 10,
+          ),
+          Text('- Only applicable for Khind Service Center (10 Branches)'),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+              '- Drop in service only available based on the selected Khind service center operating hours'),
+          SizedBox(
+            height: 5,
+          ),
+          Text('- Authorized Service Contractors are excluded at the moment'),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+              '- Courier fee of RM 15.00 will be charged if delivery service after repair is needed'),
+          SizedBox(
+            height: 10,
+          ),
+        ];
+      }
+      if (_selectedType == "Home Visit") {
+        return [
+          Text('*Home Visit :-'),
+          SizedBox(
+            height: 10,
+          ),
+          Text('- Only limited to Klang Valley at the moment'),
+          SizedBox(
+            height: 5,
+          ),
+          Text('- Limited to Major Domestic Appliances'),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+              '- Booking of 2 days in advance is needed for the home visit service'),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+              '- Home visit service only available based on the selected Khind service center operating hours'),
+          SizedBox(
+            height: 5,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+        ];
+      }
+      if (_selectedType == "Pick Up") {
+        return [
+          Text('*Pick Up :-'),
+          SizedBox(
+            height: 10,
+          ),
+          Text('- Only limited to Klang Valley at the moment'),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+              '- Courier fee of RM 15.00 will be charge for defect item pick-up for repair. Additional RM 15.00 will be charge if if delivery service after repair is needed'),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+              '- Booking of 2 days in advance is needed for the pick-up service'),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+              '- Pick-up service will be handled by Khind nominated courier partner'),
+        ];
+      }
+      return [Container()];
+    }
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -174,75 +257,7 @@ class _ServiceTypeState extends State<ServiceType> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('*Drop In :-'),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                    '- Only applicable for Khind Service Center (10 Branches)'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                    '- Drop in service only available based on the selected Khind service center operating hours'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                    '- Authorized Service Contractors are excluded at the moment'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                    '- Courier fee of RM 15.00 will be charged if delivery service after repair is needed'),
-                SizedBox(
-                  height: 10,
-                ),
-                Text('*Home Visit :-'),
-                SizedBox(
-                  height: 10,
-                ),
-                Text('- Only limited to Klang Valley at the moment'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text('- Limited to Major Domestic Appliances'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                    '- Booking of 2 days in advance is needed for the home visit service'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                    '- Home visit service only available based on the selected Khind service center operating hours'),
-                SizedBox(
-                  height: 5,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text('*Pick Up :-'),
-                SizedBox(
-                  height: 10,
-                ),
-                Text('- Only limited to Klang Valley at the moment'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                    '- Courier fee of RM 15.00 will be charge for defect item pick-up for repair. Additional RM 15.00 will be charge if if delivery service after repair is needed'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                    '- Booking of 2 days in advance is needed for the pick-up service'),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                    '- Pick-up service will be handled by Khind nominated courier partner'),
+                ...getDescription(),
               ],
             ),
           ),

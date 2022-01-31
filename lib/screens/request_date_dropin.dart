@@ -63,7 +63,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
 
     var date = new DateTime.now();
     var firstDayMonth = new DateTime(date.year, date.month, 0);
-    _maxDate = Jiffy(firstDayMonth).add(months: 3).dateTime;
+    _maxDate = Jiffy(firstDayMonth).add(months: 1).dateTime;
 
     super.initState();
     this.fetchStates();
@@ -441,7 +441,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width * 0.2,
-                      child: Text('Remark:'),
+                      child: Text('Remarks:'),
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.60,
