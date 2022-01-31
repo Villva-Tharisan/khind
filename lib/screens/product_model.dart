@@ -25,19 +25,29 @@ class _ProductModelState extends State<ProductModel> {
   Purchase? purchase;
   TextEditingController serialNoCT = new TextEditingController();
   String? purchaseDate = "";
+  bool canRequestRepair = true;
   @override
   void initState() {
     // TODO: implement initState
-    var formattedDate =
-        DateFormat('dd-MM-yyyy').format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
+    var formattedDate = DateFormat('dd-MM-yyyy')
+        .format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
 
     setState(() {
       purchase = widget.data;
       serialNoCT.text = widget.data != null && widget.data?.serialNo != null
           ? widget.data!.serialNo.toString()
-          : "";
+          : "-";
       purchaseDate = formattedDate;
     });
+
+    if (purchase!.dropIn == '0' &&
+        purchase!.homeVisit == '0' &&
+        purchase!.pickUp == '0') {
+      setState(() {
+        canRequestRepair = false;
+      });
+    }
+
     super.initState();
   }
 
@@ -54,8 +64,9 @@ class _ProductModelState extends State<ProductModel> {
     var queryParams =
         '?email=$email&warranty_registration_id=${purchase!.warrantyRegistrationId}&serial_no=${serialNoCT.text}';
 
-    final response =
-        await Api.bearerPost('provider/create_serial_number.php$queryParams', isCms: true);
+    final response = await Api.bearerPost(
+        'provider/create_serial_number.php$queryParams',
+        isCms: true);
 
     if (response['success']) {
       setState(() {
@@ -63,7 +74,8 @@ class _ProductModelState extends State<ProductModel> {
       });
 
       Helpers.showAlert(context,
-          title: 'You have successfully updated serial number', hasAction: true, onPressed: () {
+          title: 'You have successfully updated serial number',
+          hasAction: true, onPressed: () {
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, 'home');
       });
@@ -71,11 +83,15 @@ class _ProductModelState extends State<ProductModel> {
   }
 
   void _handleDeletePurchase() async {
-    var queryParams = "?warranty_registration_id=${purchase!.warrantyRegistrationId}";
-    final response = await Api.bearerPost('provider/rm_my_purchase.php$queryParams', isCms: true);
+    var queryParams =
+        "?warranty_registration_id=${purchase!.warrantyRegistrationId}";
+    final response = await Api.bearerPost(
+        'provider/rm_my_purchase.php$queryParams',
+        isCms: true);
     if (response['success']) {
       Helpers.showAlert(context,
-          title: 'You have successfully remove this purchase', hasAction: true, onPressed: () {
+          title: 'You have successfully remove this purchase',
+          hasAction: true, onPressed: () {
         Navigator.pop(context);
         Navigator.pushReplacementNamed(context, 'home');
       });
@@ -104,7 +120,10 @@ class _ProductModelState extends State<ProductModel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -149,7 +168,10 @@ class _ProductModelState extends State<ProductModel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -182,7 +204,10 @@ class _ProductModelState extends State<ProductModel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -190,46 +215,12 @@ class _ProductModelState extends State<ProductModel> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Serial Number",
-                      ),
-                      Form(
-                        key: _basicFormKey,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                                keyboardType: TextInputType.text,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please enter serial number';
-                                  }
-                                  return null;
-                                },
-                                controller: serialNoCT,
-                                onFieldSubmitted: (val) {
-                                  FocusScope.of(context).requestFocus(new FocusNode());
-                                },
-                                enabled: false,
-                                decoration: InputDecoration(
-                                  hintText: 'eg: AP550XXXXXMLKD',
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                                )),
-                          ],
-                        ),
+                        "Serial Number: ${serialNoCT.text}",
                       ),
                       SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          RoundButton(
-                              width: MediaQuery.of(context).size.width * 0.2,
-                              height: 40,
-                              title: "Save",
-                              onPressed: () {
-                                if (_basicFormKey.currentState!.validate()) {
-                                  _handleCreateSerialNo();
-                                }
-                              }),
                           // Container(
                           //   child: MaterialButton(
                           //     child: Text(
@@ -258,21 +249,45 @@ class _ProductModelState extends State<ProductModel> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      GradientButton(
-                        height: 40,
-                        child: Text(
-                          "Request Repair",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        gradient: LinearGradient(
-                            colors: <Color>[Colors.white, Colors.grey[400]!],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter),
-                        onPressed: () {
-                          Navigator.pushNamed(context, 'serviceType',
-                              arguments: purchase != null ? purchase : null);
-                        },
-                      ),
+                      canRequestRepair
+                          ? GradientButton(
+                              height: 40,
+                              hideShadow: true,
+                              child: Text(
+                                "Request Repair",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              gradient: LinearGradient(
+                                  colors: <Color>[
+                                    Colors.white,
+                                    Colors.grey[400]!
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter),
+                              onPressed: () {
+                                Navigator.pushNamed(context, 'serviceType',
+                                    arguments:
+                                        purchase != null ? purchase : null);
+                              },
+                            )
+                          : GradientButton(
+                              hideShadow: true,
+                              height: 40,
+                              child: Text(
+                                "Request Repair",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              gradient: LinearGradient(
+                                  colors: <Color>[
+                                    Colors.grey[300]!,
+                                    Colors.grey[300]!
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter),
+                              onPressed: () {},
+                            ),
 
                       // Container(
                       //   child: FlatButton(
@@ -314,10 +329,15 @@ class _ProductModelState extends State<ProductModel> {
                           height: 40,
                           child: Text(
                             "Extend Warranty",
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                           gradient: LinearGradient(
-                              colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
+                              colors: <Color>[
+                                Colors.grey[300]!,
+                                Colors.grey[300]!
+                              ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter),
                           onPressed: () {},
@@ -361,7 +381,10 @@ class _ProductModelState extends State<ProductModel> {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 gradient: LinearGradient(
-                                    colors: <Color>[Colors.white, Colors.grey[400]!],
+                                    colors: <Color>[
+                                      Colors.white,
+                                      Colors.grey[400]!
+                                    ],
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter),
                                 onPressed: () {
@@ -370,7 +393,8 @@ class _ProductModelState extends State<ProductModel> {
                                     okTitle: "Yes",
                                     noTitle: "No",
                                     // title: "Sign out confirmation",
-                                    desc: "Do you want to remove this product from 'My Purchase'",
+                                    desc:
+                                        "Do you want to remove this product from 'My Purchase'",
                                     hasAction: true,
                                     hasCancel: true,
                                     onPressed: () async {
