@@ -142,12 +142,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: EdgeInsets.only(top: 15),
-                          width: width * 0.30,
-                          child: Text('Old Password', style: TextStyles.textDefault),
-                        ),
-                        SizedBox(width: 15),
+                        // Container(
+                        //   padding: EdgeInsets.only(top: 15),
+                        //   width: width * 0.30,
+                        //   child: Text('Old Password', style: TextStyles.textDefault),
+                        // ),
+                        // SizedBox(width: 15),
                         Flexible(
                             child: Stack(children: [
                           TextFormField(
@@ -207,12 +207,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: EdgeInsets.only(top: 15),
-                          width: width * 0.30,
-                          child: Text('Password', style: TextStyles.textDefault),
-                        ),
-                        SizedBox(width: 15),
+                        // Container(
+                        //   padding: EdgeInsets.only(top: 15),
+                        //   width: width * 0.30,
+                        //   child: Text('Password', style: TextStyles.textDefault),
+                        // ),
+                        // SizedBox(width: 15),
                         Flexible(
                             child: Stack(children: [
                           TextFormField(

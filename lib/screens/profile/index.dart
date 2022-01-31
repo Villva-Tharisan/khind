@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:khind/components/custom_card.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/states.dart';
 import 'package:khind/screens/profile/change_password.dart';
@@ -293,11 +294,13 @@ class _ProfileState extends State<Profile> {
     return IconButton(onPressed: onPressed, icon: Icon(icon, size: 20, color: Colors.black));
   }
 
-  Widget _renderLabel(title, {width, padding, textStyle}) {
+  Widget _renderLabel(title, {width, padding, TextAlign? textAlign, textStyle}) {
     return Container(
         padding: padding != null ? padding : EdgeInsets.all(0),
         width: width != null ? width : MediaQuery.of(context).size.width * 0.25,
-        child: Text(title, style: textStyle != null ? textStyle : TextStyles.textDefault));
+        child: Text(title,
+            textAlign: textAlign != null ? textAlign : TextAlign.start,
+            style: textStyle != null ? textStyle : TextStyles.textDefault));
   }
 
   Widget _renderField({val}) {
@@ -462,7 +465,7 @@ class _ProfileState extends State<Profile> {
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
-                    SizedBox(height: 10),
+                    SizedBox(height: 20),
                     _renderItemContainer(
                         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                           InkWell(
@@ -476,11 +479,16 @@ class _ProfileState extends State<Profile> {
                                               child: UpdateAddress());
                                         })
                                   },
-                              child: _renderLabel("Update Address",
-                                  width: MediaQuery.of(context).size.width * 0.4,
-                                  padding: EdgeInsets.only(top: 10),
-                                  textStyle: TextStyles.textSecondary
-                                      .copyWith(fontWeight: FontWeight.w500))),
+                              child: CustomCard(
+                                  borderRadius: BorderRadius.circular(5),
+                                  textStyle: TextStyles.textWhiteBold.copyWith(fontSize: 10),
+                                  color: Colors.grey[200],
+                                  child: _renderLabel("Update Address",
+                                      textAlign: TextAlign.center,
+                                      width: MediaQuery.of(context).size.width * 0.3,
+                                      // padding: EdgeInsets.only(top: 10),
+                                      textStyle: TextStyles.textSecondary
+                                          .copyWith(fontWeight: FontWeight.w500)))),
                           SizedBox(width: 10),
                           InkWell(
                               onTap: () => {
@@ -493,11 +501,21 @@ class _ProfileState extends State<Profile> {
                                               child: ChangePassword());
                                         })
                                   },
-                              child: _renderLabel("Change Password",
-                                  width: MediaQuery.of(context).size.width * 0.4,
-                                  padding: EdgeInsets.only(top: 10),
-                                  textStyle: TextStyles.textSecondary
-                                      .copyWith(fontWeight: FontWeight.w500)))
+                              child: CustomCard(
+                                  borderRadius: BorderRadius.circular(5),
+                                  textStyle: TextStyles.textWhiteBold.copyWith(fontSize: 10),
+                                  color: Colors.grey[200],
+                                  child: _renderLabel("Change Password",
+                                      textAlign: TextAlign.center,
+                                      width: MediaQuery.of(context).size.width * 0.3,
+                                      // padding: EdgeInsets.only(top: 10),
+                                      textStyle: TextStyles.textSecondary
+                                          .copyWith(fontWeight: FontWeight.w500)))),
+                          // child: _renderLabel("Change Password",
+                          //     width: MediaQuery.of(context).size.width * 0.4,
+                          //     padding: EdgeInsets.only(top: 10),
+                          //     textStyle: TextStyles.textSecondary
+                          //         .copyWith(fontWeight: FontWeight.w500)))
                         ]),
                         padding: const EdgeInsets.all(0)),
                     SizedBox(height: 20),

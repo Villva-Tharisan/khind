@@ -5,6 +5,7 @@ import 'package:khind/components/custom_card.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:http/http.dart' as http;
 import 'package:khind/models/user.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'dart:convert';
@@ -387,7 +388,7 @@ class PurchaseItem extends StatelessWidget {
                     // )
                     serialNo != null && serialNo != ""
                         ? CustomCard(
-                            label: serialNo!,
+                            label: serialNo,
                             textStyle: TextStyles.textDefaultBold.copyWith(fontSize: 10),
                             color: Colors.grey[300],
                             padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5))
@@ -405,9 +406,10 @@ class PurchaseItem extends StatelessWidget {
                             fontSize: 12, color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                       CustomCard(
+                          borderRadius: BorderRadius.circular(5),
                           label: purchase.warrantyDate,
-                          textStyle: TextStyles.textDefaultBold.copyWith(fontSize: 10),
-                          color: Colors.grey[300],
+                          textStyle: TextStyles.textWhiteBold.copyWith(fontSize: 10),
+                          color: AppColors.secondary,
                           padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5)),
 
                       // Text(

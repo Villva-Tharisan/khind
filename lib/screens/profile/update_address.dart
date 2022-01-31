@@ -239,21 +239,19 @@ class _UpdateAddressState extends State<UpdateAddress> {
                         padding: const EdgeInsets.only(bottom: 10, top: 15),
                         child: Text("UPDATE ADDRESS", style: TextStyles.textSecondaryBold))),
                 Divider(color: Colors.grey[300]),
+                SizedBox(height: 10),
                 Container(
                     padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                    child: Row(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(top: 15),
-                          width: width * 0.30,
                           child: Text('Address Line 1', style: TextStyles.textDefault),
                         ),
-                        SizedBox(width: 15),
-                        Flexible(
-                            child: TextFormField(
+                        SizedBox(height: 10),
+                        TextFormField(
                           keyboardType: TextInputType.multiline,
-                          minLines: 2,
+                          minLines: 3,
                           maxLines: null,
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -266,29 +264,33 @@ class _UpdateAddressState extends State<UpdateAddress> {
                             FocusScope.of(context).requestFocus(new FocusNode());
                           },
                           decoration: InputDecoration(
-                            border: InputBorder.none,
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.all(Radius.circular(5))),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: AppColors.secondary),
+                                borderRadius: BorderRadius.all(Radius.circular(5))),
+                            filled: true,
+                            fillColor: Colors.white,
                             hintText: 'eg: No 78 Jalan Mawar',
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                           ),
-                        )),
+                        ),
                       ],
                     )),
                 SizedBox(height: 10),
                 Container(
                     padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                    child: Row(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(top: 15),
-                          width: width * 0.30,
                           child: Text('Address Line 2', style: TextStyles.textDefault),
                         ),
-                        SizedBox(width: 15),
-                        Flexible(
-                          child: TextFormField(
+                        SizedBox(height: 10),
+                        TextFormField(
                             keyboardType: TextInputType.multiline,
-                            minLines: 2,
+                            minLines: 3,
                             maxLines: null,
                             validator: (value) {
                               return null;
@@ -298,86 +300,86 @@ class _UpdateAddressState extends State<UpdateAddress> {
                               FocusScope.of(context).requestFocus(new FocusNode());
                             },
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                  borderRadius: BorderRadius.all(Radius.circular(5))),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: AppColors.secondary),
+                                  borderRadius: BorderRadius.all(Radius.circular(5))),
+                              filled: true,
+                              fillColor: Colors.white,
                               hintText: 'eg: Puchong Perdana',
                               contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                            ),
-                          ),
-                        ),
+                                  const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                            )),
                       ],
                     )),
                 SizedBox(height: 10),
                 Container(
                     padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                    child: Row(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(top: 15),
-                          width: width * 0.30,
                           child: Text('State', style: TextStyles.textDefault),
                         ),
-                        SizedBox(width: 15),
-                        Flexible(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 10),
-                            width: width * 0.45,
-                            child: DropdownButton<States>(
-                              items: states.map<DropdownMenuItem<States>>((e) {
-                                return DropdownMenuItem<States>(
-                                  child: Text(
-                                    e.state!,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                  value: e,
-                                );
-                              }).toList(),
-                              isExpanded: true,
-                              value: state,
-                              onChanged: (value) {
-                                if (value != null && value.stateId != "") {
-                                  setState(() {
-                                    cities = [];
-                                    postcodes = [];
-                                    state = value;
-                                    city = new City(
-                                        stateId: "",
-                                        city: "All",
-                                        cityId: "",
-                                        postcodeId: "",
-                                        postcode: "");
-                                    postcode = "";
-                                    _fetchCities(value.stateId!);
-                                  });
-                                } else {
-                                  postcodes = [];
+                        // SizedBox(height: 5),
+                        Container(
+                          child: DropdownButton<States>(
+                            // underline: SizedBox(),
+                            items: states.map<DropdownMenuItem<States>>((e) {
+                              return DropdownMenuItem<States>(
+                                child: Text(
+                                  e.state!,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                                value: e,
+                              );
+                            }).toList(),
+                            isExpanded: true,
+                            value: state,
+                            onChanged: (value) {
+                              if (value != null && value.stateId != "") {
+                                setState(() {
                                   cities = [];
-                                }
-                              },
-                            ),
+                                  postcodes = [];
+                                  state = value;
+                                  city = new City(
+                                      stateId: "",
+                                      city: "All",
+                                      cityId: "",
+                                      postcodeId: "",
+                                      postcode: "");
+                                  postcode = "";
+                                  _fetchCities(value.stateId!);
+                                });
+                              } else {
+                                postcodes = [];
+                                cities = [];
+                              }
+                            },
                           ),
                         ),
                       ],
                     )),
                 cities.length > 0 ? SizedBox(height: 10) : Container(),
-                cities.length > 0
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(top: 15),
-                              width: width * 0.30,
-                              child: Text('City', style: TextStyles.textDefault),
-                            ),
-                            SizedBox(width: 15),
-                            Flexible(
-                              child: Container(
-                                padding: EdgeInsets.only(left: 10),
-                                width: width * 0.45,
+                Row(children: [
+                  cities.length > 0
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                // padding: EdgeInsets.only(top: 15),
+                                // width: width * 0.30,
+                                child: Text('City', style: TextStyles.textDefault),
+                              ),
+                              // SizedBox(height: 10),
+                              Container(
+                                // padding: EdgeInsets.only(left: 10),
+                                width: width * 0.4,
                                 child: DropdownButton<City>(
                                   items: cities.map<DropdownMenuItem<City>>((e) {
                                     return DropdownMenuItem<City>(
@@ -399,26 +401,25 @@ class _UpdateAddressState extends State<UpdateAddress> {
                                   },
                                 ),
                               ),
-                            ),
-                          ],
-                        ))
-                    : Container(),
-                postcodes.length > 0
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(top: 15),
-                              width: width * 0.30,
-                              child: Text('Postcode', style: TextStyles.textDefault),
-                            ),
-                            SizedBox(width: 15),
-                            Flexible(
-                              child: Container(
-                                padding: EdgeInsets.only(left: 10),
-                                width: width * 0.45,
+                            ],
+                          ))
+                      : Container(),
+                  postcodes.length > 0 ? SizedBox(width: 10) : Container(),
+                  postcodes.length > 0
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                // padding: EdgeInsets.only(top: 15),
+                                // width: width * 0.30,
+                                child: Text('Postcode', style: TextStyles.textDefault),
+                              ),
+                              // SizedBox(height: 5),
+                              Container(
+                                // padding: EdgeInsets.only(left: 10),
+                                width: width * 0.25,
                                 child: DropdownButton<String>(
                                   items: postcodes.map<DropdownMenuItem<String>>((e) {
                                     return DropdownMenuItem<String>(
@@ -440,10 +441,10 @@ class _UpdateAddressState extends State<UpdateAddress> {
                                   },
                                 ),
                               ),
-                            ),
-                          ],
-                        ))
-                    : Container(),
+                            ],
+                          ))
+                      : Container(),
+                ]),
                 SizedBox(height: 10),
                 Container(
                     alignment: Alignment.center,
