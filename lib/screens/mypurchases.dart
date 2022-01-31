@@ -29,18 +29,18 @@ class _MyPurchasesState extends State<MyPurchases> {
   int _page = 1;
   bool _fetchError = false;
   bool _isRefresh = false;
-  // List<String> _status = [
-  //   'All',
-  //   'In warranty',
-  //   'Out of warranty',
-  //   'Nearing Expiry',
-  // ];
-
   List<String> _status = [
+    'All',
     'In warranty',
-    'Warranty Expiring',
-    'Out of Warranty',
+    'Out of warranty',
+    'Nearing Expiry',
   ];
+
+  // List<String> _status = [
+  //   'In warranty',
+  //   'Warranty Expiring',
+  //   'Out of Warranty',
+  // ];
 
   String selectedStatus = "In warranty";
 
