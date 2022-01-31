@@ -482,12 +482,12 @@ class _ProfileState extends State<Profile> {
                               child: CustomCard(
                                   borderRadius: BorderRadius.circular(5),
                                   textStyle: TextStyles.textWhiteBold.copyWith(fontSize: 10),
-                                  color: Colors.grey[200],
+                                  color: Colors.blue[700],
                                   child: _renderLabel("Update Address",
                                       textAlign: TextAlign.center,
                                       width: MediaQuery.of(context).size.width * 0.3,
                                       // padding: EdgeInsets.only(top: 10),
-                                      textStyle: TextStyles.textSecondary
+                                      textStyle: TextStyles.textWhite
                                           .copyWith(fontWeight: FontWeight.w500)))),
                           SizedBox(width: 10),
                           InkWell(
@@ -504,12 +504,12 @@ class _ProfileState extends State<Profile> {
                               child: CustomCard(
                                   borderRadius: BorderRadius.circular(5),
                                   textStyle: TextStyles.textWhiteBold.copyWith(fontSize: 10),
-                                  color: Colors.grey[200],
+                                  color: Colors.blue[700],
                                   child: _renderLabel("Change Password",
                                       textAlign: TextAlign.center,
                                       width: MediaQuery.of(context).size.width * 0.3,
                                       // padding: EdgeInsets.only(top: 10),
-                                      textStyle: TextStyles.textSecondary
+                                      textStyle: TextStyles.textWhite
                                           .copyWith(fontWeight: FontWeight.w500)))),
                           // child: _renderLabel("Change Password",
                           //     width: MediaQuery.of(context).size.width * 0.4,
