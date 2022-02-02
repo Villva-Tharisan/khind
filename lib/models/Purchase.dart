@@ -232,7 +232,7 @@ class Purchase {
       this.statusCode = "0";
     }
     if (diff > 0 && diff < 61) {
-      this.status = "Nearing Expiry";
+      this.status = "Waranty Expiring";
       this.statusCode = "1";
     }
   }

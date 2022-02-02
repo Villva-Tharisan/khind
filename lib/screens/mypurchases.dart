@@ -33,7 +33,7 @@ class _MyPurchasesState extends State<MyPurchases> {
     'All',
     'In warranty',
     'Out of warranty',
-    'Nearing Expiry',
+    'Waranty Expiring',
   ];
 
   // List<String> _status = [
@@ -58,7 +58,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     if (status == "All") {
       filter = _myPurchase;
     } else {
-      filter = _myPurchase.where((element) => element.status == status).toList();
+      filter =
+          _myPurchase.where((element) => element.status == status).toList();
     }
     setState(() {
       _filteredMyPurchase = filter;
@@ -97,7 +98,8 @@ class _MyPurchasesState extends State<MyPurchases> {
 
     var page = _page;
 
-    var purchases = (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
+    var purchases =
+        (response['data'] as List).map((i) => Purchase.fromJson(i)).toList();
 
     if (purchases.length < PAGE_LIMIT) {
       setState(() {
@@ -117,8 +119,9 @@ class _MyPurchasesState extends State<MyPurchases> {
     allPurchase.addAll(purchases);
     var filteredPurchase = allPurchase;
     if (selectedStatus != "All") {
-      filteredPurchase =
-          filteredPurchase.where((element) => element.status! == selectedStatus).toList();
+      filteredPurchase = filteredPurchase
+          .where((element) => element.status! == selectedStatus)
+          .toList();
     }
 
     setState(() {
@@ -135,7 +138,8 @@ class _MyPurchasesState extends State<MyPurchases> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "My Purchases", hasActions: false),
+      appBar: Helpers.customAppBar(context, _scaffoldKey,
+          title: "My Purchases", hasActions: false),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,7 +203,8 @@ class _MyPurchasesState extends State<MyPurchases> {
                               // physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               // shrinkWrap: false,
-                              itemCount: _filteredMyPurchase.length + (_hasMore ? 1 : 0),
+                              itemCount: _filteredMyPurchase.length +
+                                  (_hasMore ? 1 : 0),
                               itemBuilder: (BuildContext context, int index) {
                                 if (index == _filteredMyPurchase.length - 1) {
                                   fetchMyPurchases();
@@ -216,7 +221,8 @@ class _MyPurchasesState extends State<MyPurchases> {
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(16),
-                                        child: Text("Error while loading photos, tap to try agin"),
+                                        child: Text(
+                                            "Error while loading photos, tap to try agin"),
                                       ),
                                     ));
                                   } else {
@@ -297,7 +303,8 @@ class PurchaseItem extends StatelessWidget {
         Helpers.purchase = purchase;
 
         // print("#PURCHASE: ${jsonEncode(purchase)}");
-        Navigator.pushNamed(context, 'productModel', arguments: purchase != null ? purchase : null);
+        Navigator.pushNamed(context, 'productModel',
+            arguments: purchase != null ? purchase : null);
       },
       child: Container(
         width: double.infinity,
@@ -306,7 +313,8 @@ class PurchaseItem extends StatelessWidget {
           border: Border.all(width: 0.1),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+            BoxShadow(
+                blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
           ],
           borderRadius: BorderRadius.circular(7.5),
         ),
@@ -379,9 +387,11 @@ class PurchaseItem extends StatelessWidget {
                         ? CustomCard(
                             borderRadius: BorderRadius.circular(5),
                             label: serialNo,
-                            textStyle: TextStyles.textDefaultBold.copyWith(fontSize: 10),
+                            textStyle: TextStyles.textDefaultBold
+                                .copyWith(fontSize: 10),
                             color: Colors.grey[200],
-                            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5))
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 5))
                         : Text("-"),
                   ]),
                   SizedBox(height: 5),
@@ -399,9 +409,11 @@ class PurchaseItem extends StatelessWidget {
                     CustomCard(
                         borderRadius: BorderRadius.circular(5),
                         label: purchase.purchaseDateFormat,
-                        textStyle: TextStyles.textDefaultBold.copyWith(fontSize: 10),
+                        textStyle:
+                            TextStyles.textDefaultBold.copyWith(fontSize: 10),
                         color: Colors.grey[200],
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5)),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 5)),
                   ]),
                   SizedBox(
                     height: 5,
@@ -429,15 +441,19 @@ class PurchaseItem extends StatelessWidget {
                     Text(
                       "Warranty valid until : ",
                       overflow: TextOverflow.visible,
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w400),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
                     ),
                     CustomCard(
                         borderRadius: BorderRadius.circular(5),
                         label: purchase.warrantyDate,
-                        textStyle: TextStyles.textDefaultBold.copyWith(fontSize: 10),
+                        textStyle:
+                            TextStyles.textDefaultBold.copyWith(fontSize: 10),
                         color: Colors.grey[200],
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5)),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 5)),
                     SizedBox(
                       width: 5,
                     ),
@@ -450,9 +466,15 @@ class PurchaseItem extends StatelessWidget {
                         "Frequency of Repair : ",
                         overflow: TextOverflow.visible,
                         style: TextStyle(
-                            fontSize: 12, color: Colors.black, fontWeight: FontWeight.w400),
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400),
                       ),
-                      CustomCard(label: "1", color: Colors.yellow[800], width: 20, height: 20),
+                      CustomCard(
+                          label: "1",
+                          color: Colors.yellow[800],
+                          width: 20,
+                          height: 20),
                       SizedBox(width: 5),
                     ]),
                   ]),
