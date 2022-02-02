@@ -110,6 +110,9 @@ class _ReviewState extends State<Review> {
   }
 
   Container _renderBody(BuildContext context) {
+    var serialNo = _requestServiceArgument.purchase.serialNo != null
+        ? _requestServiceArgument.purchase.serialNo!
+        : "-";
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -137,7 +140,7 @@ class _ReviewState extends State<Review> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _requestServiceArgument.purchase.productModel!,
+                  _requestServiceArgument.purchase.productGroup!,
                   overflow: TextOverflow.visible,
                   style: TextStyle(
                       // height: 2,
@@ -145,6 +148,10 @@ class _ReviewState extends State<Review> {
                       color: Colors.black,
                       fontWeight: FontWeight.w400),
                 ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(_requestServiceArgument.purchase.productModel!),
                 SizedBox(
                   height: 5,
                 ),
@@ -163,8 +170,7 @@ class _ReviewState extends State<Review> {
                 SizedBox(
                   height: 13,
                 ),
-                Text(
-                    "Serial No: ${_requestServiceArgument.purchase.serialNo!}"),
+                Text("Serial No: ${serialNo}"),
               ],
             ),
           ),

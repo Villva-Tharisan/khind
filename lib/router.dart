@@ -55,7 +55,8 @@ class AppRouter {
       case 'news':
         return MaterialPageRoute(builder: (_) => NewsLanding());
       case 'news_detail':
-        return MaterialPageRoute(builder: (_) => NewsDetail(data: arguments as News));
+        return MaterialPageRoute(
+            builder: (_) => NewsDetail(data: arguments as News));
       case 'service_locator':
         return MaterialPageRoute(builder: (_) => ServiceLocator());
       case 'ewarranty':
@@ -94,20 +95,24 @@ class AppRouter {
         );
 
       case 'productModel':
-        return MaterialPageRoute(builder: (_) => ProductModel(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => ProductModel(data: arguments as Purchase));
 
       case 'serviceType':
-        return MaterialPageRoute(builder: (_) => ServiceType(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => ServiceType(data: arguments as Purchase));
 
       case 'requestDateHomeVisit':
-        return MaterialPageRoute(builder: (_) => RequestDateHomeVisit(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => RequestDateHomeVisit(data: arguments as Purchase));
       case 'requestDateDropIn':
         return MaterialPageRoute(
             builder: (_) => RequestDateDropIn(
-                  data: arguments as RequestServiceArgument,
+                  data: arguments as Purchase,
                 ));
       case 'requestDatePickup':
-        return MaterialPageRoute(builder: (_) => RequestDatePickup(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => RequestDatePickup(data: arguments as Purchase));
 
       case 'review':
         return MaterialPageRoute(
@@ -149,8 +154,9 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-            builder: (_) =>
-                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
+            builder: (_) => Scaffold(
+                body: Center(
+                    child: Text('No route defined for ${settings.name}'))));
     }
   }
 
