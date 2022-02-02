@@ -30,8 +30,8 @@ class _ServiceTypeState extends State<ServiceType> {
   @override
   void initState() {
     // TODO: implement initState
-    var formattedDate =
-        DateFormat('dd-MM-yyyy').format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
+    var formattedDate = DateFormat('dd-MM-yyyy')
+        .format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
 
     if (widget.data!.dropIn == "0") {
       _serviceTypes.remove('Drop-In');
@@ -75,17 +75,20 @@ class _ServiceTypeState extends State<ServiceType> {
     );
   }
 
-  Container _renderBody(Color getColor(Set<MaterialState> states), BuildContext context) {
+  Container _renderBody(
+      Color getColor(Set<MaterialState> states), BuildContext context) {
     TextStyle noteStyle = TextStyles.textWarning.copyWith(fontSize: 12);
 
     List<Widget> getDescription() {
       if (_selectedType == "Drop-In") {
         return [
-          Text('* Drop In :-', style: noteStyle.copyWith(fontWeight: FontWeight.bold)),
+          Text('* Drop In :-',
+              style: noteStyle.copyWith(fontWeight: FontWeight.bold)),
           SizedBox(
             height: 10,
           ),
-          Text('- Only applicable for Khind Service Center (10 Branches)', style: noteStyle),
+          Text('- Only applicable for Khind Service Center (10 Branches)',
+              style: noteStyle),
           SizedBox(
             height: 5,
           ),
@@ -95,7 +98,8 @@ class _ServiceTypeState extends State<ServiceType> {
           SizedBox(
             height: 5,
           ),
-          Text('- Authorized Service Contractors are excluded at the moment', style: noteStyle),
+          Text('- Authorized Service Contractors are excluded at the moment',
+              style: noteStyle),
           SizedBox(
             height: 5,
           ),
@@ -109,11 +113,13 @@ class _ServiceTypeState extends State<ServiceType> {
       }
       if (_selectedType == "Home Visit") {
         return [
-          Text('* Home Visit :-', style: noteStyle.copyWith(fontWeight: FontWeight.bold)),
+          Text('* Home Visit :-',
+              style: noteStyle.copyWith(fontWeight: FontWeight.bold)),
           SizedBox(
             height: 10,
           ),
-          Text('- Only limited to Klang Valley at the moment', style: noteStyle),
+          Text('- Only limited to Klang Valley at the moment',
+              style: noteStyle),
           SizedBox(
             height: 5,
           ),
@@ -121,7 +127,8 @@ class _ServiceTypeState extends State<ServiceType> {
           SizedBox(
             height: 5,
           ),
-          Text('- Booking of 2 days in advance is needed for the home visit service',
+          Text(
+              '- Booking of 2 days in advance is needed for the home visit service',
               style: noteStyle),
           SizedBox(
             height: 5,
@@ -139,11 +146,13 @@ class _ServiceTypeState extends State<ServiceType> {
       }
       if (_selectedType == "Pick Up") {
         return [
-          Text('* Pick Up :-', style: noteStyle.copyWith(fontWeight: FontWeight.bold)),
+          Text('* Pick Up :-',
+              style: noteStyle.copyWith(fontWeight: FontWeight.bold)),
           SizedBox(
             height: 10,
           ),
-          Text('- Only limited to Klang Valley at the moment', style: noteStyle),
+          Text('- Only limited to Klang Valley at the moment',
+              style: noteStyle),
           SizedBox(
             height: 5,
           ),
@@ -153,12 +162,14 @@ class _ServiceTypeState extends State<ServiceType> {
           SizedBox(
             height: 5,
           ),
-          Text('- Booking of 2 days in advance is needed for the pick-up service',
+          Text(
+              '- Booking of 2 days in advance is needed for the pick-up service',
               style: noteStyle),
           SizedBox(
             height: 5,
           ),
-          Text('- Pick-up service will be handled by Khind nominated courier partner',
+          Text(
+              '- Pick-up service will be handled by Khind nominated courier partner',
               style: noteStyle),
         ];
       }
@@ -206,7 +217,8 @@ class _ServiceTypeState extends State<ServiceType> {
               .map((e) => new Container(
                     width: double.infinity,
                     margin: EdgeInsets.only(bottom: 10),
-                    padding: EdgeInsets.only(left: 20, right: 15, top: 5, bottom: 5),
+                    padding:
+                        EdgeInsets.only(left: 20, right: 15, top: 5, bottom: 5),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: [
@@ -225,7 +237,8 @@ class _ServiceTypeState extends State<ServiceType> {
                         Text(e),
                         Checkbox(
                           checkColor: Colors.white,
-                          fillColor: MaterialStateProperty.resolveWith(getColor),
+                          fillColor:
+                              MaterialStateProperty.resolveWith(getColor),
                           value: _selectedType == e ? true : false,
                           onChanged: (value) {
                             setState(() {
@@ -274,7 +287,8 @@ class _ServiceTypeState extends State<ServiceType> {
                   children: [
                     showError
                         ? Center(
-                            child: Text('* Please select service required above',
+                            child: Text(
+                                '* Please select service required above',
                                 style: TextStyles.textWarningBold))
                         : Container(),
                     SizedBox(
@@ -303,7 +317,7 @@ class _ServiceTypeState extends State<ServiceType> {
                         }
                         var path = 'requestDateHomeVisit';
                         if (_selectedType == "Drop-In") {
-                          path = "requestDateHomeVisit";
+                          path = "requestDateDropIn";
                         }
                         if (_selectedType.contains("Pick Up")) {
                           path = "requestDatePickup";

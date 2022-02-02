@@ -126,7 +126,7 @@ class _ReviewPickupState extends State<ReviewPickup> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _requestServiceArgument.purchase.productModel!,
+                  _requestServiceArgument.purchase.productGroup!,
                   overflow: TextOverflow.visible,
                   style: TextStyle(
                       // height: 2,
@@ -134,6 +134,10 @@ class _ReviewPickupState extends State<ReviewPickup> {
                       color: Colors.black,
                       fontWeight: FontWeight.w400),
                 ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(_requestServiceArgument.purchase.productModel!),
                 SizedBox(
                   height: 5,
                 ),
