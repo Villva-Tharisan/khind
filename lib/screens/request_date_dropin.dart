@@ -50,8 +50,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   @override
   void initState() {
     requestServiceArgument = widget.data!;
-    state = new States(
-        countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
     _selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     city = new City(
       stateId: "",
@@ -73,13 +72,9 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   Future<void> fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
 
-    var states =
-        (response['states'] as List).map((i) => States.fromJson(i)).toList();
+    var states = (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-    states.insert(
-        0,
-        new States(
-            countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+    states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
     setState(() {
       _states = states;
@@ -88,20 +83,12 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   }
 
   Future<void> fetchCities(String stateId) async {
-    final response =
-        await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
+    final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
 
-    var cities =
-        (response['city'] as List).map((i) => City.fromJson(i)).toList();
+    var cities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
     cities.insert(
-        0,
-        new City(
-            stateId: "",
-            city: "--Select--",
-            cityId: "",
-            postcodeId: "",
-            postcode: ""));
+        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
     // print("#CITIES: $cities");
     var citySet = Set<String>();
     var postcodeSet = Set<String>();
@@ -112,8 +99,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
         tempPostcodes.add(elem.postcode!);
       }
     });
-    List<String> newPostcodes =
-        tempPostcodes.where((e) => postcodeSet.add(e)).toList();
+    List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
     // print('#newPostcodes:  $newPostcodes');
     setState(() {
       _cities = newCities;
@@ -125,9 +111,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   Future<void> fetchProblems() async {
     final response = await Api.bearerGet('provider/problems.php', isCms: true);
 
-    var problems = (response['data'] as List)
-        .map((i) => ServiceProblem.fromJson(i))
-        .toList();
+    var problems = (response['data'] as List).map((i) => ServiceProblem.fromJson(i)).toList();
 
     setState(() {
       _problems = problems;
@@ -184,9 +168,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               initialSelectedDate: DateTime.now(),
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
-                  _selectedDate = DateFormat('yyyy-MM-dd').format(
-                      DateFormat('yyyy-MM-dd hh:mm:ss')
-                          .parse(args.value.toString()));
+                  _selectedDate = DateFormat('yyyy-MM-dd')
+                      .format(DateFormat('yyyy-MM-dd hh:mm:ss').parse(args.value.toString()));
                 });
               },
               minDate: DateTime.now(),
@@ -203,10 +186,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                 color: Colors.grey.withOpacity(0.5),
               ),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
@@ -234,10 +214,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -259,8 +236,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                         width: width * 0.45,
                         child: !_timesSlot.isEmpty
                             ? DropdownButton<String>(
-                                items: _timesSlot
-                                    .map<DropdownMenuItem<String>>((e) {
+                                items: _timesSlot.map<DropdownMenuItem<String>>((e) {
                                   return DropdownMenuItem<String>(
                                     child: Text(
                                       e,
@@ -308,10 +284,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -333,8 +306,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                 ),
                 Text(
                   requestServiceArgument.serviceCenter!.address!,
-                  style:
-                      TextStyle(height: 1, fontSize: 12, color: Colors.black),
+                  style: TextStyle(height: 1, fontSize: 12, color: Colors.black),
                 ),
                 SizedBox(
                   height: 5,
@@ -356,10 +328,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                     ),
                     Container(
                       padding: EdgeInsets.only(top: 5),
-                      child: Text(
-                          requestServiceArgument.serviceCenter!.telephone!,
-                          style: TextStyle(
-                              height: 1, fontSize: 12, color: Colors.black)),
+                      child: Text(requestServiceArgument.serviceCenter!.telephone!,
+                          style: TextStyle(height: 1, fontSize: 12, color: Colors.black)),
                     )
                   ],
                 )
@@ -388,10 +358,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -413,8 +380,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                         width: width * 0.45,
                         child: !_problems.isEmpty
                             ? DropdownButton<ServiceProblem>(
-                                items: _problems
-                                    .map<DropdownMenuItem<ServiceProblem>>((e) {
+                                items: _problems.map<DropdownMenuItem<ServiceProblem>>((e) {
                                   return DropdownMenuItem<ServiceProblem>(
                                     child: Text(
                                       e.problem!,
@@ -459,13 +425,12 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                               },
                               controller: remarkCT,
                               onFieldSubmitted: (val) {
-                                FocusScope.of(context)
-                                    .requestFocus(new FocusNode());
+                                FocusScope.of(context).requestFocus(new FocusNode());
                               },
                               decoration: InputDecoration(
                                 hintText: '',
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 5),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                               ),
                             ),
                           ],
@@ -498,10 +463,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -521,8 +483,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                         width: width * 0.45,
                         child: !_deliveryOptions.isEmpty
                             ? DropdownButton<String>(
-                                items: _deliveryOptions
-                                    .map<DropdownMenuItem<String>>((e) {
+                                items: _deliveryOptions.map<DropdownMenuItem<String>>((e) {
                                   return DropdownMenuItem<String>(
                                     child: Text(
                                       e,
@@ -546,9 +507,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                   ],
                 ),
                 //address
-                _selectedDelivery == "Yes"
-                    ? renderAddressForm(width, context)
-                    : Container(),
+                _selectedDelivery == "Yes" ? renderAddressForm(width, context) : Container(),
               ],
             ),
           ),
@@ -591,9 +550,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                       Navigator.pushNamed(
                         context,
                         'review',
-                        arguments: requestServiceArgs != null
-                            ? requestServiceArgs
-                            : null,
+                        arguments: requestServiceArgs != null ? requestServiceArgs : null,
                       );
                     }
                   } else {
@@ -601,9 +558,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                       Navigator.pushNamed(
                         context,
                         'review',
-                        arguments: requestServiceArgs != null
-                            ? requestServiceArgs
-                            : null,
+                        arguments: requestServiceArgs != null ? requestServiceArgs : null,
                       );
                     }
                   }
@@ -646,8 +601,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'eg: No 78 Jalan Mawar',
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                   ),
                 ),
               ),
@@ -675,8 +629,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'eg: Puchong Perdana',
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                   ),
                 ),
               ),

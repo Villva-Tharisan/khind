@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/components/custom_card.dart';
 import 'package:khind/models/ServiceCenter.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/states.dart';
@@ -9,6 +10,7 @@ import 'dart:convert';
 import 'package:khind/services/api.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ServiceLocator extends StatefulWidget {
   const ServiceLocator({Key? key}) : super(key: key);
@@ -297,6 +299,14 @@ class ServiceCard extends StatelessWidget {
 
   final ServiceCenter serviceCenter;
 
+  Future<void> _makePhoneCall(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final telephone = serviceCenter.telephone == null ? "" : serviceCenter.telephone;
@@ -341,25 +351,17 @@ class ServiceCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                "Operating Hours: ",
-                // overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  // height: 2,
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+              Text("Operating Hours : ",
+                  // overflow: TextOverflow.ellipsis,
+                  style: TextStyles.textDefault),
               SizedBox(
-                width: 5,
+                width: 2,
               ),
               serviceCenter.operatingHours != null && serviceCenter.operatingHours != " "
                   ? Container(
                       child: Flexible(
                           child: Text('${serviceCenter.operatingHours!}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(height: 2, fontSize: 12, color: Colors.black))),
+                              style: TextStyles.textDefaultBoldSm)),
                     )
                   : Container(child: Text("-"))
             ],
@@ -368,25 +370,26 @@ class ServiceCard extends StatelessWidget {
             height: 5,
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Contact:",
-                overflow: TextOverflow.visible,
-                style: TextStyle(
-                  // height: 2,
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                ),
+                "Contact :",
+                // overflow: TextOverflow.visible,
+                style: TextStyles.textDefault,
               ),
               SizedBox(
-                width: 5,
+                width: 2,
               ),
-              Container(
-                padding: EdgeInsets.only(top: 5),
-                child: Text(telephone!,
-                    style: TextStyle(height: 1, fontSize: 12, color: Colors.black)),
-              )
+              telephone != null
+                  ? InkWell(
+                      onTap: () => _makePhoneCall('tel:$telephone'),
+                      child: CustomCard(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(5),
+                        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        child: Text(telephone, style: TextStyles.textLinkBoldSm),
+                      ))
+                  : Container()
             ],
           )
         ],
