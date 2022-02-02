@@ -73,7 +73,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
 
     var date = new DateTime.now();
     var firstDayMonth = new DateTime(date.year, date.month, 0);
-    _maxDate = Jiffy(firstDayMonth).add(months: 1).dateTime;
+    _maxDate = Jiffy(date).add(months: 1).dateTime;
 
     super.initState();
     this.fetchStates();

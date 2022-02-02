@@ -68,7 +68,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
     _selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     var date = new DateTime.now();
     var firstDayMonth = new DateTime(date.year, date.month, 0);
-    _maxDate = Jiffy(firstDayMonth).add(months: 1).dateTime;
+    _maxDate = Jiffy(date).add(months: 1).dateTime;
     super.initState();
     this.fetchStates();
     this.fetchProblems();
