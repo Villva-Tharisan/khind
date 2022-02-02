@@ -513,9 +513,6 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                             TextFormField(
                               keyboardType: TextInputType.text,
                               validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter remark';
-                                }
                                 return null;
                               },
                               controller: remarkCT,

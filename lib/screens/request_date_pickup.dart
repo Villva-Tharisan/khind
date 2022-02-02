@@ -308,9 +308,6 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                             TextFormField(
                               keyboardType: TextInputType.text,
                               validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter remark';
-                                }
                                 return null;
                               },
                               controller: remarkCT,
