@@ -190,6 +190,13 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
               initialSelectedDate: DateTime.now().add(Duration(days: 2)),
               minDate: DateTime.now().add(Duration(days: 2)),
               maxDate: _maxDate,
+              selectableDayPredicate: (DateTime date) {
+                if (date.weekday == DateTime.saturday ||
+                    date.weekday == DateTime.sunday) {
+                  return false;
+                }
+                return true;
+              },
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
                   _selectedDate = DateFormat('yyyy-MM-dd').format(

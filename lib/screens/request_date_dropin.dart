@@ -316,6 +316,13 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
             height: MediaQuery.of(context).size.height * 0.3,
             child: SfDateRangePicker(
               initialSelectedDate: DateTime.now(),
+              selectableDayPredicate: (DateTime date) {
+                if (date.weekday == DateTime.saturday ||
+                    date.weekday == DateTime.sunday) {
+                  return false;
+                }
+                return true;
+              },
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
                   _selectedDate = DateFormat('yyyy-MM-dd').format(
