@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+import 'package:khind/components/custom_card.dart';
 import 'package:khind/cubit/tracker/tracker_cubit.dart';
 import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/service_product.dart';
@@ -24,6 +25,17 @@ class _ServiceTrackerState extends State<ServiceTracker> {
   void initState() {
     context.read<TrackerCubit>().getTracker();
     super.initState();
+  }
+
+  getColor(status) {
+    var newColor = Colors.grey[300]!;
+
+    if (status == 'Pending Collection') {
+      newColor = Colors.red;
+    } else if (status == 'Collected') {
+      newColor = Colors.green;
+    }
+    return newColor;
   }
 
   @override
@@ -49,8 +61,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
               ),
               child: state.serviceProduct.data!.length == 0
                   ? Center(
-                      child: Text('There is nothing to track',
-                          style: TextStyles.textSecondaryBold),
+                      child: Text('There is nothing to track', style: TextStyles.textSecondaryBold),
                     )
                   : Column(
                       children: [
@@ -64,12 +75,9 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                   GestureDetector(
                                     onTap: () {
                                       Helpers.productIndex = index;
-                                      Helpers.serviceProduct =
-                                          state.serviceProduct;
-                                      Helpers.productWarranty =
-                                          state.productWarranty[index];
-                                      Navigator.of(context).pushNamed(
-                                          'ServiceTrackerDetails',
+                                      Helpers.serviceProduct = state.serviceProduct;
+                                      Helpers.productWarranty = state.productWarranty[index];
+                                      Navigator.of(context).pushNamed('ServiceTrackerDetails',
                                           arguments: state.serviceProduct);
                                     },
                                     child: Container(
@@ -83,8 +91,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                               color: Colors.grey[200]!,
                                               offset: Offset(0, 10)),
                                         ],
-                                        borderRadius:
-                                            BorderRadius.circular(7.5),
+                                        borderRadius: BorderRadius.circular(7.5),
                                       ),
                                       child: Row(
                                         children: [
@@ -96,33 +103,36 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                 // vertical: 10,
                                               ),
                                               child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
+                                                    alignment: Alignment.centerLeft,
                                                     child: Text(
-                                                      state
-                                                              .productWarranty[
-                                                                  index]
-                                                              .data![0]
+                                                      state.productWarranty[index].data![0]
                                                               .productDescription ??
                                                           'null',
+                                                      style: TextStyles.textDefaultBold,
                                                     ),
                                                   ),
                                                   SizedBox(height: 10),
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: Text(
-                                                      'Service Status : ${state.serviceProduct.data![index]['service_request_status']!}',
-                                                      textAlign:
-                                                          TextAlign.right,
-                                                    ),
-                                                  ),
+                                                  Row(
+                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                      children: [
+                                                        Text("Service Status :",
+                                                            style: TextStyles.textDefault),
+                                                        SizedBox(width: 5),
+                                                        CustomCard(
+                                                            color: getColor(
+                                                                state.serviceProduct.data![index]
+                                                                    ['service_request_status']!),
+                                                            borderRadius: BorderRadius.circular(5),
+                                                            padding: const EdgeInsets.symmetric(
+                                                                vertical: 2, horizontal: 5),
+                                                            textStyle: TextStyles.textWhiteSm,
+                                                            label: state.serviceProduct.data![index]
+                                                                ['service_request_status']!),
+                                                      ]),
                                                 ],
                                               ),
                                             ),
@@ -131,16 +141,14 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                             child: Container(
                                               height: double.infinity,
                                               decoration: BoxDecoration(
-                                                color: state.serviceProduct
-                                                                .data![index][
-                                                            'service_request_status'] ==
+                                                color: state.serviceProduct.data![index]
+                                                            ['service_request_status'] ==
                                                         'Pending Collection'
                                                     ? Colors.green
                                                     : Colors.grey,
                                                 borderRadius: BorderRadius.only(
                                                   topRight: Radius.circular(10),
-                                                  bottomRight:
-                                                      Radius.circular(10),
+                                                  bottomRight: Radius.circular(10),
                                                 ),
                                                 boxShadow: [
                                                   BoxShadow(
@@ -150,8 +158,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                   ),
                                                 ],
                                               ),
-                                              child: Icon(Icons.chevron_right,
-                                                  color: Colors.white),
+                                              child: Icon(Icons.chevron_right, color: Colors.white),
                                             ),
                                           ),
                                         ],
