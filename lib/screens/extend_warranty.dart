@@ -1,8 +1,13 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/cubit/product_model/product_model_cubit.dart';
+import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/Purchase.dart';
+import 'package:khind/models/product_warranty.dart';
 import 'package:khind/services/repositories.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -15,11 +20,16 @@ class ExtendWarranty extends StatefulWidget {
 }
 
 class _ExtendWarrantyState extends State<ExtendWarranty> {
-  late String chosenProductModel;
-
   late Purchase purchase;
 
   late DateTime purchaseDate;
+  late DateTime endDate;
+
+  ProductWarranty? productWarranty;
+
+  TextEditingController ref = TextEditingController();
+
+  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -28,8 +38,13 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
   }
 
   void init() {
+    context.read<StoreCubit>().getStore();
     purchase = Helpers.purchase!;
+    productWarranty = Helpers.productWarranty;
     purchaseDate = DateTime.parse(purchase.purchaseDate!);
+    endDate =
+        purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
+    ref.text = '';
   }
 
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -37,7 +52,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
   DateTime now = DateTime.now();
 
   Widget build(BuildContext context) {
-    // double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -131,7 +146,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                                   'mm',
                                   '-',
                                   'yyyy'
-                                ])} - ${formatDate(purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365)), [
+                                ])} - ${formatDate(endDate, [
                                   'dd',
                                   '-',
                                   'mm',
@@ -178,13 +193,13 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   Text('New Extended Warranty'),
                   SizedBox(height: 5),
                   Text(
-                    '${formatDate(now, [
+                    '${formatDate(endDate, [
                           'dd',
                           '-',
                           'mm',
                           '-',
                           'yyyy'
-                        ])} - ${formatDate(now.add(Duration(days: 365)), [
+                        ])} - ${formatDate(endDate.add(Duration(days: 365)), [
                           'dd',
                           '-',
                           'mm',
@@ -203,8 +218,87 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
 
             Row(
               children: [
-                Text('Purchase from: '),
-                Text('KHIND Marketing SDN BHD'),
+                Container(
+                  width: width * 0.3,
+                  child: Text('Serial Number'),
+                ),
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: ref,
+                      onChanged: (value) {},
+                      validator: (value) {
+                        if (value == '') {
+                          return 'Please fill in the field';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 20),
+
+            Row(
+              children: [
+                Container(
+                  width: width * 0.3,
+                  child: Text('Purchase from '),
+                ),
+                BlocBuilder<StoreCubit, StoreState>(
+                  builder: (context, state) {
+                    if (state is StoreLoaded) {
+                      String storeName = 'null';
+
+                      for (var i = 0; i < state.store.data!.length; i++) {
+                        if (purchase.storeId == state.store.data![i].storeId) {
+                          storeName = state.store.data![i].storeName!;
+                        }
+                      }
+
+                      return Text(storeName);
+                      // return Expanded(
+                      //   child: DropdownButton<String>(
+                      //     items: state.store.data!.map((e) {
+                      //       return DropdownMenuItem(
+                      //         child: Text(e.storeName!),
+                      //         value: e.storeId,
+                      //       );
+                      //     }).toList(),
+                      //     // items: state.store.data
+                      //     //     .map<DropdownMenuItem<String>>(
+                      //     //         (String value) {
+                      //     //   return DropdownMenuItem<String>(
+                      //     //     value: value,
+                      //     //     child: Text(
+                      //     //       value,
+                      //     //       overflow: TextOverflow.ellipsis,
+                      //     //       maxLines: 2,
+                      //     //     ),
+                      //     //   );
+                      //     // }).toList(),
+                      //     isExpanded: true,
+                      //     value: chosenStore,
+                      //     onChanged: (value) {
+                      //       print(value);
+                      //       setState(() {
+                      //         chosenStore = value!;
+                      //       });
+                      //     },
+                      //   ),
+                      // );
+                    } else {
+                      return SpinKitFadingCircle(
+                        color: Colors.black,
+                        size: 20,
+                      );
+                    }
+                  },
+                ),
               ],
             ),
 
@@ -213,7 +307,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
 
             SizedBox(height: 10),
 
-            Text('RM ${purchase.extendedEwarrantyCost ?? '95.00'}',
+            Text('RM ${productWarranty!.data![0].extendedWarrantyCharge1Yr}',
                 style: TextStyle(fontWeight: FontWeight.bold)),
 
             // SizedBox(height: 50),
@@ -232,40 +326,43 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter),
                   onPressed: () async {
-                    bool success = await Repositories.sendExtend(
-                      warrantyId: purchase.warrantyRegistrationId,
-                    );
-
-                    if (success) {
-                      Alert(
-                        context: context,
-                        // type: AlertType.info,
-                        title: "Warranty Extension Submitted",
-                        desc:
-                            "You will be notified in 2 days on the approval of the extension. Please ensure that payment is done within 7 days after approval",
-                        buttons: [
-                          DialogButton(
-                            child: Text(
-                              "Okay",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                            onPressed: () =>
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                              'home',
-                              (route) => false,
-                              arguments: 0,
-                            ),
-                            width: 120,
-                          )
-                        ],
-                      ).show();
-                    } else {
-                      Fluttertoast.showToast(
-                        msg: 'Something went wrong, please try again',
-                        toastLength: Toast.LENGTH_LONG,
-                        gravity: ToastGravity.BOTTOM,
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      bool success = await Repositories.sendExtend(
+                        warrantyId: purchase.warrantyRegistrationId,
                       );
+
+                      if (success) {
+                        Alert(
+                          context: context,
+                          // type: AlertType.info,
+                          title: "Warranty Extension Submitted",
+                          desc:
+                              "You will be notified in 2 days on the approval of the extension. Please ensure that payment is done within 7 days after approval",
+                          buttons: [
+                            DialogButton(
+                              child: Text(
+                                "Okay",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
+                              onPressed: () =>
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                'home',
+                                (route) => false,
+                                arguments: 0,
+                              ),
+                              width: 120,
+                            )
+                          ],
+                        ).show();
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: 'Something went wrong, please try again',
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.BOTTOM,
+                        );
+                      }
                     }
                   },
                 ),

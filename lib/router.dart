@@ -139,7 +139,12 @@ class AppRouter {
                 ));
 
       case 'ExtendWarranty':
-        return MaterialPageRoute(builder: (_) => ExtendWarranty());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => StoreCubit(),
+            child: ExtendWarranty(),
+          ),
+        );
 
       // case 'ServiceTrackerDetails':
       //   return MaterialPageRoute(builder: (_) => ServiceTrackerDetails());
