@@ -18,6 +18,7 @@ import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/product_model.dart';
 import 'package:khind/models/user.dart';
 import 'package:khind/services/repositories.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:khind/util/key.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -121,13 +122,9 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white,
+                    border: Border.all(width: 0.1),
                     boxShadow: [
-                      BoxShadow(
-                        blurRadius: 0.5,
-                        color: Colors.grey,
-                        spreadRadius: 0.5,
-                        // offset:
-                      ),
+                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -378,20 +375,16 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white,
+                    border: Border.all(width: 0.1),
                     boxShadow: [
-                      BoxShadow(
-                        blurRadius: 0.5,
-                        color: Colors.grey,
-                        spreadRadius: 0.5,
-                        // offset:
-                      ),
+                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
                   child: Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
                             width: width * 0.3,
@@ -402,27 +395,44 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(width: 10),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.green,
-                            ),
-                            child: Text('Change Date'),
-                            onPressed: () async {
-                              DateTime? chosen = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now().subtract(Duration(days: 30)),
-                                lastDate: DateTime.now(),
-                                initialEntryMode: DatePickerEntryMode.calendar,
-                              );
+                          IconButton(
+                              onPressed: () async {
+                                DateTime? chosen = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime.now().subtract(Duration(days: 30)),
+                                  lastDate: DateTime.now(),
+                                  initialEntryMode: DatePickerEntryMode.calendar,
+                                );
 
-                              if (chosen != null) {
-                                setState(() {
-                                  choosenDate = chosen;
-                                });
-                              }
-                            },
-                          ),
+                                if (chosen != null) {
+                                  setState(() {
+                                    choosenDate = chosen;
+                                  });
+                                }
+                              },
+                              icon: Icon(Icons.date_range, size: 20, color: Colors.black)),
+                          // ElevatedButton(
+                          //   style: ElevatedButton.styleFrom(
+                          //     primary: Colors.blue,
+                          //   ),
+                          //   child: Text('Change Date'),
+                          //   onPressed: () async {
+                          //     DateTime? chosen = await showDatePicker(
+                          //       context: context,
+                          //       initialDate: DateTime.now(),
+                          //       firstDate: DateTime.now().subtract(Duration(days: 30)),
+                          //       lastDate: DateTime.now(),
+                          //       initialEntryMode: DatePickerEntryMode.calendar,
+                          //     );
+
+                          //     if (chosen != null) {
+                          //       setState(() {
+                          //         choosenDate = chosen;
+                          //       });
+                          //     }
+                          //   },
+                          // ),
                         ],
                       ),
                       SizedBox(height: 10),
@@ -503,7 +513,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   },
                                   child: Icon(
                                     FontAwesomeIcons.infoCircle,
-                                    color: Colors.green,
+                                    color: Colors.grey,
+                                    size: 20,
                                   ))
                               // child: Icon(
                               //   FontAwesomeIcons.infoCircle,
@@ -532,7 +543,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       Row(
                         children: [
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(primary: Colors.green),
+                            style: ElevatedButton.styleFrom(primary: AppColors.secondary),
                             onPressed: () async {
                               FilePickerResult? result = await FilePicker.platform.pickFiles(
                                 type: FileType.custom,

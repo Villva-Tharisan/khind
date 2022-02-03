@@ -31,7 +31,7 @@ class _EwarrantyState extends State<Ewarranty> {
 
   checkIsAuth() async {
     var auth = await storage.read(key: IS_AUTH);
-    print('#AUTH: $auth');
+    // print('#AUTH: $auth');
 
     setState(() {
       if (auth != null) {
@@ -45,9 +45,7 @@ class _EwarrantyState extends State<Ewarranty> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "E-Warranty",
-          isBack: isAuth ? false : true,
-          hasActions: false),
+          title: "E-Warranty", isBack: isAuth ? false : true, hasActions: false),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
