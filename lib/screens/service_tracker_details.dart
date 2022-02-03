@@ -65,11 +65,14 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                   Text('Status :'),
                   SizedBox(width: 5),
                   CustomCard(
-                      color: getColor(serviceProduct.data![index]['service_request_status']!),
+                      color: getColor(serviceProduct.data![index]
+                          ['service_request_status']!),
                       borderRadius: BorderRadius.circular(5),
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 10),
                       textStyle: TextStyles.textWhiteSm,
-                      label: serviceProduct.data![index]['service_request_status']!),
+                      label: serviceProduct.data![index]
+                          ['service_request_status']!),
                   // Container(
                   //   padding: EdgeInsets.all(10),
                   //   decoration: BoxDecoration(
@@ -104,7 +107,10 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                     color: Colors.grey.withOpacity(0.5),
                   ),
                   boxShadow: [
-                    BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                    BoxShadow(
+                        blurRadius: 5,
+                        color: Colors.grey[200]!,
+                        offset: Offset(0, 10)),
                   ],
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -125,7 +131,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(serviceProduct.data![index]['serial_no']!),
+                          child:
+                              Text(serviceProduct.data![index]['serial_no']!),
                         )
                       ],
                     ),
@@ -140,7 +147,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(serviceProduct.data![index]['serial_no']!),
+                          child: Text(
+                              serviceProduct.data![index]['service_type']!),
                         )
                       ],
                     ),
@@ -169,7 +177,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(productWarranty.data![0].technicianServiceGroup!),
+                          child: Text(
+                              productWarranty.data![0].technicianServiceGroup!),
                         )
                       ],
                     ),
@@ -190,7 +199,9 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                               // borderRadius: BorderRadius.circular(5),
                               border: Border.all(color: Colors.grey[300]!),
                             ),
-                            child: Text(serviceProduct.data![index]['remarks'] ?? 'null'),
+                            child: Text(serviceProduct.data![index]
+                                    ['remarks'] ??
+                                'null'),
                           ),
                         )
                       ],
@@ -199,123 +210,122 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                 ),
               ),
               SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: GradientButton(
-                  height: 40,
-                  child: Text(
-                    "View Invoice",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  gradient: LinearGradient(
-                      colors: <Color>[Colors.white, Colors.grey[400]!],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                  onPressed: () {},
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Text('Survey: Incomplete'),
-                    SizedBox(height: 20),
-                    Text(
-                      '* Give us feedback by participating in the Survey. You may view your result after completion of the survey',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 30),
-              if (serviceProduct.data![index]['service_request_status']! == 'Pending Collection')
+
+              if (serviceProduct.data![index]['service_request_status']! ==
+                      'Pending Collection' ||
+                  serviceProduct.data![index]['service_request_status']! ==
+                      'Collected')
+                //     'Collected')
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: GradientButton(
                     height: 40,
                     child: Text(
-                      "Survey",
+                      "View Invoice",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     gradient: LinearGradient(
                         colors: <Color>[Colors.white, Colors.grey[400]!],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter),
-                    onPressed: () {
-                      Alert(
-                        // style: AlertStyle(),
-                        onWillPopActive: false,
-                        context: context,
-                        // type: AlertType.info,
-                        title: 'Choose Language',
-                        desc: 'Choose a language for survey',
-                        buttons: [
-                          DialogButton(
-                            child: Text(
-                              'English',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                            ),
-                            onPressed: () {
-                              launch(Uri.encodeFull(
-                                  'https://surveyheart.com/form/60d5450b4297ae51da66832a'));
-                            },
-                            color: Colors.green,
-                            radius: BorderRadius.circular(10),
-                          ),
-                          DialogButton(
-                            child: Text(
-                              'Bahasa',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                            ),
-                            onPressed: () {
-                              launch(Uri.encodeFull(
-                                  'https://surveyheart.com/form/60da84673edbbc27c2c0cccb'));
-                            },
-                            color: Colors.red,
-                            radius: BorderRadius.circular(10),
-                          ),
-                        ],
-                      ).show();
-                    },
+                    onPressed: () {},
                   ),
                 ),
-              if (serviceProduct.data![index]['service_request_status']! != 'Pending Collection')
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: GradientButton(
-                      hideShadow: true,
-                      height: 40,
-                      child: Text(
-                        "Survey",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+
+              if (serviceProduct.data![index]['service_request_status']! ==
+                  'Collected')
+                Column(
+                  children: [
+                    SizedBox(height: 20),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Text('Survey: Incomplete'),
+                          SizedBox(height: 20),
+                          Text(
+                            '* Give us feedback by participating in the Survey. You may view your result after completion of the survey',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
                       ),
-                      gradient: LinearGradient(
-                          colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter),
-                      onPressed: () {},
-                    ))
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 20),
-              //   child: SizedBox(
-              //     width: double.infinity,
-              //     child: ElevatedButton(
-              //       style: ElevatedButton.styleFrom(primary: Colors.grey),
-              //       onPressed: () {},
-              //       child: Text(
-              //         'Survey',
+                    ),
+                    SizedBox(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: GradientButton(
+                        height: 40,
+                        child: Text(
+                          "Survey",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        gradient: LinearGradient(
+                            colors: <Color>[Colors.white, Colors.grey[400]!],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                        onPressed: () {
+                          Alert(
+                            // style: AlertStyle(),
+                            onWillPopActive: false,
+                            context: context,
+                            // type: AlertType.info,
+                            title: 'Choose Language',
+                            desc: 'Choose a language for survey',
+                            buttons: [
+                              DialogButton(
+                                child: Text(
+                                  'English',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  launch(Uri.encodeFull(
+                                      'https://surveyheart.com/form/60d5450b4297ae51da66832a'));
+                                },
+                                color: Colors.green,
+                                radius: BorderRadius.circular(10),
+                              ),
+                              DialogButton(
+                                child: Text(
+                                  'Bahasa',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  launch(Uri.encodeFull(
+                                      'https://surveyheart.com/form/60da84673edbbc27c2c0cccb'));
+                                },
+                                color: Colors.red,
+                                radius: BorderRadius.circular(10),
+                              ),
+                            ],
+                          ).show();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              // if (serviceProduct.data![index]['service_request_status']! !=
+              //     'Collected')
+              //   Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 20),
+              //     child: SizedBox(
+              //       width: double.infinity,
+              //       child: ElevatedButton(
+              //         style: ElevatedButton.styleFrom(primary: Colors.grey),
+              //         onPressed: () {},
+              //         child: Text(
+              //           'Survey',
+              //         ),
               //       ),
               //     ),
               //   ),
-              // ),
             ],
           ),
         ),

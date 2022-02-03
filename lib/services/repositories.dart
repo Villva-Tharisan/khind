@@ -199,6 +199,8 @@ class Repositories {
       headers: authHeader,
     );
 
+    print(response.body);
+
     if (response.body.contains('false')) {
       return false;
     } else {

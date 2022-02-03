@@ -17,14 +17,47 @@ class TrackerCubit extends Cubit<TrackerState> {
     //process
     ServiceProduct serviceProduct = await Repositories.getServiceProduct();
 
+    ServiceProduct serviceProductSorted = ServiceProduct(data: []);
+
+    //for sorting
+
+    //pending collection
+    for (var i = 0; i < serviceProduct.data!.length; i++) {
+      if (serviceProduct.data![i]['service_request_status'] ==
+          'Pending Collection') {
+        serviceProductSorted.data!.add(serviceProduct.data![i]);
+      }
+    }
+
+    //not started
+    for (var i = 0; i < serviceProduct.data!.length; i++) {
+      if (serviceProduct.data![i]['service_request_status'] == 'Not Started') {
+        serviceProductSorted.data!.add(serviceProduct.data![i]);
+      }
+    }
+
+    //repairing
+    for (var i = 0; i < serviceProduct.data!.length; i++) {
+      if (serviceProduct.data![i]['service_request_status'] == 'Repairing') {
+        serviceProductSorted.data!.add(serviceProduct.data![i]);
+      }
+    }
+
+    //collected
+    for (var i = 0; i < serviceProduct.data!.length; i++) {
+      if (serviceProduct.data![i]['service_request_status'] == 'Collected') {
+        serviceProductSorted.data!.add(serviceProduct.data![i]);
+      }
+    }
+
     List<ProductWarranty> productWarranty = [];
 
-    for (var i = 0; i < serviceProduct.data!.length; i++) {
+    for (var i = 0; i < serviceProductSorted.data!.length; i++) {
       ProductWarranty pw;
 
       try {
         pw = productWarrantyFromJson(await Repositories.getProduct(
-            productModel: serviceProduct.data![i]['product_model']!));
+            productModel: serviceProductSorted.data![i]['product_model']!));
       } catch (e) {
         //dummy
         pw = productWarrantyFromJson(
@@ -34,12 +67,14 @@ class TrackerCubit extends Cubit<TrackerState> {
       productWarranty.add(pw);
     }
 
-    productWarranty.shuffle();
+    // productWarranty.shuffle();
 
-    print(productWarranty[0].data![0].productDescription);
+    // print(productWarranty[0].data![0].productDescription);
+
+    print('masuk sini');
 
     emit(TrackerLoaded(
-      serviceProduct: serviceProduct,
+      serviceProduct: serviceProductSorted,
       productWarranty: productWarranty,
     ));
   }

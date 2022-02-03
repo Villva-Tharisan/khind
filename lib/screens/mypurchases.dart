@@ -4,7 +4,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/components/custom_card.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/user.dart';
+import 'package:khind/services/repositories.dart';
 import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
@@ -295,12 +297,15 @@ class PurchaseItem extends StatelessWidget {
   Widget build(BuildContext context) {
     var serialNo = this.purchase.serialNo == null ? "" : this.purchase.serialNo;
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         // Navigator.pushNamed(
         //   context,
         //   'productModel',
         // );
         Helpers.purchase = purchase;
+        Helpers.productWarranty = productWarrantyFromJson(
+            await Repositories.getProduct(
+                productModel: purchase.productModel!));
 
         // print("#PURCHASE: ${jsonEncode(purchase)}");
         Navigator.pushNamed(context, 'productModel',
