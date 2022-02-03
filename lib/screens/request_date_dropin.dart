@@ -570,6 +570,11 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                     )
                   ],
                 ),
+                SizedBox(height: 5),
+                Text(
+                    "* Courier fee of RM 15.00 will be charged if delivery service after repair is needed",
+                    style: TextStyles.textWarning.copyWith(fontStyle: FontStyle.italic),
+                    textAlign: TextAlign.start),
                 //address
                 _selectedDelivery == "Yes" ? renderAddressForm(width, context) : Container(),
                 !showError
