@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:khind/services/repositories.dart';
+import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -67,13 +68,12 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.white,
+                border: Border.all(
+                  width: 0.4,
+                  color: Colors.grey.withOpacity(0.5),
+                ),
                 boxShadow: [
-                  BoxShadow(
-                    blurRadius: 0.5,
-                    color: Colors.grey,
-                    spreadRadius: 0.5,
-                    // offset:
-                  ),
+                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -84,16 +84,13 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                     purchase.productGroupDescription!,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(purchase.modelDescription!,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(purchase.modelDescription!, style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 30),
                   Row(
                     children: [
                       Text('Serial Number:'),
                       SizedBox(width: 10),
-                      Text(purchase.serialNo != null
-                          ? purchase.serialNo.toString()
-                          : "-"),
+                      Text(purchase.serialNo != null ? purchase.serialNo.toString() : "-"),
                       // Expanded(
                       //   child: DropdownButton<String>(
                       //     items: productModel
@@ -154,13 +151,12 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.white,
+                border: Border.all(
+                  width: 0.4,
+                  color: Colors.grey.withOpacity(0.5),
+                ),
                 boxShadow: [
-                  BoxShadow(
-                    blurRadius: 0.5,
-                    color: Colors.grey,
-                    spreadRadius: 0.5,
-                    // offset:
-                  ),
+                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -170,8 +166,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   Row(
                     children: [
                       Text('Purchase Date : '),
-                      Text(formatDate(
-                          purchaseDate, ['dd', '-', 'mm', '-', 'yyyy'])),
+                      Text(formatDate(purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                          style: TextStyles.textDefaultBold),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -247,11 +243,9 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                           DialogButton(
                             child: Text(
                               "Okay",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
+                              style: TextStyle(color: Colors.white, fontSize: 20),
                             ),
-                            onPressed: () =>
-                                Navigator.of(context).pushNamedAndRemoveUntil(
+                            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
                               'home',
                               (route) => false,
                               arguments: 0,

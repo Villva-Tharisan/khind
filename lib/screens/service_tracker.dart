@@ -28,7 +28,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
   }
 
   getColor(status) {
-    var newColor = Colors.grey[300]!;
+    var newColor = Colors.grey[400]!;
 
     if (status == 'Pending Collection') {
       newColor = Colors.red;

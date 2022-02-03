@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:khind/components/custom_card.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/service_product.dart';
+import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,6 +29,17 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
   late ServiceProduct serviceProduct;
   late ProductWarranty productWarranty;
 
+  getColor(status) {
+    var newColor = Colors.grey[400]!;
+
+    if (status == 'Pending Collection') {
+      newColor = Colors.red;
+    } else if (status == 'Collected') {
+      newColor = Colors.green;
+    }
+    return newColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -49,22 +62,27 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
               Row(
                 children: [
                   Expanded(child: Container()),
-                  Text('Status: '),
-                  SizedBox(width: 20),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: serviceProduct.data![index]
-                                  ['service_request_status'] ==
-                              'Pending Collection'
-                          ? Colors.green
-                          : Colors.grey,
-                    ),
-                    child: Text(
-                      serviceProduct.data![index]['service_request_status']!,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                  Text('Status :'),
+                  SizedBox(width: 5),
+                  CustomCard(
+                      color: getColor(serviceProduct.data![index]['service_request_status']!),
+                      borderRadius: BorderRadius.circular(5),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      textStyle: TextStyles.textWhiteSm,
+                      label: serviceProduct.data![index]['service_request_status']!),
+                  // Container(
+                  //   padding: EdgeInsets.all(10),
+                  //   decoration: BoxDecoration(
+                  //     color: serviceProduct.data![index]['service_request_status'] ==
+                  //             'Pending Collection'
+                  //         ? Colors.green
+                  //         : Colors.grey[300],
+                  //   ),
+                  //   child: Text(
+                  //     serviceProduct.data![index]['service_request_status']!,
+                  //     style: TextStyle(color: Colors.white),
+                  //   ),
+                  // ),
                   SizedBox(width: 20),
                 ],
               ),
@@ -74,23 +92,44 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                 margin: EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     blurRadius: 0.5,
+                  //     color: Colors.grey,
+                  //     spreadRadius: 0.5,
+                  //   ),
+                  // ],
+                  border: Border.all(
+                    width: 0.4,
+                    color: Colors.grey.withOpacity(0.5),
+                  ),
                   boxShadow: [
-                    BoxShadow(
-                      blurRadius: 0.5,
-                      color: Colors.grey,
-                      spreadRadius: 0.5,
-                    ),
+                    BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                   ],
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(productWarranty.data![0].productGroupDescription!),
-                    Text(productWarranty.data![0].productDescription!),
+                    Text(productWarranty.data![0].productGroupDescription!,
+                        style: TextStyles.textDefaultBold),
+                    Text(productWarranty.data![0].productDescription!,
+                        style: TextStyles.textDefaultBold),
                     SizedBox(height: 15),
-                    Text(
-                        'Serial No: ${serviceProduct.data![index]['serial_no']}'),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: width * 0.2,
+                          child: Text('Serial No.'),
+                        ),
+                        SizedBox(width: 30),
+                        Expanded(
+                          child: Text(serviceProduct.data![index]['serial_no']!),
+                        )
+                      ],
+                    ),
+                    // Text('Serial No: ${serviceProduct.data![index]['serial_no']}'),
                     SizedBox(height: 15),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,8 +140,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child:
-                              Text(serviceProduct.data![index]['serial_no']!),
+                          child: Text(serviceProduct.data![index]['serial_no']!),
                         )
                       ],
                     ),
@@ -131,8 +169,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(
-                              productWarranty.data![0].technicianServiceGroup!),
+                          child: Text(productWarranty.data![0].technicianServiceGroup!),
                         )
                       ],
                     ),
@@ -147,14 +184,13 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         SizedBox(width: 30),
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(5),
                             height: 75,
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
+                              // borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: Colors.grey[300]!),
                             ),
-                            child: Text(serviceProduct.data![index]
-                                    ['remarks'] ??
-                                'null'),
+                            child: Text(serviceProduct.data![index]['remarks'] ?? 'null'),
                           ),
                         )
                       ],
@@ -194,8 +230,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                 ),
               ),
               SizedBox(height: 30),
-              if (serviceProduct.data![index]['service_request_status']! ==
-                  'Pending Collection')
+              if (serviceProduct.data![index]['service_request_status']! == 'Pending Collection')
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: GradientButton(
@@ -252,21 +287,35 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                     },
                   ),
                 ),
-              if (serviceProduct.data![index]['service_request_status']! !=
-                  'Pending Collection')
+              if (serviceProduct.data![index]['service_request_status']! != 'Pending Collection')
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.grey),
-                      onPressed: () {},
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: GradientButton(
+                      hideShadow: true,
+                      height: 40,
                       child: Text(
-                        'Survey',
+                        "Survey",
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                       ),
-                    ),
-                  ),
-                ),
+                      gradient: LinearGradient(
+                          colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter),
+                      onPressed: () {},
+                    ))
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 20),
+              //   child: SizedBox(
+              //     width: double.infinity,
+              //     child: ElevatedButton(
+              //       style: ElevatedButton.styleFrom(primary: Colors.grey),
+              //       onPressed: () {},
+              //       child: Text(
+              //         'Survey',
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

@@ -75,7 +75,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
           }
         });
 
-        print('#NEW ADDRESS: ${newAddress.toString()}');
+        // print('#NEW ADDRESS: ${newAddress.toString()}');
 
         setState(() {
           consumerAddress = newAddress;
