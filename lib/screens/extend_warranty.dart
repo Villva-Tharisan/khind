@@ -27,7 +27,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
 
   ProductWarranty? productWarranty;
 
-  TextEditingController ref = TextEditingController();
+  TextEditingController serialNo = TextEditingController();
 
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -44,7 +44,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
     purchaseDate = DateTime.parse(purchase.purchaseDate!);
     endDate =
         purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
-    ref.text = '';
+    serialNo.text = '';
   }
 
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -226,7 +226,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   child: Form(
                     key: _formKey,
                     child: TextFormField(
-                      controller: ref,
+                      controller: serialNo,
                       onChanged: (value) {},
                       validator: (value) {
                         if (value == '') {
@@ -328,11 +328,16 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      bool success = await Repositories.sendExtend(
+                      bool successExtend = await Repositories.sendExtend(
                         warrantyId: purchase.warrantyRegistrationId,
                       );
 
-                      if (success) {
+                      bool successSerial = await Repositories.sendSerialNumber(
+                        serialNo: serialNo.text,
+                        warrantyId: purchase.warrantyRegistrationId,
+                      );
+
+                      if (successExtend && successSerial) {
                         Alert(
                           context: context,
                           // type: AlertType.info,

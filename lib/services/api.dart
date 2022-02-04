@@ -22,4 +22,5 @@ class Api {
   static const GET_PRODUCT_GROUP = 'provider/product_group.php';
   static const EXTEND_WARRANTY = 'provider/extend_warranty.php';
   static const GET_STORE = 'provider/store.php';
+  static const CREATE_SERIAL_NO = 'provider/create_serial_number.php';
 }
