@@ -9,6 +9,7 @@ import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:khind/models/product_warranty.dart';
 import 'package:khind/services/repositories.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -43,8 +44,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
     purchase = Helpers.purchase!;
     productWarranty = Helpers.productWarranty;
     purchaseDate = DateTime.parse(purchase.purchaseDate!);
-    endDate =
-        purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
+    endDate = purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
     ref.text = '';
   }
 
@@ -88,10 +88,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 boxShadow: [
-                  BoxShadow(
-                      blurRadius: 5,
-                      color: Colors.grey[200]!,
-                      offset: Offset(0, 10)),
+                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -102,16 +99,13 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                     purchase.productGroupDescription!,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(purchase.modelDescription!,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(purchase.modelDescription!, style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 30),
                   Row(
                     children: [
                       Text('Serial Number:'),
                       SizedBox(width: 10),
-                      Text(purchase.serialNo != null
-                          ? purchase.serialNo.toString()
-                          : "-"),
+                      Text(purchase.serialNo != null ? purchase.serialNo.toString() : "-"),
                       // Expanded(
                       //   child: DropdownButton<String>(
                       //     items: productModel
@@ -142,22 +136,25 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                       Text('Warranty valid until:'),
                       SizedBox(width: 5),
                       Expanded(
-                        child: Text(
-                            '${formatDate(purchaseDate, [
-                                  'dd',
-                                  '-',
-                                  'mm',
-                                  '-',
-                                  'yyyy'
-                                ])} - ${formatDate(endDate, [
-                                  'dd',
-                                  '-',
-                                  'mm',
-                                  '-',
-                                  'yyyy'
-                                ])}',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
+                          child:
+                              Text('${purchase.warrantyDate}', style: TextStyles.textDefaultBold)),
+                      // Expanded(
+                      //   child: Text(
+                      //       '${formatDate(purchaseDate, [
+                      //             'dd',
+                      //             '-',
+                      //             'mm',
+                      //             '-',
+                      //             'yyyy'
+                      //           ])} - ${formatDate(endDate, [
+                      //             'dd',
+                      //             '-',
+                      //             'mm',
+                      //             '-',
+                      //             'yyyy'
+                      //           ])}',
+                      //       style: TextStyle(fontWeight: FontWeight.bold)),
+                      // ),
                     ],
                   ),
                 ],
@@ -177,10 +174,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 boxShadow: [
-                  BoxShadow(
-                      blurRadius: 5,
-                      color: Colors.grey[200]!,
-                      offset: Offset(0, 10)),
+                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -190,9 +184,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   Row(
                     children: [
                       Text('Purchase Date : '),
-                      Text(
-                          formatDate(
-                              purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                      Text(formatDate(purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
                           style: TextStyles.textDefaultBold),
                     ],
                   ),
@@ -222,27 +214,47 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             ),
 
             SizedBox(height: 20),
-
             Row(
               children: [
                 Container(
-                  width: width * 0.3,
-                  child: Text('Serial Number'),
+                  // width: width * 0.3,
+                  child: Text('Serial Number : '),
                 ),
                 Expanded(
                   child: Form(
                     key: _formKey,
-                    child: TextFormField(
+                    child: SizedBox(
+                        // height: 40,
+                        child: TextFormField(
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.secondary, width: 1, style: BorderStyle.solid),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.grey[400]!, width: 0.5, style: BorderStyle.solid),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.red, width: 1, style: BorderStyle.solid),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.red, width: 1, style: BorderStyle.solid),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      ),
                       controller: ref,
                       onChanged: (value) {},
                       validator: (value) {
-                        if (value == '') {
-                          return 'Please fill in the field';
+                        if (value == '' || value == null) {
+                          return 'Please key in Serial No.';
                         } else {
                           return null;
                         }
                       },
-                    ),
+                    )),
                   ),
                 ),
               ],
@@ -253,13 +265,13 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             Row(
               children: [
                 Container(
-                  width: width * 0.3,
-                  child: Text('Purchase from '),
+                  // width: width * 0.3,
+                  child: Text('Purchase from : '),
                 ),
                 BlocBuilder<StoreCubit, StoreState>(
                   builder: (context, state) {
                     if (state is StoreLoaded) {
-                      String storeName = 'null';
+                      String storeName = '-';
 
                       for (var i = 0; i < state.store.data!.length; i++) {
                         if (purchase.storeId == state.store.data![i].storeId) {
@@ -310,12 +322,15 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             ),
 
             SizedBox(height: 10),
-            Text('Warranty Cost: -'),
-
-            SizedBox(height: 10),
-
-            Text('RM ${productWarranty!.data![0].extendedWarrantyCharge1Yr}',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            Row(children: [
+              Text('Warranty Cost : '),
+              SizedBox(width: 2),
+              productWarranty!.data![0].extendedWarrantyCharge1Yr != null &&
+                      productWarranty!.data![0].extendedWarrantyCharge1Yr != "null"
+                  ? Text('RM ${productWarranty!.data![0].extendedWarrantyCharge1Yr}',
+                      style: TextStyle(fontWeight: FontWeight.bold))
+                  : Text("-")
+            ]),
 
             // SizedBox(height: 50),
 
@@ -350,11 +365,9 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                             DialogButton(
                               child: Text(
                                 "Okay",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                                style: TextStyle(color: Colors.white, fontSize: 20),
                               ),
-                              onPressed: () =>
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                              onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
                                 'home',
                                 (route) => false,
                                 arguments: 0,
