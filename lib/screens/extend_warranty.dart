@@ -29,7 +29,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
 
   ProductWarranty? productWarranty;
 
-  TextEditingController ref = TextEditingController();
+  TextEditingController serialNo = TextEditingController();
 
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -44,8 +44,9 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
     purchase = Helpers.purchase!;
     productWarranty = Helpers.productWarranty;
     purchaseDate = DateTime.parse(purchase.purchaseDate!);
-    endDate = purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
-    ref.text = '';
+    endDate =
+        purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
+    serialNo.text = '';
   }
 
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -88,7 +89,10 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 boxShadow: [
-                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                  BoxShadow(
+                      blurRadius: 5,
+                      color: Colors.grey[200]!,
+                      offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -99,13 +103,16 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                     purchase.productGroupDescription!,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(purchase.modelDescription!, style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(purchase.modelDescription!,
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 30),
                   Row(
                     children: [
                       Text('Serial Number:'),
                       SizedBox(width: 10),
-                      Text(purchase.serialNo != null ? purchase.serialNo.toString() : "-"),
+                      Text(purchase.serialNo != null
+                          ? purchase.serialNo.toString()
+                          : "-"),
                       // Expanded(
                       //   child: DropdownButton<String>(
                       //     items: productModel
@@ -136,8 +143,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                       Text('Warranty valid until:'),
                       SizedBox(width: 5),
                       Expanded(
-                          child:
-                              Text('${purchase.warrantyDate}', style: TextStyles.textDefaultBold)),
+                          child: Text('${purchase.warrantyDate}',
+                              style: TextStyles.textDefaultBold)),
                       // Expanded(
                       //   child: Text(
                       //       '${formatDate(purchaseDate, [
@@ -174,7 +181,10 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 boxShadow: [
-                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                  BoxShadow(
+                      blurRadius: 5,
+                      color: Colors.grey[200]!,
+                      offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -184,7 +194,9 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   Row(
                     children: [
                       Text('Purchase Date : '),
-                      Text(formatDate(purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                      Text(
+                          formatDate(
+                              purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
                           style: TextStyles.textDefaultBold),
                     ],
                   ),
@@ -223,29 +235,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                 Expanded(
                   child: Form(
                     key: _formKey,
-                    child: SizedBox(
-                        // height: 40,
-                        child: TextFormField(
-                      decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.secondary, width: 1, style: BorderStyle.solid),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.grey[400]!, width: 0.5, style: BorderStyle.solid),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.red, width: 1, style: BorderStyle.solid),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.red, width: 1, style: BorderStyle.solid),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      ),
-                      controller: ref,
+                    child: TextFormField(
+                      controller: serialNo,
                       onChanged: (value) {},
                       validator: (value) {
                         if (value == '' || value == null) {
@@ -254,7 +245,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                           return null;
                         }
                       },
-                    )),
+                    ),
                   ),
                 ),
               ],
@@ -326,8 +317,10 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
               Text('Warranty Cost : '),
               SizedBox(width: 2),
               productWarranty!.data![0].extendedWarrantyCharge1Yr != null &&
-                      productWarranty!.data![0].extendedWarrantyCharge1Yr != "null"
-                  ? Text('RM ${productWarranty!.data![0].extendedWarrantyCharge1Yr}',
+                      productWarranty!.data![0].extendedWarrantyCharge1Yr !=
+                          "null"
+                  ? Text(
+                      'RM ${productWarranty!.data![0].extendedWarrantyCharge1Yr}',
                       style: TextStyle(fontWeight: FontWeight.bold))
                   : Text("-")
             ]),
@@ -350,11 +343,16 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      bool success = await Repositories.sendExtend(
+                      bool successExtend = await Repositories.sendExtend(
                         warrantyId: purchase.warrantyRegistrationId,
                       );
 
-                      if (success) {
+                      bool successSerial = await Repositories.sendSerialNumber(
+                        serialNo: serialNo.text,
+                        warrantyId: purchase.warrantyRegistrationId,
+                      );
+
+                      if (successExtend && successSerial) {
                         Alert(
                           context: context,
                           // type: AlertType.info,
@@ -365,9 +363,11 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                             DialogButton(
                               child: Text(
                                 "Okay",
-                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
-                              onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                              onPressed: () =>
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
                                 'home',
                                 (route) => false,
                                 arguments: 0,

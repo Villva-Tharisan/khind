@@ -1,12 +1,16 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/models/product_group.dart';
 import 'package:khind/models/product_group_model.dart';
 import 'package:khind/models/service_product.dart';
 import 'package:khind/models/store.dart';
+import 'package:khind/models/user.dart';
 import 'package:khind/services/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/util/key.dart';
 
 class Repositories {
   static Future<String> getProduct({required String productModel}) async {
@@ -93,8 +97,12 @@ class Repositories {
   }
 
   static Future<ServiceProduct> getServiceProduct() async {
+    final storage = new FlutterSecureStorage();
+    var userStorage = await storage.read(key: USER);
+    User user = User.fromJson(jsonDecode(userStorage!));
+
     final queryParameters = {
-      'email': 'khindcustomerservice@gmail.com',
+      'email': user.email,
       // 'email': '',
     };
 
@@ -193,6 +201,41 @@ class Repositories {
 
     print(url);
     print('calling extend warranty');
+
+    final response = await http.post(
+      url,
+      headers: authHeader,
+    );
+
+    print(response.body);
+
+    if (response.body.contains('false')) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  static Future<bool> sendSerialNumber({
+    required String warrantyId,
+    required String serialNo,
+  }) async {
+    final storage = new FlutterSecureStorage();
+    var userStorage = await storage.read(key: USER);
+    User user = User.fromJson(jsonDecode(userStorage!));
+
+    String email = user.email!.toLowerCase();
+
+    var url = Uri.parse(Api.endpoint +
+        Api.CREATE_SERIAL_NO +
+        "?warranty_registration_id=$warrantyId&serial_no=$serialNo&email=$email");
+    Map<String, String> authHeader = {
+      'Content-Type': 'application/json',
+      'Authorization': Api.defaultToken,
+    };
+
+    print(url);
+    print('calling serial no');
 
     final response = await http.post(
       url,
