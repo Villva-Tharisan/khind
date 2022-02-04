@@ -102,7 +102,7 @@ class Repositories {
     User user = User.fromJson(jsonDecode(userStorage!));
 
     final queryParameters = {
-      'email': user.email,
+      'email': user.email!.toLowerCase(),
       // 'email': '',
     };
 
