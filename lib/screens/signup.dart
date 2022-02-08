@@ -57,22 +57,35 @@ class _SignUpState extends State<SignUp> {
   bool agreeTerm = false;
   late List<States> states = [];
   late List<City> cities = [];
+  List<String> postcodes = [];
   City? city;
   States? state;
-  String? postcode;
+  String postcode = "";
 
   @override
   void initState() {
-    // firstNameCT.text = "test1";
-    // lastNameCT.text = "khind";
-    // mobileNoCT.text = "0156663229";
-    // emailCT.text = "test1.khind@gmail.com";
-    // dobCT.text = "01-01-1990";
-    // address1CT.text = "No 44 Taman Miharja";
-    // confirmPasswordCT.text = "p455word";
-    // passwordCT.text = "p455word";
-    super.initState();
+    firstNameCT.text = "test1";
+    lastNameCT.text = "khind";
+    mobileNoCT.text = "0156663229";
+    emailCT.text = "test1.khind@gmail.com";
+    dobCT.text = "01-01-1990";
+    address1CT.text = "No 44 Taman Miharja";
+    confirmPasswordCT.text = "p455word";
+    passwordCT.text = "p455word";
+    _init();
     _fetchStates();
+    super.initState();
+  }
+
+  _init() {
+    city = new City(
+      stateId: "",
+      city: "--Select City--",
+      cityId: "",
+      postcodeId: "",
+      postcode: "",
+    );
+    state = new States(countryId: "", state: "--Select State--", stateId: "", stateCode: "");
   }
 
   @override
@@ -89,27 +102,44 @@ class _SignUpState extends State<SignUp> {
 
   _fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
+    var newStates = (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-    if (response['states'] != null) {
-      setState(() {
-        states = (response['states'] as List<dynamic>).map((e) => States.fromJson(e)).toList();
-      });
-    }
+    newStates.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+
+    setState(() {
+      states = newStates;
+      state = newStates[0];
+    });
   }
 
-  _fetchCity(stateId) async {
-    setState(() {
-      city = null;
-      cities = [];
-    });
+  _fetchCities(stateId) async {
     Map<String, dynamic> map = {'state_id': stateId};
     final response = await Api.bearerGet('provider/city.php', params: map, isCms: true);
     // print(response);
-    if (response['city'] != null) {
-      setState(() {
-        cities = (response['city'] as List<dynamic>).map((e) => City.fromJson(e)).toList();
-      });
-    }
+    var newCities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
+
+    newCities.insert(
+        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
+    // print("#CITIES: $cities");
+    var citySet = Set<String>();
+    List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
+
+    var postcodeSet = Set<String>();
+    List<String> tempPostcodes = [];
+
+    newCities.forEach((elem) {
+      if (elem.postcode != null) {
+        tempPostcodes.add(elem.postcode!);
+      }
+    });
+    List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
+    // newPostcodes.insert(0, "--Select--");
+    // print('#newPostcodes:  $newPostcodes');
+    setState(() {
+      cities = tempCities;
+      city = tempCities[0];
+      postcodes = newPostcodes;
+    });
   }
 
   Widget _renderHeader() {
@@ -205,7 +235,7 @@ class _SignUpState extends State<SignUp> {
           agreeTerm = false;
         });
         Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, 'home');
+        Navigator.pushReplacementNamed(context, 'home', arguments: 0);
       });
     } else {
       if (response['error'] != null) {
@@ -493,13 +523,13 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 5),
               states.length > 0
                   ? DropdownButtonFormField(
-                      hint: Text("Select state"),
                       focusNode: focusState,
                       // onTap: () {
                       //   FocusScope.of(context).requestFocus(focusState);
                       // },
                       style: TextStyles.textDefault,
                       decoration: InputDecoration(
+                        labelText: 'State',
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: AppColors.primary, width: 2, style: BorderStyle.solid),
@@ -516,8 +546,13 @@ class _SignUpState extends State<SignUp> {
                       value: state != null ? state : null,
                       onChanged: (val) {
                         setState(() {
+                          cities = [];
+                          postcodes = [];
+                          city = new City(
+                              stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
+                          postcode = "";
                           state = (val as States);
-                          _fetchCity(val.stateId);
+                          _fetchCities(val.stateId);
                         });
                       },
                       items: states
@@ -528,10 +563,10 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 5),
               cities.length > 0
                   ? DropdownButtonFormField(
-                      hint: Text("Select city"),
                       focusNode: focusCity,
                       style: TextStyles.textDefault,
                       decoration: InputDecoration(
+                        labelText: 'City',
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: AppColors.primary, width: 2, style: BorderStyle.solid),
@@ -548,10 +583,10 @@ class _SignUpState extends State<SignUp> {
                       onChanged: (val) {
                         setState(() {
                           city = (val as City);
-                          if (val.postcode != null) {
-                            postcodeCT.text = val.postcode!;
-                            postcode = val.postcode!;
-                          }
+                          // if (val.postcode != null) {
+                          //   postcodeCT.text = val.postcode!;
+                          //   postcode = val.postcode!;
+                          // }
                         });
                       },
                       items: cities
@@ -559,40 +594,71 @@ class _SignUpState extends State<SignUp> {
                               child: Text(e.city!), value: e, key: Key(jsonEncode(e))))
                           .toList())
                   : Container(),
-              TextFormField(
-                focusNode: focusPostcode,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  RegExp regExp = new RegExp(r'^(^[0-9]*$)');
-                  if (value!.isEmpty) {
-                    return 'Please enter postcode';
-                  } else if (!regExp.hasMatch(value)) {
-                    return 'Invalid postcode format';
-                  }
-                  return null;
-                },
-                controller: postcodeCT,
-                // onFieldSubmitted: (val) {
-                //   FocusScope.of(context).requestFocus(new FocusNode());
-                // },
-                style: TextStyles.textDefault,
-                decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
-                    ),
-                    hintText: 'Postcode',
-                    hintStyle:
-                        focusPostcode.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                    border: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
-              ),
+              postcodes.length > 0 ? SizedBox(width: 10) : Container(),
+              postcodes.length > 0
+                  ? DropdownButtonFormField(
+                      focusNode: focusPostcode,
+                      style: TextStyles.textDefault,
+                      decoration: InputDecoration(
+                        labelText: 'Postcode',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                        ),
+                        border: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
+                      ),
+                      value: postcode != null ? postcode : null,
+                      items: postcodes
+                          .map((e) => DropdownMenuItem(child: Text(e), value: e, key: Key(e)))
+                          .toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          postcode = val! as String;
+                          // this.onSelectCity(value.postcode!);
+                        });
+                      },
+                    )
+                  : Container(),
+              // TextFormField(
+              //   focusNode: focusPostcode,
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) {
+              //     RegExp regExp = new RegExp(r'^(^[0-9]*$)');
+              //     if (value!.isEmpty) {
+              //       return 'Please enter postcode';
+              //     } else if (!regExp.hasMatch(value)) {
+              //       return 'Invalid postcode format';
+              //     }
+              //     return null;
+              //   },
+              //   controller: postcodeCT,
+              //   // onFieldSubmitted: (val) {
+              //   //   FocusScope.of(context).requestFocus(new FocusNode());
+              //   // },
+              //   style: TextStyles.textDefault,
+              //   decoration: InputDecoration(
+              //       focusedBorder: UnderlineInputBorder(
+              //         borderSide:
+              //             BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+              //       ),
+              //       enabledBorder: UnderlineInputBorder(
+              //         borderSide: BorderSide(
+              //             color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+              //       ),
+              //       hintText: 'Postcode',
+              //       hintStyle:
+              //           focusPostcode.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+              //       contentPadding: const EdgeInsets.symmetric(vertical: 5),
+              //       border: UnderlineInputBorder(
+              //           borderSide: BorderSide(
+              //               color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              // ),
               SizedBox(height: 30),
               RoundButton(
                   title: "Next",

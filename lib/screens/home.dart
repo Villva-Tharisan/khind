@@ -49,6 +49,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    print("##WIDGET DATA: ${widget.data}");
     if (widget.data != null) {
       if (widget.data == 0) {
         page = 1;
@@ -64,7 +65,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         tabIdx = 4;
       }
     }
-    super.initState();
 
     _animationController = AnimationController(
       duration: Duration(seconds: 1),
@@ -87,6 +87,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       Duration(seconds: 1),
       () => _animationController.forward(),
     );
+
+    super.initState();
   }
 
   _renderBottomNav() {
@@ -143,6 +145,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // print("###PAGE: $page");
     return Scaffold(
       body: IndexedStack(children: _tabs, index: page),
       floatingActionButton: ScaleTransition(
@@ -154,15 +157,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.all(2),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // SizedBox(height: 5),
-                    // Image(image: AssetImage('assets/images/logo_sm.png')),
-                    Icon(Icons.add, size: 50),
-                    // SizedBox(height: 2),
-                    // Text("E-Warranty", style: TextStyle(fontSize: 6))
-                  ])),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                // SizedBox(height: 5),
+                // Image(image: AssetImage('assets/images/logo_sm.png')),
+                Icon(Icons.add, size: 50),
+                // SizedBox(height: 2),
+                // Text("E-Warranty", style: TextStyle(fontSize: 6))
+              ])),
           onPressed: () {
             setState(() {
               // tabIdx = 5;
