@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/shipping_address.dart';
@@ -12,6 +13,9 @@ import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 
 class UpdateAddress extends StatefulWidget {
+  final User? user;
+  UpdateAddress({this.user});
+
   @override
   _UpdateAddressState createState() => _UpdateAddressState();
 }
@@ -150,15 +154,24 @@ class _UpdateAddressState extends State<UpdateAddress> {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> map = {
-        'address1': address1CT.text,
-        'address2': address1CT.text,
-        'state': state,
+        'address_1': address1CT.text,
+        'address_2': address1CT.text,
+        'zone_id': state.stateId,
         'city': city,
         'postcode': postcode
       };
 
-      // print("MAP: $map");
-      final response = await Api.bearerPost('update_user.php', params: jsonEncode(map));
+      print("MAP: $map");
+
+      final response = await Api.customPut(
+        'customer/${widget.user!.id}',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
+        },
+        params: jsonEncode(map),
+      );
+
       setState(() {
         isLoading = true;
         errorMsg = "";
@@ -456,7 +469,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
                             bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
                     child: InkWell(
                         // onTap: () => _handleUpdate(),
-                        onTap: () => {},
+                        onTap: () => _handleUpdate(),
                         child: Container(
                             decoration: BoxDecoration(
                                 color: AppColors.secondary,

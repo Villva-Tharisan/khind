@@ -148,4 +148,25 @@ class Api {
       return {'error': e.toString()};
     }
   }
+
+  static customPut(endpoint, {headers, params, isRest = false}) async {
+    print("HEADESR: $headers");
+    try {
+      final response;
+      String baseUrl = isRest ? FlutterConfig.get("API_URL") : FlutterConfig.get("API_ADMIN_URL");
+      String url = '$baseUrl/$endpoint';
+      print("Url: $url");
+      if (params != null) {
+        response = await http.put(url.toUri(), body: params, headers: headers);
+      } else {
+        response = await http.put(url.toUri(), headers: headers);
+      }
+      print('customPut Response: ${response.body}');
+
+      return jsonDecode(response.body);
+    } catch (e) {
+      print('customPut error : $e');
+      return {'error': e.toString()};
+    }
+  }
 }

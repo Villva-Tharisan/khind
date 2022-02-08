@@ -202,70 +202,71 @@ class _ProfileState extends State<Profile> {
   }
 
   void _handleUpdate() async {
+    print("#handleUpdate");
     Helpers.showAlert(context);
-    if (_formKey.currentState!.validate()) {
-      final Map<String, dynamic> map = {
-        // 'firstname': firstnameCT.text,
-        // 'lastname': lastnameCT.text,
-        'email': emailCT.text,
-        'telephone': mobileNoCT.text,
-      };
+    // if (_formKey.currentState!.validate()) {
+    final Map<String, String> map = {
+      // 'firstname': firstnameCT.text,
+      // 'lastname': lastnameCT.text,
+      'email': emailCT.text,
+      'telephone': mobileNoCT.text,
+    };
+    print("MAP: $map");
 
-      // print("MAP: $map");
-      final response = await Api.customPost(
-        'customer.php',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
-        },
-        params: jsonEncode(map),
-      );
-      setState(() {
-        isLoading = true;
-        errorMsg = "";
-        errors = [];
-      });
-      Navigator.pop(context);
+    final response = await Api.customPut(
+      'customer/${user!.id}',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
+      },
+      params: jsonEncode(map),
+    );
+    setState(() {
+      isLoading = true;
+      errorMsg = "";
+      errors = [];
+    });
+    Navigator.pop(context);
 
-      if (response['success']) {
-        Helpers.showAlert(context, hasAction: true, onPressed: () {
-          _clearTextField();
-          setState(() {
-            errors = [];
-          });
-          Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home');
-        },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                    margin: EdgeInsets.only(left: 5),
-                    child: Text("Your profile has been successfully updated")),
-              ],
-            ));
-      } else {
-        if (response['error'] != null) {
-          setState(() {
-            isLoading = false;
-            errorMsg = "Validation failed!";
-
-            if (response['error'] is LinkedHashMap) {
-              (response['error'] as LinkedHashMap).forEach((key, value) {
-                errors.add(value);
-              });
-            }
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-            errors.add("Validation failed!");
-          });
-        }
-      }
+    if (response['success']) {
+      Helpers.showAlert(context, hasAction: true, onPressed: () {
+        // _clearTextField();
+        setState(() {
+          errors = [];
+        });
+        Navigator.pop(context);
+        // Navigator.pushReplacementNamed(context, 'home');
+      },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                  margin: EdgeInsets.only(left: 5),
+                  child: Text("Your profile has been successfully updated")),
+            ],
+          ));
     } else {
-      Navigator.pop(context);
+      if (response['error'] != null) {
+        setState(() {
+          isLoading = false;
+          errorMsg = "Validation failed!";
+
+          if (response['error'] is LinkedHashMap) {
+            (response['error'] as LinkedHashMap).forEach((key, value) {
+              errors.add(value);
+            });
+          }
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          errors.add("Validation failed!");
+        });
+      }
     }
+    // } else {
+    //   Navigator.pop(context);
+    // }
   }
 
   Future<void> _selectDob(BuildContext context) async {
@@ -366,6 +367,10 @@ class _ProfileState extends State<Profile> {
                               setState(() {
                                 canEditMobile = !this.canEditMobile;
                               });
+                              // print(canEditMobile);
+                              if (!canEditMobile) {
+                                _handleUpdate();
+                              }
                             },
                             child: canEditMobile
                                 ? Container(
@@ -413,6 +418,9 @@ class _ProfileState extends State<Profile> {
                               setState(() {
                                 canEditEmail = !this.canEditEmail;
                               });
+                              if (!canEditEmail) {
+                                _handleUpdate();
+                              }
                             },
                             child: Container(
                                 decoration: BoxDecoration(
@@ -484,7 +492,7 @@ class _ProfileState extends State<Profile> {
                                           return Dialog(
                                               shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(20)),
-                                              child: UpdateAddress());
+                                              child: UpdateAddress(user: user));
                                         })
                                   },
                               child: CustomCard(
@@ -506,7 +514,7 @@ class _ProfileState extends State<Profile> {
                                           return Dialog(
                                               shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(20)),
-                                              child: ChangePassword());
+                                              child: ChangePassword(user: user));
                                         })
                                   },
                               child: CustomCard(

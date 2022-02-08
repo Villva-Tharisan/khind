@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/states.dart';
@@ -11,6 +12,9 @@ import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 
 class ChangePassword extends StatefulWidget {
+  final User? user;
+  ChangePassword({this.user});
+
   @override
   _ChangePasswordState createState() => _ChangePasswordState();
 }
@@ -20,15 +24,15 @@ class _ChangePasswordState extends State<ChangePassword> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final storage = new FlutterSecureStorage();
   TextEditingController passwordCT = new TextEditingController();
-  TextEditingController oldPasswordCT = new TextEditingController();
-  FocusNode focusOldPassword = new FocusNode();
+  TextEditingController confirmPasswordCT = new TextEditingController();
+  FocusNode focusConfirmPassword = new FocusNode();
   FocusNode focusPassword = new FocusNode();
   bool isLoading = false;
   User? user;
   String errorMsg = "";
   List errors = [];
   bool showPassword = false;
-  bool showOldPassword = false;
+  bool showConfirmPassword = false;
 
   @override
   void initState() {
@@ -38,25 +42,33 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   void dispose() {
     passwordCT.dispose();
-    oldPasswordCT.dispose();
+    confirmPasswordCT.dispose();
     super.dispose();
   }
 
   void _clearTextField() {
     passwordCT.clear();
-    oldPasswordCT.clear();
+    confirmPasswordCT.clear();
   }
 
   void _handleUpdate() async {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
-      final Map<String, dynamic> map = {
+      final Map<String, String> map = {
         'password': passwordCT.text,
-        'postcode': oldPasswordCT.text
+        'confirm': confirmPasswordCT.text,
       };
+      print("MAP: $map");
 
-      // print("MAP: $map");
-      final response = await Api.bearerPost('change_password.php', params: jsonEncode(map));
+      final response = await Api.customPut(
+        'customer/${widget.user!.id}',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
+        },
+        params: jsonEncode(map),
+      );
+
       setState(() {
         isLoading = true;
         errorMsg = "";
@@ -145,71 +157,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                         // Container(
                         //   padding: EdgeInsets.only(top: 15),
                         //   width: width * 0.30,
-                        //   child: Text('Old Password', style: TextStyles.textDefault),
-                        // ),
-                        // SizedBox(width: 15),
-                        Flexible(
-                            child: Stack(children: [
-                          TextFormField(
-                            focusNode: focusOldPassword,
-                            keyboardType: TextInputType.text,
-                            obscureText: !showOldPassword,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Please enter old password';
-                              }
-                              return null;
-                            },
-                            controller: oldPasswordCT,
-                            onFieldSubmitted: (val) {
-                              FocusScope.of(context).requestFocus(new FocusNode());
-                            },
-                            style: TextStyles.textDefault,
-                            decoration: InputDecoration(
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppColors.primary, width: 2, style: BorderStyle.solid),
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppColors.greyLight,
-                                      width: 1,
-                                      style: BorderStyle.solid),
-                                ),
-                                hintText: 'Old Password',
-                                hintStyle: focusOldPassword.hasFocus
-                                    ? TextStyles.textPrimary
-                                    : TextStyles.textGreyDark,
-                                contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                                border: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.greyLight,
-                                        width: 1,
-                                        style: BorderStyle.solid))),
-                          ),
-                          Positioned(
-                              right: 15,
-                              top: 10,
-                              child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      showOldPassword = !this.showOldPassword;
-                                    });
-                                  },
-                                  child: Icon(
-                                      showOldPassword ? Icons.visibility : Icons.visibility_off)))
-                        ])),
-                      ],
-                    )),
-                SizedBox(height: 10),
-                Container(
-                    padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Container(
-                        //   padding: EdgeInsets.only(top: 15),
-                        //   width: width * 0.30,
                         //   child: Text('Password', style: TextStyles.textDefault),
                         // ),
                         // SizedBox(width: 15),
@@ -242,7 +189,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                       style: BorderStyle.solid),
                                 ),
                                 hintText: 'Password',
-                                hintStyle: focusOldPassword.hasFocus
+                                hintStyle: focusPassword.hasFocus
                                     ? TextStyles.textPrimary
                                     : TextStyles.textGreyDark,
                                 contentPadding: const EdgeInsets.symmetric(vertical: 5),
@@ -268,6 +215,66 @@ class _ChangePasswordState extends State<ChangePassword> {
                     )),
                 SizedBox(height: 10),
                 Container(
+                    padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                            child: Stack(children: [
+                          TextFormField(
+                            focusNode: focusConfirmPassword,
+                            keyboardType: TextInputType.text,
+                            obscureText: !showConfirmPassword,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter confirm password';
+                              }
+                              return null;
+                            },
+                            controller: confirmPasswordCT,
+                            onFieldSubmitted: (val) {
+                              FocusScope.of(context).requestFocus(new FocusNode());
+                            },
+                            style: TextStyles.textDefault,
+                            decoration: InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: AppColors.greyLight,
+                                      width: 1,
+                                      style: BorderStyle.solid),
+                                ),
+                                hintText: 'Confirm Password',
+                                hintStyle: focusConfirmPassword.hasFocus
+                                    ? TextStyles.textPrimary
+                                    : TextStyles.textGreyDark,
+                                contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: AppColors.greyLight,
+                                        width: 1,
+                                        style: BorderStyle.solid))),
+                          ),
+                          Positioned(
+                              right: 15,
+                              top: 10,
+                              child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      showConfirmPassword = !this.showConfirmPassword;
+                                    });
+                                  },
+                                  child: Icon(showConfirmPassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off)))
+                        ])),
+                      ],
+                    )),
+                SizedBox(height: 10),
+                Container(
                     alignment: Alignment.center,
                     width: width,
                     padding: const EdgeInsets.only(bottom: 10, top: 15),
@@ -277,7 +284,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
                     child: InkWell(
                         // onTap: () => _handleUpdate(),
-                        onTap: () => {},
+                        onTap: () => _handleUpdate(),
                         child: Container(
                             decoration: BoxDecoration(
                                 color: AppColors.secondary,
