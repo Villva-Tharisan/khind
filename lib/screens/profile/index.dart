@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/components/custom_card.dart';
 import 'package:khind/models/city.dart';
@@ -204,18 +205,21 @@ class _ProfileState extends State<Profile> {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> map = {
+        // 'firstname': firstnameCT.text,
+        // 'lastname': lastnameCT.text,
         'email': emailCT.text,
-        'password': passwordCT.text,
         'telephone': mobileNoCT.text,
-        'address1': address1CT.text,
-        'address2': address1CT.text,
-        'state': state,
-        'city': city,
-        // 'postcode': postcode,
       };
 
       // print("MAP: $map");
-      final response = await Api.bearerPost('update_user.php', params: jsonEncode(map));
+      final response = await Api.customPost(
+        'customer.php',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
+        },
+        params: jsonEncode(map),
+      );
       setState(() {
         isLoading = true;
         errorMsg = "";
@@ -363,13 +367,17 @@ class _ProfileState extends State<Profile> {
                                 canEditMobile = !this.canEditMobile;
                               });
                             },
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    color: AppColors.secondary,
-                                    borderRadius: BorderRadius.circular(10)),
-                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                child: Text(canEditMobile ? "View" : "Edit",
-                                    style: TextStyles.textWhiteSm)))
+                            child: canEditMobile
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    child: Icon(Icons.check, color: Colors.green))
+                                : Container(
+                                    decoration: BoxDecoration(
+                                        color: AppColors.secondary,
+                                        borderRadius: BorderRadius.circular(10)),
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    child: Text(canEditMobile ? "View" : "Edit",
+                                        style: TextStyles.textWhiteSm)))
                       ]))
                     ])),
                     SizedBox(height: 5),
