@@ -15,8 +15,9 @@ class ServiceTrackerDetails extends StatefulWidget {
 
 class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
   late int index;
+  late ServiceProduct serviceProduct;
+  late ProductWarranty productWarranty;
 
   @override
   void initState() {
@@ -25,9 +26,6 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
     productWarranty = Helpers.productWarranty!;
     super.initState();
   }
-
-  late ServiceProduct serviceProduct;
-  late ProductWarranty productWarranty;
 
   getColor(status) {
     var newColor = Colors.grey[400]!;
@@ -65,14 +63,11 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                   Text('Status :'),
                   SizedBox(width: 5),
                   CustomCard(
-                      color: getColor(serviceProduct.data![index]
-                          ['service_request_status']!),
+                      color: getColor(serviceProduct.data![index]['service_request_status']!),
                       borderRadius: BorderRadius.circular(5),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                       textStyle: TextStyles.textWhiteSm,
-                      label: serviceProduct.data![index]
-                          ['service_request_status']!),
+                      label: serviceProduct.data![index]['service_request_status']!),
                   // Container(
                   //   padding: EdgeInsets.all(10),
                   //   decoration: BoxDecoration(
@@ -107,10 +102,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                     color: Colors.grey.withOpacity(0.5),
                   ),
                   boxShadow: [
-                    BoxShadow(
-                        blurRadius: 5,
-                        color: Colors.grey[200]!,
-                        offset: Offset(0, 10)),
+                    BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                   ],
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -131,8 +123,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child:
-                              Text(serviceProduct.data![index]['serial_no']!),
+                          child: Text(serviceProduct.data![index]['serial_no']!),
                         )
                       ],
                     ),
@@ -147,8 +138,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(
-                              serviceProduct.data![index]['service_type']!),
+                          child: Text(serviceProduct.data![index]['service_type']!),
                         )
                       ],
                     ),
@@ -177,8 +167,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(
-                              productWarranty.data![0].technicianServiceGroup!),
+                          child: Text(productWarranty.data![0].technicianServiceGroup!),
                         )
                       ],
                     ),
@@ -199,9 +188,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                               // borderRadius: BorderRadius.circular(5),
                               border: Border.all(color: Colors.grey[300]!),
                             ),
-                            child: Text(serviceProduct.data![index]
-                                    ['remarks'] ??
-                                'null'),
+                            child: Text(serviceProduct.data![index]['remarks'] ?? 'null'),
                           ),
                         )
                       ],
@@ -211,10 +198,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
               ),
               SizedBox(height: 15),
 
-              if (serviceProduct.data![index]['service_request_status']! ==
-                      'Pending Collection' ||
-                  serviceProduct.data![index]['service_request_status']! ==
-                      'Collected')
+              if (serviceProduct.data![index]['service_request_status']! == 'Pending Collection' ||
+                  serviceProduct.data![index]['service_request_status']! == 'Collected')
                 //     'Collected')
 
                 Padding(
@@ -229,12 +214,11 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         colors: <Color>[Colors.white, Colors.grey[400]!],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter),
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(context, 'invoice'),
                   ),
                 ),
 
-              if (serviceProduct.data![index]['service_request_status']! ==
-                  'Collected')
+              if (serviceProduct.data![index]['service_request_status']! == 'Collected')
                 Column(
                   children: [
                     SizedBox(height: 20),

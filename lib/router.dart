@@ -28,6 +28,7 @@ import 'package:khind/screens/signin.dart';
 import 'package:khind/screens/signup.dart';
 import 'package:khind/screens/forgot_password.dart';
 import 'package:khind/screens/home.dart';
+import 'package:khind/screens/invoice.dart';
 import 'models/Purchase.dart';
 import 'models/request_service_arguments.dart';
 import 'screens/request_date_pickup.dart';
@@ -54,9 +55,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => Home(data: arguments as int));
       case 'news':
         return MaterialPageRoute(builder: (_) => NewsLanding());
+      case 'invoice':
+        return MaterialPageRoute(builder: (_) => Invoice());
       case 'news_detail':
-        return MaterialPageRoute(
-            builder: (_) => NewsDetail(data: arguments as News));
+        return MaterialPageRoute(builder: (_) => NewsDetail(data: arguments as News));
       case 'service_locator':
         return MaterialPageRoute(builder: (_) => ServiceLocator());
       case 'ewarranty':
@@ -95,24 +97,20 @@ class AppRouter {
         );
 
       case 'productModel':
-        return MaterialPageRoute(
-            builder: (_) => ProductModel(data: arguments as Purchase));
+        return MaterialPageRoute(builder: (_) => ProductModel(data: arguments as Purchase));
 
       case 'serviceType':
-        return MaterialPageRoute(
-            builder: (_) => ServiceType(data: arguments as Purchase));
+        return MaterialPageRoute(builder: (_) => ServiceType(data: arguments as Purchase));
 
       case 'requestDateHomeVisit':
-        return MaterialPageRoute(
-            builder: (_) => RequestDateHomeVisit(data: arguments as Purchase));
+        return MaterialPageRoute(builder: (_) => RequestDateHomeVisit(data: arguments as Purchase));
       case 'requestDateDropIn':
         return MaterialPageRoute(
             builder: (_) => RequestDateDropIn(
                   data: arguments as Purchase,
                 ));
       case 'requestDatePickup':
-        return MaterialPageRoute(
-            builder: (_) => RequestDatePickup(data: arguments as Purchase));
+        return MaterialPageRoute(builder: (_) => RequestDatePickup(data: arguments as Purchase));
 
       case 'review':
         return MaterialPageRoute(
@@ -159,9 +157,8 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-            builder: (_) => Scaffold(
-                body: Center(
-                    child: Text('No route defined for ${settings.name}'))));
+            builder: (_) =>
+                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
     }
   }
 

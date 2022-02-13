@@ -49,11 +49,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    print("##WIDGET DATA: ${widget.data}");
+    // print("##WIDGET DATA: ${widget.data}");
     if (widget.data != null) {
       if (widget.data == 0) {
-        page = 1;
-        tabIdx = 1;
+        page = 0;
+        tabIdx = 0;
       } else if (widget.data == 1) {
         page = 2;
         tabIdx = 2;

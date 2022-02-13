@@ -60,6 +60,7 @@ dependencies:
   fluttertoast: ^8.0.8
   flutter_typeahead: ^3.2.4
   font_awesome_flutter: ^9.2.0
+  advance_pdf_viewer: any
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +96,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/icons/
+    - assets/docs/
     # - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

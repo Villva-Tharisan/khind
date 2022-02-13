@@ -1,0 +1,10 @@
+#Sun Feb 13 10:58:25 MYT 2022
+base.2=/Users/hiysham/FlutterProjects/khind/android/app/build/intermediates/dex/debug/mergeDexDebug/classes3.dex
+path.2=classes3.dex
+base.1=/Users/hiysham/FlutterProjects/khind/android/app/build/intermediates/dex/debug/mergeDexDebug/classes2.dex
+path.1=classes2.dex
+base.0=/Users/hiysham/FlutterProjects/khind/android/app/build/intermediates/dex/debug/mergeDexDebug/classes.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+path.0=classes.dex

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Automatically generated file. DO NOT MODIFY -->
+
+    <!-- Value from default config. -->
+    <string name="API_ADMIN_URL" translatable="false">https://www.khind.com.my/api/rest_admin</string>
+    <!-- Value from default config. -->
+    <string name="API_URL" translatable="false">https://www.khind.com.my/api/rest</string>
+    <!-- Value from default config. -->
+    <string name="CLIENT_PASSWORD" translatable="false">Khind1qaz2wsx3edc</string>
+    <!-- Value from default config. -->
+    <string name="CLIENT_USERNAME" translatable="false">khindapi</string>
+    <!-- Value from default config. -->
+    <string name="CMS_URL" translatable="false">http://cm.khind.com.my</string>
+
+</resources>
