@@ -31,8 +31,8 @@ class _ProductModelState extends State<ProductModel> {
   @override
   void initState() {
     // TODO: implement initState
-    var formattedDate =
-        DateFormat('dd-MM-yyyy').format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
+    var formattedDate = DateFormat('dd-MM-yyyy')
+        .format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
 
     setState(() {
       purchase = widget.data;
@@ -42,7 +42,9 @@ class _ProductModelState extends State<ProductModel> {
       purchaseDate = formattedDate;
     });
 
-    if (purchase!.dropIn == '0' && purchase!.homeVisit == '0' && purchase!.pickUp == '0') {
+    if (purchase!.dropIn == '0' &&
+        purchase!.homeVisit == '0' &&
+        purchase!.pickUp == '0') {
       setState(() {
         canRequestRepair = false;
       });
@@ -64,8 +66,9 @@ class _ProductModelState extends State<ProductModel> {
     var queryParams =
         '?email=$email&warranty_registration_id=${purchase!.warrantyRegistrationId}&serial_no=${serialNoCT.text}';
 
-    final response =
-        await Api.bearerPost('provider/create_serial_number.php$queryParams', isCms: true);
+    final response = await Api.bearerPost(
+        'provider/create_serial_number.php$queryParams',
+        isCms: true);
 
     if (response['success']) {
       setState(() {
@@ -73,7 +76,8 @@ class _ProductModelState extends State<ProductModel> {
       });
 
       Helpers.showAlert(context,
-          title: 'You have successfully updated serial number', hasAction: true, onPressed: () {
+          title: 'You have successfully updated serial number',
+          hasAction: true, onPressed: () {
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, 'home');
       });
@@ -81,13 +85,17 @@ class _ProductModelState extends State<ProductModel> {
   }
 
   void _handleDeletePurchase() async {
-    var queryParams = "?warranty_registration_id=${purchase!.warrantyRegistrationId}";
-    final response = await Api.bearerPost('provider/rm_my_purchase.php$queryParams', isCms: true);
+    var queryParams =
+        "?warranty_registration_id=${purchase!.warrantyRegistrationId}";
+    final response = await Api.bearerPost(
+        'provider/rm_my_purchase.php$queryParams',
+        isCms: true);
     if (response['success']) {
       Helpers.showAlert(context,
-          title: 'You have successfully remove this purchase', hasAction: true, onPressed: () {
+          title: 'You have successfully remove this purchase',
+          hasAction: true, onPressed: () {
         Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, 'home');
+        Navigator.pushReplacementNamed(context, 'home', arguments: 1);
       });
     }
   }
@@ -114,7 +122,10 @@ class _ProductModelState extends State<ProductModel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -155,7 +166,10 @@ class _ProductModelState extends State<ProductModel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -177,7 +191,8 @@ class _ProductModelState extends State<ProductModel> {
                         Text("Purchase Date :", style: TextStyles.textDefault),
                         SizedBox(width: 5),
                         purchaseDate != "" && purchaseDate != "-"
-                            ? Text(purchaseDate!, style: TextStyles.textDefaultBold)
+                            ? Text(purchaseDate!,
+                                style: TextStyles.textDefaultBold)
                             : Text("-")
                       ]),
                       // Text("Purchase Date: ${purchaseDate!}"),
@@ -186,9 +201,11 @@ class _ProductModelState extends State<ProductModel> {
                       ),
                       purchase?.warrantyPeriod != null
                           ? Row(children: [
-                              Text("Warranty Valid until :", style: TextStyles.textDefault),
+                              Text("Warranty Valid until :",
+                                  style: TextStyles.textDefault),
                               SizedBox(width: 5),
-                              Text('${purchase?.warrantyDate}', style: TextStyles.textDefaultBold),
+                              Text('${purchase?.warrantyDate}',
+                                  style: TextStyles.textDefaultBold),
                               // CustomCard(
                               //     borderRadius: BorderRadius.circular(5),
                               //     label: purchase?.warrantyDate,
@@ -217,7 +234,10 @@ class _ProductModelState extends State<ProductModel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -237,7 +257,8 @@ class _ProductModelState extends State<ProductModel> {
                                 label: serialNoCT.text,
                                 textStyle: TextStyles.textDefaultBold,
                                 color: Colors.grey[200],
-                                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5))
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 5))
                             : Text("-"),
                       ]),
                       // Text(
@@ -269,12 +290,16 @@ class _ProductModelState extends State<ProductModel> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               gradient: LinearGradient(
-                                  colors: <Color>[Colors.white, Colors.grey[400]!],
+                                  colors: <Color>[
+                                    Colors.white,
+                                    Colors.grey[400]!
+                                  ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter),
                               onPressed: () {
                                 Navigator.pushNamed(context, 'serviceType',
-                                    arguments: purchase != null ? purchase : null);
+                                    arguments:
+                                        purchase != null ? purchase : null);
                               },
                             )
                           : GradientButton(
@@ -282,10 +307,15 @@ class _ProductModelState extends State<ProductModel> {
                               height: 40,
                               child: Text(
                                 "Request Repair",
-                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
                               gradient: LinearGradient(
-                                  colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
+                                  colors: <Color>[
+                                    Colors.grey[300]!,
+                                    Colors.grey[300]!
+                                  ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter),
                               onPressed: () {},
@@ -331,10 +361,15 @@ class _ProductModelState extends State<ProductModel> {
                           height: 40,
                           child: Text(
                             "Extend Warranty",
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                           gradient: LinearGradient(
-                              colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
+                              colors: <Color>[
+                                Colors.grey[300]!,
+                                Colors.grey[300]!
+                              ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter),
                           onPressed: () {},
@@ -378,7 +413,10 @@ class _ProductModelState extends State<ProductModel> {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 gradient: LinearGradient(
-                                    colors: <Color>[Colors.white, Colors.grey[400]!],
+                                    colors: <Color>[
+                                      Colors.white,
+                                      Colors.grey[400]!
+                                    ],
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter),
                                 onPressed: () {
@@ -387,7 +425,8 @@ class _ProductModelState extends State<ProductModel> {
                                     okTitle: "Yes",
                                     noTitle: "No",
                                     // title: "Sign out confirmation",
-                                    desc: "Do you want to remove this product from 'My Purchase'",
+                                    desc:
+                                        "Do you want to remove this product from 'My Purchase'",
                                     hasAction: true,
                                     hasCancel: true,
                                     onPressed: () async {

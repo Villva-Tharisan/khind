@@ -39,9 +39,11 @@ class _ReviewState extends State<Review> {
     User userJson = User.fromJson(jsonDecode(userStorage!));
 
     var payload = {
-      "service_center_id": _requestServiceArgument.serviceCenter!.serviceCenterId,
+      "service_center_id":
+          _requestServiceArgument.serviceCenter!.serviceCenterId,
       "service_type": _requestServiceArgument.serviceType,
-      "warranty_registration_id": _requestServiceArgument.purchase.warrantyRegistrationId,
+      "warranty_registration_id":
+          _requestServiceArgument.purchase.warrantyRegistrationId,
       "product_id": _requestServiceArgument.purchase.productGroupId,
       "problem_id": _requestServiceArgument.serviceProblem!.problemId,
       "user_id": _requestServiceArgument.purchase.userId,
@@ -73,18 +75,20 @@ class _ReviewState extends State<Review> {
     queryParams = queryParams.substring(0, queryParams.length - 1);
     // print(queryParams);
 
-    final response =
-        await Api.basicPost('provider/create_service_request.php$queryParams', isCms: true);
+    final response = await Api.basicPost(
+        'provider/create_service_request.php$queryParams',
+        isCms: true);
 
     if (response['success']) {
-      Helpers.showAlert(context, title: 'You have successfully request service', hasAction: true,
-          onPressed: () {
+      Helpers.showAlert(context,
+          title: 'You have successfully request service',
+          hasAction: true, onPressed: () {
         Navigator.pop(context);
         Navigator.pushReplacementNamed(context, 'home', arguments: 2);
       });
     } else {
-      Helpers.showAlert(context, title: 'Failed to request service', hasAction: true,
-          onPressed: () {
+      Helpers.showAlert(context,
+          title: 'Failed to request service', hasAction: true, onPressed: () {
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, 'home');
       });
@@ -138,7 +142,10 @@ class _ReviewState extends State<Review> {
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
@@ -187,7 +194,10 @@ class _ReviewState extends State<Review> {
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
@@ -240,7 +250,8 @@ class _ReviewState extends State<Review> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.50,
-                      child: Text(_requestServiceArgument.serviceProblem!.problem!),
+                      child: Text(
+                          _requestServiceArgument.serviceProblem!.problem!),
                     )
                   ],
                 ),
@@ -253,7 +264,8 @@ class _ReviewState extends State<Review> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.50,
-                      child: Text(_requestServiceArgument.serviceCenter!.address!),
+                      child:
+                          Text(_requestServiceArgument.serviceCenter!.address!),
                     )
                   ],
                 ),
@@ -268,7 +280,10 @@ class _ReviewState extends State<Review> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
-                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                  BoxShadow(
+                      blurRadius: 5,
+                      color: Colors.grey[200]!,
+                      offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),

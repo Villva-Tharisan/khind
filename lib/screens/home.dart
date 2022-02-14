@@ -55,14 +55,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         page = 0;
         tabIdx = 0;
       } else if (widget.data == 1) {
+        page = 1;
+        tabIdx = 1;
+      } else if (widget.data == 2) {
         page = 2;
         tabIdx = 2;
-      } else if (widget.data == 2) {
+      } else if (widget.data == 3) {
         page = 3;
         tabIdx = 3;
-      } else if (widget.data == 3) {
-        page = 4;
-        tabIdx = 4;
       }
     }
 
@@ -157,13 +157,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.all(2),
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                // SizedBox(height: 5),
-                // Image(image: AssetImage('assets/images/logo_sm.png')),
-                Icon(Icons.add, size: 50),
-                // SizedBox(height: 2),
-                // Text("E-Warranty", style: TextStyle(fontSize: 6))
-              ])),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // SizedBox(height: 5),
+                    // Image(image: AssetImage('assets/images/logo_sm.png')),
+                    Icon(Icons.add, size: 50),
+                    // SizedBox(height: 2),
+                    // Text("E-Warranty", style: TextStyle(fontSize: 6))
+                  ])),
           onPressed: () {
             setState(() {
               // tabIdx = 5;
