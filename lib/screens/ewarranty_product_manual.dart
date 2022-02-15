@@ -124,7 +124,10 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                     color: Colors.white,
                     border: Border.all(width: 0.1),
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -139,12 +142,14 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                           ),
                           SizedBox(width: 10),
                           Expanded(
-                            child: BlocBuilder<ProductGroupCubit, ProductGroupState>(
+                            child: BlocBuilder<ProductGroupCubit,
+                                ProductGroupState>(
                               builder: (context, state) {
                                 if (state is ProductGroupLoaded) {
                                   return DropdownButton<String>(
                                     items: state.productModel
-                                        .map<DropdownMenuItem<String>>((String value) {
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(
@@ -163,7 +168,9 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                       });
                                       context
                                           .read<ProductModelCubit>()
-                                          .getProductModel(productGroup: value!);
+                                          .getProductModel(
+                                              productGroup: value!);
+                                      product.text = '';
                                     },
                                   );
                                 } else {
@@ -192,19 +199,22 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                     SizedBox(width: 10),
                                     Expanded(
                                       child: TypeAheadField(
-                                        textFieldConfiguration: TextFieldConfiguration(
+                                        textFieldConfiguration:
+                                            TextFieldConfiguration(
                                           controller: product,
                                           autofocus: true,
                                           style: DefaultTextStyle.of(context)
                                               .style
-                                              .copyWith(fontStyle: FontStyle.italic),
+                                              .copyWith(
+                                                  fontStyle: FontStyle.italic),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(),
                                           ),
                                         ),
                                         suggestionsCallback: (pattern) async {
-                                          return await Repositories.getProductModelList(
-                                              state.productName, pattern);
+                                          return await Repositories
+                                              .getProductModelList(
+                                                  state.productName, pattern);
                                           // return await BackendService
                                           //     .getSuggestions(pattern);
                                         },
@@ -212,7 +222,9 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                           // return Text(suggestion.toString());
                                           return ListTile(
                                             leading: Icon(Icons.shopping_cart),
-                                            title: Text(suggestion.toString().toUpperCase()),
+                                            title: Text(suggestion
+                                                .toString()
+                                                .toUpperCase()),
                                             // subtitle: Text(
                                             //   '\$${suggestion['price']}',
                                             // ),
@@ -222,10 +234,13 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                           product.text = suggestion.toString();
                                           print(suggestion.toString());
                                           setState(() {
-                                            chosenProductModel = suggestion.toString();
-                                            index = state.productName.indexOf(chosenProductModel!);
+                                            chosenProductModel =
+                                                suggestion.toString();
+                                            index = state.productName
+                                                .indexOf(chosenProductModel!);
 
-                                            productModel = state.productModel[index!];
+                                            productModel =
+                                                state.productModel[index!];
 
                                             // print(productModel);
                                           });
@@ -269,7 +284,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                 index != null
                                     ? Text(
                                         state.modelDescription[index!],
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
                                       )
                                     : Container(),
                               ],
@@ -377,7 +393,10 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                     color: Colors.white,
                     border: Border.all(width: 0.1),
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -391,7 +410,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             child: Text('Purchase Date '),
                           ),
                           Text(
-                            formatDate(choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                            formatDate(
+                                choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(width: 10),
@@ -400,9 +420,10 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                 DateTime? chosen = await showDatePicker(
                                   context: context,
                                   initialDate: DateTime.now(),
-                                  firstDate: DateTime.now().subtract(Duration(days: 30)),
+                                  firstDate: DateTime(2000, 1),
                                   lastDate: DateTime.now(),
-                                  initialEntryMode: DatePickerEntryMode.calendar,
+                                  initialEntryMode:
+                                      DatePickerEntryMode.calendar,
                                 );
 
                                 if (chosen != null) {
@@ -411,7 +432,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   });
                                 }
                               },
-                              icon: Icon(Icons.date_range, size: 20, color: Colors.black)),
+                              icon: Icon(Icons.date_range,
+                                  size: 20, color: Colors.black)),
                           // ElevatedButton(
                           //   style: ElevatedButton.styleFrom(
                           //     primary: Colors.blue,
@@ -508,7 +530,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                               child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
-                                    final dynamic _toolTip = toolTipKey.currentState;
+                                    final dynamic _toolTip =
+                                        toolTipKey.currentState;
                                     _toolTip.ensureTooltipVisible();
                                   },
                                   child: Icon(
@@ -543,9 +566,11 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       Row(
                         children: [
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(primary: AppColors.secondary),
+                            style: ElevatedButton.styleFrom(
+                                primary: AppColors.secondary),
                             onPressed: () async {
-                              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
                                 type: FileType.custom,
                                 allowedExtensions: [
                                   'jpg',
@@ -656,7 +681,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       email: email,
                       productModel: productModel!,
                       quantity: '$quantity',
-                      purchaseDate: formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                      purchaseDate: formatDate(
+                          choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
                       referralCode: ref.text,
                       receiptFile: receiptFile,
                     );
@@ -679,9 +705,11 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                           DialogButton(
                             child: Text(
                               "Okay",
-                              style: TextStyle(color: Colors.white, fontSize: 20),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
                             ),
-                            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                            onPressed: () =>
+                                Navigator.of(context).pushNamedAndRemoveUntil(
                               'home',
                               (route) => false,
                               arguments: 0,

@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/hiysham/FlutterProjects/khind/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-id/values-id.xml",
+            "outputFile": "C:\\Flutter Workspace\\khind\\android\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-id\\values-id.xml",
             "map": [
                 {
-                    "source": "/Users/hiysham/.gradle/caches/transforms-3/7a6d8d067ec7e04dbd58162e714beca1/transformed/jetified-zxing-android-embedded-4.2.0/res/values-id/values-id.xml",
+                    "source": "C:\\Users\\User\\.gradle\\caches\\transforms-3\\7a6d8d067ec7e04dbd58162e714beca1\\transformed\\jetified-zxing-android-embedded-4.2.0\\res\\values-id\\values-id.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

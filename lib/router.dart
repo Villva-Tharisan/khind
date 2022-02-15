@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:khind/cubit/city/city_cubit.dart';
+import 'package:khind/cubit/postcode/postcode_cubit.dart';
 import 'package:khind/cubit/product_group/product_group_cubit.dart';
 import 'package:khind/cubit/product_model/product_model_cubit.dart';
+import 'package:khind/cubit/state/state_cubit.dart';
 import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/news.dart';
 import 'package:khind/models/service_product.dart';
@@ -21,6 +24,7 @@ import 'package:khind/screens/request_service_locator.dart';
 import 'package:khind/screens/review.dart';
 import 'package:khind/screens/review_homevisit.dart';
 import 'package:khind/screens/review_pickup.dart';
+import 'package:khind/screens/service_tracker_delivery.dart';
 import 'package:khind/screens/service_tracker_details.dart';
 import 'package:khind/screens/servicelocator.dart';
 import 'package:khind/screens/splash.dart';
@@ -58,7 +62,8 @@ class AppRouter {
       case 'invoice':
         return MaterialPageRoute(builder: (_) => Invoice());
       case 'news_detail':
-        return MaterialPageRoute(builder: (_) => NewsDetail(data: arguments as News));
+        return MaterialPageRoute(
+            builder: (_) => NewsDetail(data: arguments as News));
       case 'service_locator':
         return MaterialPageRoute(builder: (_) => ServiceLocator());
       case 'ewarranty':
@@ -97,20 +102,24 @@ class AppRouter {
         );
 
       case 'productModel':
-        return MaterialPageRoute(builder: (_) => ProductModel(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => ProductModel(data: arguments as Purchase));
 
       case 'serviceType':
-        return MaterialPageRoute(builder: (_) => ServiceType(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => ServiceType(data: arguments as Purchase));
 
       case 'requestDateHomeVisit':
-        return MaterialPageRoute(builder: (_) => RequestDateHomeVisit(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => RequestDateHomeVisit(data: arguments as Purchase));
       case 'requestDateDropIn':
         return MaterialPageRoute(
             builder: (_) => RequestDateDropIn(
                   data: arguments as Purchase,
                 ));
       case 'requestDatePickup':
-        return MaterialPageRoute(builder: (_) => RequestDatePickup(data: arguments as Purchase));
+        return MaterialPageRoute(
+            builder: (_) => RequestDatePickup(data: arguments as Purchase));
 
       case 'review':
         return MaterialPageRoute(
@@ -147,6 +156,24 @@ class AppRouter {
       // case 'ServiceTrackerDetails':
       //   return MaterialPageRoute(builder: (_) => ServiceTrackerDetails());
 
+      case 'ServiceTrackerDelivery':
+        return MaterialPageRoute(
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => StateCubit(),
+              ),
+              BlocProvider(
+                create: (context) => CityCubit(),
+              ),
+              BlocProvider(
+                create: (context) => PostcodeCubit(),
+              ),
+            ],
+            child: ServiceTrackerDelivery(),
+          ),
+        );
+
       case 'EwarrantyScanner':
         return MaterialPageRoute(builder: (_) => EwarrantyScanner());
 
@@ -157,8 +184,9 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-            builder: (_) =>
-                Scaffold(body: Center(child: Text('No route defined for ${settings.name}'))));
+            builder: (_) => Scaffold(
+                body: Center(
+                    child: Text('No route defined for ${settings.name}'))));
     }
   }
 
