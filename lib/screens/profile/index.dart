@@ -620,7 +620,9 @@ class _ProfileState extends State<Profile> {
                     desc: "Are you sure to sign out?",
                     hasAction: true,
                     hasCancel: true, onPressed: () async {
-                  await Api.bearerPost('logout');
+                  var response = await Api.bearerPost('logout');
+
+                  print("#LOGOUT RESPONSE: $response");
                   await storage.delete(key: IS_AUTH);
 
                   Navigator.pop(context);
