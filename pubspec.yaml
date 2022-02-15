@@ -61,6 +61,7 @@ dependencies:
   flutter_typeahead: ^3.2.4
   font_awesome_flutter: ^9.2.0
   advance_pdf_viewer: ^2.0.1
+  carousel_slider: ^4.0.0
 
 dev_dependencies:
   flutter_test:
