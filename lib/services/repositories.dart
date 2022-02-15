@@ -2,14 +2,17 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:date_format/date_format.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/models/product_group.dart';
 import 'package:khind/models/product_group_model.dart';
+import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/service_product.dart';
 import 'package:khind/models/store.dart';
 import 'package:khind/models/user.dart';
 import 'package:khind/services/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:khind/util/helpers.dart';
 import 'package:khind/util/key.dart';
 
 class Repositories {
@@ -286,5 +289,73 @@ class Repositories {
     }
 
     return matchedModel;
+  }
+
+  static Future<bool> sendRequestforDelivery(
+    String address1,
+    String address2,
+    String cityId,
+    String postcode,
+  ) async {
+    //get user info
+    final storage = new FlutterSecureStorage();
+    var userStorage = await storage.read(key: USER);
+    User user = User.fromJson(jsonDecode(userStorage!));
+    String userId = user.id!;
+
+    //get product info
+    int index = Helpers.productIndex!;
+    ServiceProduct serviceProduct = Helpers.serviceProduct!;
+    // ProductWarranty productWarranty = Helpers.productWarranty!;
+    String productId = serviceProduct.data![index]['product_id']!;
+
+    //get current date
+    String currentDate =
+        formatDate(DateTime.now(), ['yyyy', '-', 'mm', '-', 'dd']);
+
+    String getAMPM = formatDate(DateTime.now(), ['am']);
+
+    final queryParameters = {
+      'service_type': 'Request for Delivery',
+      'warranty_registration_id': '', //pending
+      'product_id': productId,
+      'problem_id': '', //pending
+      'user_id': userId,
+      'service_request_date': currentDate,
+      'remarks': '',
+      'address_line_1': address1,
+      'address_line_2': address2,
+      'city_id': cityId,
+      'postcode': postcode,
+      'service_request_time': getAMPM,
+      'delivery_status': '1',
+    };
+
+    print(queryParameters);
+
+    String queryString = Uri(queryParameters: queryParameters).query;
+
+    var url = Uri.parse(
+        Api.endpoint + Api.CREATE_SERVICE_REQUEST + '?' + queryString);
+    Map<String, String> authHeader = {
+      'Content-Type': 'application/json',
+      'Authorization': Api.defaultToken,
+    };
+
+    print(url);
+    print('calling request for delivery');
+
+    final response = await http.post(
+      url,
+      headers: authHeader,
+    );
+
+    print(response.body);
+
+    if (response.body.contains('false')) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

@@ -23,7 +23,7 @@ class ServiceTracker extends StatefulWidget {
 class _ServiceTrackerState extends State<ServiceTracker> {
   @override
   void initState() {
-    context.read<TrackerCubit>().getTracker();
+    context.read<TrackerCubit>().getTracker('All');
     super.initState();
   }
 
@@ -38,11 +38,22 @@ class _ServiceTrackerState extends State<ServiceTracker> {
     return newColor;
   }
 
+  String selectedStatus = "All";
+
+  List<String> _status = [
+    'All',
+    'Pending Collection',
+    'Not Started',
+    'Repairing',
+    'Collected'
+  ];
+
   @override
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: Helpers.customAppBar(
@@ -51,138 +62,219 @@ class _ServiceTrackerState extends State<ServiceTracker> {
         title: "Service Tracker",
         hasActions: false,
       ),
-      body: BlocBuilder<TrackerCubit, TrackerState>(
-        builder: (context, state) {
-          if (state is TrackerLoaded) {
-            return Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 20,
+      body: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              width: width * 0.5,
+              margin: EdgeInsets.only(
+                top: 15,
+                right: 15,
+                bottom: 10,
               ),
-              child: state.serviceProduct.data!.length == 0
-                  ? Center(
-                      child: Text('There is nothing to track', style: TextStyles.textSecondaryBold),
-                    )
-                  : Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: state.serviceProduct.data!.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Helpers.productIndex = index;
-                                      Helpers.serviceProduct = state.serviceProduct;
-                                      Helpers.productWarranty = state.productWarranty[index];
-                                      Navigator.of(context).pushNamed('ServiceTrackerDetails',
-                                          arguments: state.serviceProduct);
-                                    },
-                                    child: Container(
-                                      height: height * 0.1,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(width: 0.1),
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                              blurRadius: 5,
-                                              color: Colors.grey[200]!,
-                                              offset: Offset(0, 10)),
-                                        ],
-                                        borderRadius: BorderRadius.circular(7.5),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 15,
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 20,
-                                                // vertical: 10,
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Align(
-                                                    alignment: Alignment.centerLeft,
-                                                    child: Text(
-                                                      state.productWarranty[index].data![0]
-                                                              .productDescription ??
-                                                          'null',
-                                                      style: TextStyles.textDefaultBold,
+              child: DropdownButton<String>(
+                items: _status.map<DropdownMenuItem<String>>((e) {
+                  return DropdownMenuItem<String>(
+                    child: Text(
+                      e,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                    value: e,
+                  );
+                }).toList(),
+                isExpanded: true,
+                value: selectedStatus,
+                onChanged: (value) {
+                  // this.onSelectStatus(value!);
+                  setState(() {
+                    selectedStatus = value!;
+                  });
+                  context.read<TrackerCubit>().getTracker(value!);
+                },
+              ),
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<TrackerCubit, TrackerState>(
+              builder: (context, state) {
+                if (state is TrackerLoaded) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 20,
+                    ),
+                    child: state.serviceProduct.data!.length == 0
+                        ? Center(
+                            child: Text('There is nothing to track',
+                                style: TextStyles.textSecondaryBold),
+                          )
+                        : Column(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: state.serviceProduct.data!.length,
+                                  itemBuilder: (context, index) {
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            Helpers.productIndex = index;
+                                            Helpers.serviceProduct =
+                                                state.serviceProduct;
+                                            Helpers.productWarranty =
+                                                productWarrantyFromJson(
+                                                    await Repositories.getProduct(
+                                                        productModel: state
+                                                                .serviceProduct
+                                                                .data![index][
+                                                            'product_model']!));
+                                            Navigator.of(context).pushNamed(
+                                                'ServiceTrackerDetails',
+                                                arguments:
+                                                    state.serviceProduct);
+                                          },
+                                          child: Container(
+                                            height: height * 0.1,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.1),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    blurRadius: 5,
+                                                    color: Colors.grey[200]!,
+                                                    offset: Offset(0, 10)),
+                                              ],
+                                              borderRadius:
+                                                  BorderRadius.circular(7.5),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 15,
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                      // vertical: 10,
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Align(
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          child: Text(
+                                                            state.serviceProduct
+                                                                        .data![
+                                                                    index][
+                                                                'model_description']!,
+                                                            style: TextStyles
+                                                                .textDefaultBold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              Text(
+                                                                  "Service Status :",
+                                                                  style: TextStyles
+                                                                      .textDefault),
+                                                              SizedBox(
+                                                                  width: 5),
+                                                              CustomCard(
+                                                                  color: getColor(state
+                                                                          .serviceProduct
+                                                                          .data![index][
+                                                                      'service_request_status']!),
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                          5),
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          2,
+                                                                      horizontal:
+                                                                          5),
+                                                                  textStyle:
+                                                                      TextStyles
+                                                                          .textWhiteSm,
+                                                                  label: state
+                                                                          .serviceProduct
+                                                                          .data![index]
+                                                                      [
+                                                                      'service_request_status']!),
+                                                            ]),
+                                                      ],
                                                     ),
                                                   ),
-                                                  SizedBox(height: 10),
-                                                  Row(
-                                                      mainAxisAlignment: MainAxisAlignment.end,
-                                                      children: [
-                                                        Text("Service Status :",
-                                                            style: TextStyles.textDefault),
-                                                        SizedBox(width: 5),
-                                                        CustomCard(
-                                                            color: getColor(
-                                                                state.serviceProduct.data![index]
-                                                                    ['service_request_status']!),
-                                                            borderRadius: BorderRadius.circular(5),
-                                                            padding: const EdgeInsets.symmetric(
-                                                                vertical: 2, horizontal: 5),
-                                                            textStyle: TextStyles.textWhiteSm,
-                                                            label: state.serviceProduct.data![index]
-                                                                ['service_request_status']!),
-                                                      ]),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              height: double.infinity,
-                                              decoration: BoxDecoration(
-                                                color: state.serviceProduct.data![index]
-                                                            ['service_request_status'] ==
-                                                        'Pending Collection'
-                                                    ? Colors.green
-                                                    : Colors.grey,
-                                                borderRadius: BorderRadius.only(
-                                                  topRight: Radius.circular(10),
-                                                  bottomRight: Radius.circular(10),
                                                 ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    blurRadius: 0.5,
-                                                    color: Colors.grey,
-                                                    spreadRadius: 0.5,
+                                                Expanded(
+                                                  child: Container(
+                                                    height: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                      color: state.serviceProduct
+                                                                          .data![
+                                                                      index][
+                                                                  'service_request_status'] ==
+                                                              'Pending Collection'
+                                                          ? Colors.green
+                                                          : Colors.grey,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        topRight:
+                                                            Radius.circular(10),
+                                                        bottomRight:
+                                                            Radius.circular(10),
+                                                      ),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          blurRadius: 0.5,
+                                                          color: Colors.grey,
+                                                          spreadRadius: 0.5,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Icon(
+                                                        Icons.chevron_right,
+                                                        color: Colors.white),
                                                   ),
-                                                ],
-                                              ),
-                                              child: Icon(Icons.chevron_right, color: Colors.white),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                ],
-                              );
-                            },
+                                        ),
+                                        SizedBox(height: 10),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                  );
+                } else {
+                  return Center(
+                    child: SpinKitFadingCircle(
+                      color: Colors.black,
+                      size: 30,
                     ),
-            );
-          } else {
-            return Center(
-              child: SpinKitFadingCircle(
-                color: Colors.black,
-                size: 30,
-              ),
-            );
-          }
-        },
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
       // body: FutureBuilder(
       //   future: Repositories.getServiceProduct(),
