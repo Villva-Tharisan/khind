@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:khind/themes/app_colors.dart';
-// import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
-import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -15,11 +12,14 @@ class Invoice extends StatefulWidget {
   _InvoiceState createState() => _InvoiceState();
 }
 
-class _InvoiceState extends State<Invoice> {
+class _InvoiceState extends State<Invoice> with WidgetsBindingObserver {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final Completer<PDFViewController> _controller = Completer<PDFViewController>();
   late int index;
   bool _isLoading = true;
   String pathPDF = "";
+  int? _totalPage = 1;
+  int? _currentPage = 1;
 
   // late PDFDocument document;
 
@@ -50,6 +50,9 @@ class _InvoiceState extends State<Invoice> {
       var bytes = data.buffer.asUint8List();
       await file.writeAsBytes(bytes, flush: true);
       completer.complete(file);
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
       throw Exception('Error parsing asset file!');
     }
@@ -70,73 +73,54 @@ class _InvoiceState extends State<Invoice> {
       body: Center(
         child: _isLoading
             ? Center(child: CircularProgressIndicator(color: AppColors.grey))
-            : PDFView(
-                filePath: pathPDF,
-                enableSwipe: true,
-                swipeHorizontal: true,
-                autoSpacing: false,
-                pageFling: false,
-                onRender: (_pages) {
-                  // setState(() {
-                  //   pages = _pages;
-                  //   isReady = true;
-                  // });
-                },
-                onError: (error) {
-                  print(error.toString());
-                },
-                onPageError: (page, error) {
-                  print('$page: ${error.toString()}');
-                },
-                // onViewCreated: (PDFViewController pdfViewController) {
-                //   _controller.complete(pdfViewController);
-                // },
-                // onPageChanged: (int page, int total) {
-                //   print('page change: $page/$total');
-                // },
-              ),
-        // : PDFViewer(
-        //     document: document,
-        //     zoomSteps: 1,
-        //     //uncomment below line to preload all pages
-        //     // lazyLoad: false,
-        //     // uncomment below line to scroll vertically
-        //     // scrollDirection: Axis.vertical,
+            : Stack(children: [
+                PDFView(
+                  filePath: pathPDF,
+                  enableSwipe: true,
+                  swipeHorizontal: true,
+                  autoSpacing: false,
+                  pageFling: false,
+                  preventLinkNavigation: false,
+                  onRender: (pages) {
+                    // _pages = pag
+                    // if (pages != null) {
+                    //   List newList = [];
 
-        //     //uncomment below code to replace bottom navigation with your own
-        //     /* navigationBuilder:
-        //               (context, page, totalPages, jumpToPage, animateToPage) {
-        //             return ButtonBar(
-        //               alignment: MainAxisAlignment.spaceEvenly,
-        //               children: <Widget>[
-        //                 IconButton(
-        //                   icon: Icon(Icons.first_page),
-        //                   onPressed: () {
-        //                     jumpToPage()(page: 0);
-        //                   },
-        //                 ),
-        //                 IconButton(
-        //                   icon: Icon(Icons.arrow_back),
-        //                   onPressed: () {
-        //                     animateToPage(page: page - 2);
-        //                   },
-        //                 ),
-        //                 IconButton(
-        //                   icon: Icon(Icons.arrow_forward),
-        //                   onPressed: () {
-        //                     animateToPage(page: page);
-        //                   },
-        //                 ),
-        //                 IconButton(
-        //                   icon: Icon(Icons.last_page),
-        //                   onPressed: () {
-        //                     jumpToPage(page: totalPages - 1);
-        //                   },
-        //                 ),
-        //               ],
-        //             );
-        //           }, */
-        //   ),
+                    //   for (int i = 0; i < pages; i++) {
+                    //     newList.add(i);
+                    //   }
+
+                    //   print("#NEWLIST: $newList");
+
+                    setState(() {
+                      _totalPage = pages;
+                    });
+                    // }
+                  },
+                  onError: (error) {
+                    print(error.toString());
+                  },
+                  onPageError: (page, error) {
+                    print('$page: ${error.toString()}');
+                  },
+                  onViewCreated: (PDFViewController pdfViewController) {
+                    _controller.complete(pdfViewController);
+                  },
+                  onPageChanged: (int? page, int? total) {
+                    print('page change: $page/$total');
+                    if (page != null) {
+                      setState(() {
+                        _currentPage = page + 1;
+                      });
+                    }
+                  },
+                ),
+                Positioned.fill(
+                    bottom: 50,
+                    child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Text('$_currentPage / $_totalPage')))
+              ]),
       ),
     );
   }
