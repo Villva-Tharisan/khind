@@ -225,14 +225,14 @@ class Purchase {
     var diff = warrantyDate.difference(today).inDays;
 
     this.statusCode = "2";
-    this.status = "Out of warranty";
+    this.status = "Out of Warranty";
 
     if (diff > 0) {
-      this.status = "In warranty";
+      this.status = "In Warranty";
       this.statusCode = "0";
     }
     if (diff > 0 && diff < 61) {
-      this.status = "Waranty Expiring";
+      this.status = "Warranty Expiring";
       this.statusCode = "1";
     }
   }
