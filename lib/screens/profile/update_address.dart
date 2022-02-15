@@ -65,7 +65,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
 
   Future<void> _fetchConsumerAddress() async {
     final response = await Api.bearerGet('shippingaddress');
-    // print("#RESPONSE: $response");
+    // print("#fetchConsumerAddress RESPONSE: $response");
     ShippingAddress? newAddress;
 
     if (response['data'] != null) {
@@ -158,18 +158,15 @@ class _UpdateAddressState extends State<UpdateAddress> {
         'address_2': address1CT.text,
         'zone_id': state.stateId,
         'city': city,
-        'postcode': postcode
+        'postcode': postcode,
+        'email': widget.user?.email
       };
 
       print("MAP: $map");
 
-      final response = await Api.customPut(
-        'customer/${widget.user!.id}',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
-        },
-        params: jsonEncode(map),
+      final response = await Api.customPost(
+        'provider/update_address.php',
+        queryParams: map,
       );
 
       setState(() {

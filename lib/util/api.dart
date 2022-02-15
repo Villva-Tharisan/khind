@@ -40,7 +40,8 @@ class ApiInterceptor implements InterceptorContract {
       print('TOKEN: $token');
       if (token != null) {
         String bearerAuth = 'Bearer $token';
-        data.headers['authorization'] = bearerAuth;
+        data.headers['Authorization'] = bearerAuth;
+        print("#HEADERS: ${bearerAuth}");
       }
     } catch (e) {
       print('Api Interceptor error $e');
@@ -109,11 +110,27 @@ class Api {
     }
   }
 
-  static bearerPost(endpoint, {params, isCms = false}) async {
+  static bearerPost(endpoint, {params, queryParams, isCms = false}) async {
     try {
       final response;
       String baseUrl = isCms ? FlutterConfig.get("CMS_URL") : FlutterConfig.get("API_URL");
       String url = '$baseUrl/$endpoint';
+
+      if (queryParams != null) {
+        String newParams = "";
+        int cnt = 0;
+        queryParams.forEach((key, val) {
+          // print(key);
+          if (cnt == 0) {
+            newParams = '?$key=$val';
+            return;
+          }
+          newParams += '&$val';
+          cnt++;
+        });
+        url = '$url$newParams';
+      }
+
       print("Url: $url");
       if (params != null) {
         response = await client.post(url.toUri(), body: params);
@@ -129,12 +146,29 @@ class Api {
     }
   }
 
-  static customPost(endpoint, {headers, params, isRest = false}) async {
+  static customPost(endpoint, {headers, params, queryParams, isRest = false}) async {
     try {
       final response;
       String baseUrl = isRest ? FlutterConfig.get("API_URL") : FlutterConfig.get("API_ADMIN_URL");
       String url = '$baseUrl/$endpoint';
+
+      if (queryParams != null) {
+        String newParams = "";
+        int cnt = 0;
+        queryParams.forEach((key, val) {
+          // print(key);
+          if (cnt == 0) {
+            newParams = '?$key=$val';
+            return;
+          }
+          newParams += '&$val';
+          cnt++;
+        });
+        url = '$url$newParams';
+      }
+
       print("Url: $url");
+
       if (params != null) {
         response = await http.post(url.toUri(), body: params, headers: headers);
       } else {
@@ -150,7 +184,7 @@ class Api {
   }
 
   static customPut(endpoint, {headers, params, isRest = false}) async {
-    print("HEADESR: $headers");
+    // print("HEADESR: $headers");
     try {
       final response;
       String baseUrl = isRest ? FlutterConfig.get("API_URL") : FlutterConfig.get("API_ADMIN_URL");
