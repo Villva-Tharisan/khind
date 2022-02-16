@@ -1,8 +1,10 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:khind/models/Postcode.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/shipping_address.dart';
 import 'package:khind/models/states.dart';
@@ -36,10 +38,10 @@ class _UpdateAddressState extends State<UpdateAddress> {
   bool canEditAddress = false;
   List<City> cities = [];
   List<States> states = [];
-  List<String> postcodes = [];
+  List<Postcode> postcodes = [];
   late States state;
   late City city;
-  String postcode = "";
+  late Postcode postcode;
   String version = "";
   String buildNo = "";
   ShippingAddress? consumerAddress;
@@ -53,14 +55,17 @@ class _UpdateAddressState extends State<UpdateAddress> {
   }
 
   _init() {
-    city = new City(
-      stateId: "",
-      city: "--Select--",
-      cityId: "",
-      postcodeId: "",
-      postcode: "",
-    );
-    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    setState(() {
+      city = new City(
+        stateId: "",
+        city: "--Select--",
+        cityId: "",
+        postcodeId: "",
+        postcode: "",
+      );
+      state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
+      postcode = new Postcode(id: "", postcode: "--Select--");
+    });
   }
 
   Future<void> _fetchConsumerAddress() async {
@@ -122,19 +127,21 @@ class _UpdateAddressState extends State<UpdateAddress> {
     List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
 
     var postcodeSet = Set<String>();
-    List<String> tempPostcodes = [];
-
+    List<Postcode> tempPostcodes = [];
+    tempPostcodes.insert(0, new Postcode(id: "", postcode: "--Select--"));
     newCities.forEach((elem) {
-      if (elem.postcode != null) {
-        tempPostcodes.add(elem.postcode!);
+      if (elem.postcode != null && elem.postcode != "") {
+        tempPostcodes
+            .add(Postcode.fromJson({'postcode_id': elem.postcodeId, 'postcode': elem.postcode}));
       }
     });
-    List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
-    // print('#newPostcodes:  $newPostcodes');
+    List<Postcode> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e.postcode!)).toList();
+    // log('#newPostcodes:  ${jsonEncode(newPostcodes)}');
     setState(() {
       cities = tempCities;
       city = tempCities[0];
       postcodes = newPostcodes;
+      postcode = newPostcodes[0];
     });
   }
 
@@ -154,20 +161,18 @@ class _UpdateAddressState extends State<UpdateAddress> {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> map = {
-        'address_1': address1CT.text,
-        'address_2': address1CT.text,
+        'address_line1': address1CT.text,
+        'address_line2': address2CT.text,
         'zone_id': state.stateId,
-        'city': city,
-        'postcode': postcode,
+        'city_id': city.cityId,
+        'postcode_id': postcode.id,
         'email': widget.user?.email
       };
 
       print("MAP: $map");
 
-      final response = await Api.customPost(
-        'provider/update_address.php',
-        queryParams: map,
-      );
+      final response =
+          await Api.bearerPost('provider/update_address.php', queryParams: map, isCms: true);
 
       setState(() {
         isLoading = true;
@@ -177,13 +182,13 @@ class _UpdateAddressState extends State<UpdateAddress> {
       Navigator.pop(context);
 
       if (response['success']) {
-        Helpers.showAlert(context, hasAction: true, onPressed: () {
-          _clearTextField();
+        Helpers.showAlert(context, title: 'Address successfully updated', hasAction: true,
+            onPressed: () {
+          // _clearTextField();
           setState(() {
             errors = [];
           });
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home');
         },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -197,7 +202,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
         if (response['error'] != null) {
           setState(() {
             isLoading = false;
-            errorMsg = "Validation failed!";
+            errorMsg = "Internal server error!";
 
             if (response['error'] is LinkedHashMap) {
               (response['error'] as LinkedHashMap).forEach((key, value) {
@@ -351,6 +356,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
                             value: state,
                             onChanged: (value) {
                               if (value != null && value.stateId != "") {
+                                // print("STATE: $value");
                                 setState(() {
                                   cities = [];
                                   postcodes = [];
@@ -361,7 +367,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
                                       cityId: "",
                                       postcodeId: "",
                                       postcode: "");
-                                  postcode = "";
+                                  // postcode = new Postcode(id: "", postcode: "");
                                   _fetchCities(value.stateId!);
                                 });
                               } else {
@@ -430,11 +436,11 @@ class _UpdateAddressState extends State<UpdateAddress> {
                               Container(
                                 // padding: EdgeInsets.only(left: 10),
                                 width: width * 0.25,
-                                child: DropdownButton<String>(
-                                  items: postcodes.map<DropdownMenuItem<String>>((e) {
-                                    return DropdownMenuItem<String>(
+                                child: DropdownButton<Postcode>(
+                                  items: postcodes.map<DropdownMenuItem<Postcode>>((e) {
+                                    return DropdownMenuItem<Postcode>(
                                       child: Text(
-                                        e,
+                                        e.postcode as String,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
                                       ),
@@ -455,6 +461,14 @@ class _UpdateAddressState extends State<UpdateAddress> {
                           ))
                       : Container(),
                 ]),
+                SizedBox(height: 10),
+                errors.length > 0
+                    ? Container(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children:
+                                errors.map((e) => Text(e, style: TextStyles.textWarning)).toList()))
+                    : Container(),
                 SizedBox(height: 10),
                 Container(
                     alignment: Alignment.center,

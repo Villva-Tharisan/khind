@@ -54,7 +54,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   void _handleUpdate() async {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
-      final Map<String, String> map = {
+      final Map<String, dynamic> map = {
         'password': passwordCT.text,
         'confirm': confirmPasswordCT.text,
       };
@@ -62,11 +62,11 @@ class _ChangePasswordState extends State<ChangePassword> {
 
       final response = await Api.customPut(
         'customer/${widget.user!.id}',
-        headers: {
+        headers: <String, String>{
           'Content-Type': 'application/json',
           'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
         },
-        params: jsonEncode(map),
+        queryParams: map,
       );
 
       setState(() {
@@ -77,13 +77,12 @@ class _ChangePasswordState extends State<ChangePassword> {
       Navigator.pop(context);
 
       if (response['success']) {
-        Helpers.showAlert(context, hasAction: true, onPressed: () {
-          _clearTextField();
+        Helpers.showAlert(context, title: 'Password successfully updated', onPressed: () {
+          // _clearTextField();
           setState(() {
             errors = [];
           });
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home');
         },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -108,7 +107,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         } else {
           setState(() {
             isLoading = false;
-            errors.add("Validation failed!");
+            errors.add("Internal server error!");
           });
         }
       }
@@ -273,6 +272,14 @@ class _ChangePasswordState extends State<ChangePassword> {
                         ])),
                       ],
                     )),
+                SizedBox(height: 10),
+                errors.length > 0
+                    ? Container(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children:
+                                errors.map((e) => Text(e, style: TextStyles.textWarning)).toList()))
+                    : Container(),
                 SizedBox(height: 10),
                 Container(
                     alignment: Alignment.center,

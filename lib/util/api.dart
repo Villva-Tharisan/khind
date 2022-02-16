@@ -81,26 +81,18 @@ class Api {
 
   static bearerGet(endpoint, {params, isCms = false}) async {
     try {
-      String newParams = "";
-      int cnt = 0;
+      final response;
+      String baseUrl = isCms ? FlutterConfig.get("CMS_URL") : FlutterConfig.get("API_URL");
+      String url = '$baseUrl/$endpoint';
+
+      print("Url: $url");
+
       if (params != null) {
-        params.forEach((key, val) {
-          // print(key);
-          if (cnt == 0) {
-            newParams = '?$key=$val';
-            return;
-          }
-          newParams += '&$val';
-          cnt++;
-        });
+        response = await client.get(Uri.parse(url).replace(queryParameters: params));
+      } else {
+        response = await client.get(url.toUri());
       }
 
-      // print("#NEWPARAMS: $newParams");
-
-      String baseUrl = isCms ? FlutterConfig.get("CMS_URL") : FlutterConfig.get("API_URL");
-      String url = params != null ? '$baseUrl/$endpoint$newParams' : '$baseUrl/$endpoint';
-      print("Url: $url");
-      final response = await client.get(url.toUri());
       print('Bearer Response: ${response.body}');
 
       return jsonDecode(response.body);
@@ -117,21 +109,25 @@ class Api {
       String url = '$baseUrl/$endpoint';
 
       if (queryParams != null) {
-        String newParams = "";
+        List<String> listParams = [];
         int cnt = 0;
         queryParams.forEach((key, val) {
-          // print(key);
           if (cnt == 0) {
-            newParams = '?$key=$val';
+            cnt++;
+            listParams.add('?$key=$val');
             return;
           }
-          newParams += '&$val';
+          listParams.add('&$key=$val');
           cnt++;
         });
-        url = '$url$newParams';
+
+        if (listParams.length > 0) {
+          // print('#LISTPARAMS: ${listParams.join()}');
+          url = '$url${listParams.join()}';
+        }
       }
 
-      print("Url: $url");
+      print("bearerPost Url: $url");
       if (params != null) {
         response = await client.post(url.toUri(), body: params);
       } else {
@@ -153,18 +149,22 @@ class Api {
       String url = '$baseUrl/$endpoint';
 
       if (queryParams != null) {
-        String newParams = "";
+        List<String> listParams = [];
         int cnt = 0;
         queryParams.forEach((key, val) {
-          // print(key);
           if (cnt == 0) {
-            newParams = '?$key=$val';
+            cnt++;
+            listParams.add('?$key=$val');
             return;
           }
-          newParams += '&$val';
+          listParams.add('&$key=$val');
           cnt++;
         });
-        url = '$url$newParams';
+
+        if (listParams.length > 0) {
+          // print('#LISTPARAMS: ${listParams.join()}');
+          url = '$url${listParams.join()}';
+        }
       }
 
       print("Url: $url");
@@ -183,12 +183,32 @@ class Api {
     }
   }
 
-  static customPut(endpoint, {headers, params, isRest = false}) async {
+  static customPut(endpoint, {headers, params, queryParams, isRest = false}) async {
     // print("HEADESR: $headers");
     try {
       final response;
       String baseUrl = isRest ? FlutterConfig.get("API_URL") : FlutterConfig.get("API_ADMIN_URL");
       String url = '$baseUrl/$endpoint';
+
+      if (queryParams != null) {
+        List<String> listParams = [];
+        int cnt = 0;
+        queryParams.forEach((key, val) {
+          if (cnt == 0) {
+            cnt++;
+            listParams.add('?$key=$val');
+            return;
+          }
+          listParams.add('&$key=$val');
+          cnt++;
+        });
+
+        if (listParams.length > 0) {
+          // print('#LISTPARAMS: ${listParams.join()}');
+          url = '$url${listParams.join()}';
+        }
+      }
+
       print("Url: $url");
       if (params != null) {
         response = await http.put(url.toUri(), body: params, headers: headers);
