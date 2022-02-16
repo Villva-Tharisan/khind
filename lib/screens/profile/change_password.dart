@@ -61,12 +61,12 @@ class _ChangePasswordState extends State<ChangePassword> {
       print("MAP: $map");
 
       final response = await Api.customPut(
-        'customer/${widget.user!.id}',
+        'customers/${widget.user!.id}',
         headers: <String, String>{
           'Content-Type': 'application/json',
           'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
         },
-        queryParams: map,
+        params: jsonEncode(map),
       );
 
       setState(() {
@@ -77,11 +77,13 @@ class _ChangePasswordState extends State<ChangePassword> {
       Navigator.pop(context);
 
       if (response['success']) {
-        Helpers.showAlert(context, title: 'Password successfully updated', onPressed: () {
+        Helpers.showAlert(context, title: 'Password successfully updated', hasAction: true,
+            onPressed: () {
           // _clearTextField();
           setState(() {
             errors = [];
           });
+          Navigator.pop(context);
           Navigator.pop(context);
         },
             child: Row(

@@ -189,6 +189,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
             errors = [];
           });
           Navigator.pop(context);
+          Navigator.pop(context);
         },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

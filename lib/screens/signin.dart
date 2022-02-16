@@ -66,7 +66,7 @@ class _SignInState extends State<SignIn> {
         errorMsg = "";
       });
 
-      // print("RESPONSE: ${jsonEncode(response)}");
+      print("#LOGIN RESP: ${jsonEncode(response)}");
 
       if (response?.length > 0) {
         if (response['error'] != null) {
@@ -87,7 +87,9 @@ class _SignInState extends State<SignIn> {
           }
         } else {
           await storage.write(key: IS_AUTH, value: "1");
-          await storage.write(key: USER, value: jsonEncode(response['data']));
+          var newResp = response['data'];
+          newResp['email'] = emailCT.text;
+          await storage.write(key: USER, value: jsonEncode(newResp));
           Navigator.pop(context);
           Navigator.pushReplacementNamed(context, 'home', arguments: 0);
         }

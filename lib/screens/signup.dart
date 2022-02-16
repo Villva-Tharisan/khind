@@ -64,14 +64,14 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    // firstNameCT.text = "testA1";
-    // lastNameCT.text = "khind";
-    // mobileNoCT.text = "0156663229";
-    // emailCT.text = "testA1.khind@gmail.com";
-    // dobCT.text = "01-01-1990";
-    // address1CT.text = "No 44 Taman Miharja";
-    // confirmPasswordCT.text = "p455word";
-    // passwordCT.text = "p455word";
+    firstNameCT.text = "testA1";
+    lastNameCT.text = "khind";
+    mobileNoCT.text = "0156663229";
+    emailCT.text = "testA1.khind@gmail.com";
+    dobCT.text = "01-01-1990";
+    address1CT.text = "No 44 Taman Miharja";
+    confirmPasswordCT.text = "p455word";
+    passwordCT.text = "p455word";
     _init();
     _fetchStates();
     super.initState();
@@ -227,7 +227,7 @@ class _SignUpState extends State<SignUp> {
     Navigator.pop(context);
 
     if (response['success']) {
-      print("#RESPONSE $response");
+      // print("#RESPONSE $response");
       await storage.write(key: IS_AUTH, value: "1");
       await storage.write(key: USER, value: jsonEncode(response['data']));
       Helpers.showAlert(context, title: 'You have successfully sign up', hasAction: true,
