@@ -128,8 +128,12 @@ class Repositories {
 
     print('result get service product' + response.body);
 
-    ServiceProduct serviceProduct = serviceProductFromJson(response.body);
-    return serviceProduct;
+    try {
+      ServiceProduct serviceProduct = serviceProductFromJson(response.body);
+      return serviceProduct;
+    } catch (e) {
+      return ServiceProduct(data: []);
+    }
   }
 
   static Future<ProductGroup> getProductGroup() async {
