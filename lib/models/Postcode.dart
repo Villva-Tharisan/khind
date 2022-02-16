@@ -2,7 +2,7 @@ class Postcode {
   String? id;
   String? postcode;
 
-  Postcode({this.id, this.postcode});
+  Postcode({required this.id, this.postcode});
 
   Postcode.fromJson(Map<String, dynamic> json) {
     this.id = json["postcode_id"];

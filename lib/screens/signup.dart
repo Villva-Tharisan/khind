@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
@@ -5,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:khind/components/bg_painter.dart';
 import 'package:khind/components/round_button.dart';
+import 'package:khind/models/Postcode.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/states.dart';
 import 'package:khind/themes/app_colors.dart';
@@ -57,21 +59,22 @@ class _SignUpState extends State<SignUp> {
   bool agreeTerm = false;
   late List<States> states = [];
   late List<City> cities = [];
-  List<String> postcodes = [];
+  late Postcode postcode;
+  List<Postcode> postcodes = [];
   City? city;
   States? state;
-  String postcode = "";
 
   @override
   void initState() {
-    firstNameCT.text = "testA1";
-    lastNameCT.text = "khind";
-    mobileNoCT.text = "0156663229";
-    emailCT.text = "testA1.khind@gmail.com";
-    dobCT.text = "01-01-1990";
-    address1CT.text = "No 44 Taman Miharja";
-    confirmPasswordCT.text = "p455word";
-    passwordCT.text = "p455word";
+    // firstNameCT.text = "testB1";
+    // lastNameCT.text = "khind";
+    // mobileNoCT.text = "0156663229";
+    // emailCT.text = "testB1.khind@gmail.com";
+    // dobCT.text = "01-01-1990";
+    // address1CT.text = "No 44 Taman Murni";
+    // address2CT.text = "Taman Murni";
+    // confirmPasswordCT.text = "p455word";
+    // passwordCT.text = "p455word";
     _init();
     _fetchStates();
     super.initState();
@@ -86,6 +89,7 @@ class _SignUpState extends State<SignUp> {
       postcode: "",
     );
     state = new States(countryId: "", state: "--Select State--", stateId: "", stateCode: "");
+    postcode = new Postcode(id: "", postcode: "--Select--");
   }
 
   @override
@@ -113,9 +117,8 @@ class _SignUpState extends State<SignUp> {
   }
 
   _fetchCities(stateId) async {
-    Map<String, dynamic> map = {'state_id': stateId};
-    final response = await Api.bearerGet('provider/city.php', params: map, isCms: true);
-    // print(response);
+    final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
+
     var newCities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
     newCities.insert(
@@ -125,20 +128,21 @@ class _SignUpState extends State<SignUp> {
     List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
 
     var postcodeSet = Set<String>();
-    List<String> tempPostcodes = [];
-
+    List<Postcode> tempPostcodes = [];
+    tempPostcodes.insert(0, new Postcode(id: "", postcode: "--Select--"));
     newCities.forEach((elem) {
-      if (elem.postcode != null) {
-        tempPostcodes.add(elem.postcode!);
+      if (elem.postcode != null && elem.postcode != "") {
+        tempPostcodes
+            .add(Postcode.fromJson({'postcode_id': elem.postcodeId, 'postcode': elem.postcode}));
       }
     });
-    List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
-    // newPostcodes.insert(0, "--Select--");
-    // print('#newPostcodes:  $newPostcodes');
+    List<Postcode> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e.postcode!)).toList();
+    // log('#newPostcodes:  ${jsonEncode(newPostcodes)}');
     setState(() {
       cities = tempCities;
       city = tempCities[0];
       postcodes = newPostcodes;
+      postcode = newPostcodes[0];
     });
   }
 
@@ -175,24 +179,39 @@ class _SignUpState extends State<SignUp> {
     confirmPasswordCT.clear();
   }
 
-  validateToken() async {
-    String? token = await storage.read(key: TOKEN);
+  // _validateToken() async {
+  //   String? token = await storage.read(key: TOKEN);
 
-    if (token != null) {
-      return;
-    } else {
-      final response = await Api.basicPost('oauth2/token/client_credentials');
+  //   if (token != null) {
+  //     return;
+  //   } else {
+  //     final response = await Api.basicPost('oauth2/token/client_credentials');
 
-      if (response['access_token'] != null) {
-        await storage.write(key: TOKEN, value: response['access_token']);
+  //     if (response['access_token'] != null) {
+  //       await storage.write(key: TOKEN, value: response['access_token']);
 
-        if (response['expires_in'] != null) {
-          var curDate = new DateTime.now();
-          var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
+  //       if (response['expires_in'] != null) {
+  //         var curDate = new DateTime.now();
+  //         var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
 
-          await storage.write(
-              key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
-        }
+  //         await storage.write(
+  //             key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
+  //       }
+  //     }
+  //   }
+  // }
+
+  _fetchOauth() async {
+    final response = await Api.basicPost('oauth2/token/client_credentials');
+
+    if (response['access_token'] != null) {
+      await storage.write(key: TOKEN, value: response['access_token']);
+
+      if (response['expires_in'] != null) {
+        var curDate = new DateTime.now();
+        var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
+
+        await storage.write(key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
       }
     }
   }
@@ -205,6 +224,7 @@ class _SignUpState extends State<SignUp> {
       'firstname': firstNameCT.text,
       'lastname': lastNameCT.text,
       'address_1': address1CT.text,
+      'address_2': address2CT.text,
       'postcode': postcode,
       'city': city?.cityId,
       'zone_id': state?.stateId,
@@ -216,7 +236,8 @@ class _SignUpState extends State<SignUp> {
     };
 
     // print("MAP: $map");
-    await validateToken();
+    // await _validateToken();
+    await _fetchOauth();
 
     final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
     setState(() {
@@ -227,19 +248,44 @@ class _SignUpState extends State<SignUp> {
     Navigator.pop(context);
 
     if (response['success']) {
-      // print("#RESPONSE $response");
-      await storage.write(key: IS_AUTH, value: "1");
-      await storage.write(key: USER, value: jsonEncode(response['data']));
-      Helpers.showAlert(context, title: 'You have successfully sign up', hasAction: true,
-          onPressed: () async {
-        _clearTextField();
-        setState(() {
-          errors = [];
-          agreeTerm = false;
+      final Map<String, dynamic> mapRest = {
+        'first_name': firstNameCT.text,
+        'last_name': lastNameCT.text,
+        'email': emailCT.text,
+        'date_of_birth': dobCT.text,
+        'telephone': mobileNoCT.text,
+        'address_line1': address1CT.text,
+        'address_line2': address2CT.text,
+        'zone_id': state?.stateId,
+        'city_id': city?.cityId,
+        'postcode_id': postcode.id
+      };
+      final respRest =
+          await Api.bearerPost('provider/register_user.php', isCms: true, queryParams: mapRest);
+      print("#RESP REST: ${jsonEncode(response['data'])}");
+
+      if (respRest['success']) {
+        await storage.write(key: IS_AUTH, value: "1");
+        await storage.write(key: USER, value: jsonEncode(response['data']));
+        Helpers.showAlert(context, title: 'You have successfully sign up', hasAction: true,
+            onPressed: () async {
+          _clearTextField();
+          setState(() {
+            errors = [];
+            agreeTerm = false;
+          });
+          Navigator.pop(context);
+
+          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+          // Timer(Duration(seconds: 1),
+          //     () => Navigator.pushReplacementNamed(context, 'home', arguments: 0));
         });
-        Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, 'home', arguments: 0);
-      });
+      } else {
+        setState(() {
+          isLoading = false;
+          errors.add("Internal Server Error!");
+        });
+      }
     } else {
       if (response['error'] != null) {
         setState(() {
@@ -255,7 +301,7 @@ class _SignUpState extends State<SignUp> {
       } else {
         setState(() {
           isLoading = false;
-          errors.add("Validation failed!");
+          errors.add("Internal Server Error!");
         });
       }
     }
@@ -496,15 +542,11 @@ class _SignUpState extends State<SignUp> {
                 keyboardType: TextInputType.text,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter address';
+                    return 'Please enter address 1';
                   }
                   return null;
                 },
                 controller: address1CT,
-                // onFieldSubmitted: (val) {
-                //   print("onFieldSubmitted");
-                //   FocusScope.of(context).unfocus();
-                // },
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
@@ -515,9 +557,38 @@ class _SignUpState extends State<SignUp> {
                       borderSide: BorderSide(
                           color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
                     ),
-                    hintText: 'Address',
+                    hintText: 'Address 1',
                     hintStyle:
                         focusAddress1.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
+              ),
+              SizedBox(height: 5),
+              TextFormField(
+                focusNode: focusAddress2,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter address 2';
+                  }
+                  return null;
+                },
+                controller: address2CT,
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                    ),
+                    hintText: 'Address 2',
+                    hintStyle:
+                        focusAddress2.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
                     contentPadding: const EdgeInsets.symmetric(vertical: 5),
                     border: UnderlineInputBorder(
                         borderSide: BorderSide(
@@ -553,7 +624,7 @@ class _SignUpState extends State<SignUp> {
                           postcodes = [];
                           city = new City(
                               stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
-                          postcode = "";
+                          // postcode = "";
                           state = (val as States);
                           _fetchCities(val.stateId);
                         });
@@ -618,11 +689,14 @@ class _SignUpState extends State<SignUp> {
                       ),
                       value: postcode != null ? postcode : null,
                       items: postcodes
-                          .map((e) => DropdownMenuItem(child: Text(e), value: e, key: Key(e)))
+                          .map((e) => DropdownMenuItem(
+                              child: Text(e.postcode as String),
+                              value: e,
+                              key: Key(e.id as String)))
                           .toList(),
                       onChanged: (val) {
                         setState(() {
-                          postcode = val! as String;
+                          postcode = val as Postcode;
                           // this.onSelectCity(value.postcode!);
                         });
                       },

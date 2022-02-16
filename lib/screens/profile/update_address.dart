@@ -169,7 +169,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
         'email': widget.user?.email
       };
 
-      print("MAP: $map");
+      // print("MAP: $map");
 
       final response =
           await Api.bearerPost('provider/update_address.php', queryParams: map, isCms: true);
