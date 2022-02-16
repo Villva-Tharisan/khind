@@ -57,21 +57,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         errors.add(elem);
       });
     } else {
-      Helpers.showAlert(context, hasAction: true, onPressed: () {
+      Helpers.showAlert(context,
+          title: "Temporary password has been sent to your email", hasAction: true, onPressed: () {
         setState(() {
           success = true;
           errors = [];
         });
         Navigator.pop(context);
-      },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                  margin: EdgeInsets.only(left: 5),
-                  child: Text("Reset password link has been sent to your email")),
-            ],
-          ));
+      });
     }
   }
 
@@ -128,7 +121,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               RoundButton(
                   // height: 40,
                   title: 'Send me my new password',
-                  onPressed: () => _handleForgotPwd())
+                  onPressed: () => _handleForgotPwd()),
+              SizedBox(height: 10),
+              RoundButton(
+                  color: AppColors.tertiery,
+                  // height: 40,
+                  title: 'Back to Login screen',
+                  onPressed: () => Navigator.pop(context)),
             ])));
   }
 
