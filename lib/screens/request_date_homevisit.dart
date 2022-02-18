@@ -120,7 +120,8 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
         await this.fetchCities(currentState.stateId!);
 
         var currentCity = _cities
-            .where((element) => element.city == newAddress!.city)
+            .where((element) =>
+                element.city!.toLowerCase() == newAddress!.city!.toLowerCase())
             .toList()
             .first;
 
