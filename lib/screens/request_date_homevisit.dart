@@ -56,7 +56,8 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
   void initState() {
     // address1CT.text = 'address 1';
     // address2CT.text = 'address 2';
-    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    state = new States(
+        countryId: "", state: "--Select--", stateId: "", stateCode: "");
     city = new City(
       stateId: "",
       city: "--Select--",
@@ -80,9 +81,13 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
   Future<void> fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
 
-    var states = (response['states'] as List).map((i) => States.fromJson(i)).toList();
+    var states =
+        (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-    states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+    states.insert(
+        0,
+        new States(
+            countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
     setState(() {
       _states = states;
@@ -97,24 +102,31 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
     ShippingAddress? newAddress;
     if (response['data'] != null) {
       var addressId = response['data']['address_id'] as String;
-      var shipAddress =
-          (response['data']['addresses'] as List).map((i) => ShippingAddress.fromJson(i)).toList();
+      var shipAddress = (response['data']['addresses'] as List)
+          .map((i) => ShippingAddress.fromJson(i))
+          .toList();
 
       if (addressId != null) {
-        newAddress = shipAddress.where((e) => e.addressId == addressId).toList().first;
+        newAddress =
+            shipAddress.where((e) => e.addressId == addressId).toList().first;
 
         var currentState = _states
-            .where((element) => element.state!.toLowerCase() == newAddress!.state!.toLowerCase())
+            .where((element) =>
+                element.state!.toLowerCase() ==
+                newAddress!.state!.toLowerCase())
             .toList()
             .first;
 
         await this.fetchCities(currentState.stateId!);
 
-        var currentCity =
-            _cities.where((element) => element.city == newAddress!.city).toList().first;
+        var currentCity = _cities
+            .where((element) => element.city == newAddress!.city)
+            .toList()
+            .first;
 
-        var currentPostcode =
-            postcodes.where((element) => element == newAddress!.postcode).toList();
+        var currentPostcode = postcodes
+            .where((element) => element == newAddress!.postcode)
+            .toList();
         var selectedPostcode = "";
         if (currentPostcode.length == 0) {
           selectedPostcode = newAddress.postcode!;
@@ -144,12 +156,20 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
   }
 
   Future<void> fetchCities(String stateId) async {
-    final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
+    final response =
+        await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
 
-    var cities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
+    var cities =
+        (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
     cities.insert(
-        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
+        0,
+        new City(
+            stateId: "",
+            city: "--Select--",
+            cityId: "",
+            postcodeId: "",
+            postcode: ""));
 
     var citySet = Set<String>();
     var postcodeSet = Set<String>();
@@ -160,7 +180,8 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
         tempPostcodes.add(elem.postcode!);
       }
     });
-    List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
+    List<String> newPostcodes =
+        tempPostcodes.where((e) => postcodeSet.add(e)).toList();
 
     setState(() {
       _cities = newCities;
@@ -173,7 +194,9 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
   Future<void> fetchProblems() async {
     final response = await Api.bearerGet('provider/problems.php', isCms: true);
 
-    var problems = (response['data'] as List).map((i) => ServiceProblem.fromJson(i)).toList();
+    var problems = (response['data'] as List)
+        .map((i) => ServiceProblem.fromJson(i))
+        .toList();
 
     setState(() {
       _problems = problems;
@@ -242,15 +265,17 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
               minDate: DateTime.now().add(Duration(days: 2)),
               maxDate: _maxDate,
               selectableDayPredicate: (DateTime date) {
-                if (date.weekday == DateTime.saturday || date.weekday == DateTime.sunday) {
+                if (date.weekday == DateTime.saturday ||
+                    date.weekday == DateTime.sunday) {
                   return false;
                 }
                 return true;
               },
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
-                  _selectedDate = DateFormat('yyyy-MM-dd')
-                      .format(DateFormat('yyyy-MM-dd hh:mm:ss').parse(args.value.toString()));
+                  _selectedDate = DateFormat('yyyy-MM-dd').format(
+                      DateFormat('yyyy-MM-dd hh:mm:ss')
+                          .parse(args.value.toString()));
                 });
               },
               selectionMode: DateRangePickerSelectionMode.single,
@@ -265,7 +290,10 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                 color: Colors.grey.withOpacity(0.5),
               ),
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
@@ -293,7 +321,10 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -315,7 +346,8 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                         width: width * 0.45,
                         child: !_timesSlot.isEmpty
                             ? DropdownButton<String>(
-                                items: _timesSlot.map<DropdownMenuItem<String>>((e) {
+                                items: _timesSlot
+                                    .map<DropdownMenuItem<String>>((e) {
                                   return DropdownMenuItem<String>(
                                     child: Text(
                                       e,
@@ -363,7 +395,10 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -385,7 +420,8 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                         width: width * 0.45,
                         child: !_problems.isEmpty
                             ? DropdownButton<ServiceProblem>(
-                                items: _problems.map<DropdownMenuItem<ServiceProblem>>((e) {
+                                items: _problems
+                                    .map<DropdownMenuItem<ServiceProblem>>((e) {
                                   return DropdownMenuItem<ServiceProblem>(
                                     child: Text(
                                       e.problem!,
@@ -427,12 +463,13 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                               },
                               controller: remarkCT,
                               onFieldSubmitted: (val) {
-                                FocusScope.of(context).requestFocus(new FocusNode());
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
                               },
                               decoration: InputDecoration(
                                 hintText: '',
-                                contentPadding:
-                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 5),
                               ),
                             ),
                           ],
@@ -471,7 +508,10 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
             ),
             child: Form(
@@ -498,12 +538,14 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                           },
                           controller: address1CT,
                           onFieldSubmitted: (val) {
-                            FocusScope.of(context).requestFocus(new FocusNode());
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'eg: No 78 Jalan Mawar',
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 5),
                           ),
                         ),
                       ),
@@ -526,12 +568,14 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                           },
                           controller: address2CT,
                           onFieldSubmitted: (val) {
-                            FocusScope.of(context).requestFocus(new FocusNode());
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'eg: Puchong Perdana',
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 5),
                           ),
                         ),
                       ),
@@ -589,7 +633,8 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                                 padding: EdgeInsets.only(left: 10),
                                 width: width * 0.45,
                                 child: DropdownButton<City>(
-                                  items: _cities.map<DropdownMenuItem<City>>((e) {
+                                  items:
+                                      _cities.map<DropdownMenuItem<City>>((e) {
                                     return DropdownMenuItem<City>(
                                       child: Text(
                                         e.city!,
@@ -701,7 +746,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                           addressLine2: address2CT.text,
                           city: city.city,
                           cityId: city.cityId,
-                          postcode: postCodeCT.text,
+                          postcode: postcode,
                           stateId: state.stateId,
                           state: state.state,
                         ));
@@ -709,7 +754,9 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                     Navigator.pushNamed(
                       context,
                       'reviewHomevisit',
-                      arguments: requestServiceArgs != null ? requestServiceArgs : null,
+                      arguments: requestServiceArgs != null
+                          ? requestServiceArgs
+                          : null,
                     );
                   }
                 },

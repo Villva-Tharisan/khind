@@ -112,6 +112,9 @@ class _ReviewPickupState extends State<ReviewPickup> {
   }
 
   Container _renderBody(BuildContext context) {
+    var serialNo = _requestServiceArgument.purchase.serialNo == null
+        ? "-"
+        : _requestServiceArgument.purchase.serialNo;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -169,8 +172,7 @@ class _ReviewPickupState extends State<ReviewPickup> {
                 SizedBox(
                   height: 13,
                 ),
-                Text(
-                    "Serial No: ${_requestServiceArgument.purchase.serialNo!}"),
+                Text("Serial No: $serialNo"),
               ],
             ),
           ),

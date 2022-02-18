@@ -694,7 +694,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                           addressLine2: address2CT.text,
                           city: city.city,
                           cityId: city.cityId,
-                          postcode: postCodeCT.text,
+                          postcode: postcode,
                           stateId: state.stateId,
                           state: state.state,
                         ));
