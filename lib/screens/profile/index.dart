@@ -5,6 +5,7 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/components/custom_card.dart';
 import 'package:khind/models/city.dart';
+import 'package:khind/models/shipping_address.dart';
 import 'package:khind/models/states.dart';
 import 'package:khind/screens/profile/change_password.dart';
 import 'package:khind/screens/profile/update_address.dart';
@@ -46,14 +47,10 @@ class _ProfileState extends State<Profile> {
   bool canEditEmail = false;
   bool canEditDob = false;
   bool canEditAddress = false;
-  List<City> cities = [];
-  List<States> states = [];
-  List<String> postcodes = [];
-  late States state;
-  late City city;
   String postcode = "";
   String version = "";
   String buildNo = "";
+  ShippingAddress? consumerAddress;
 
   @override
   void initState() {
@@ -73,22 +70,33 @@ class _ProfileState extends State<Profile> {
     //     'address': 'Nu Sentral'
     //   });
     // });
-    _init();
     _loadUser();
     _loadVersion();
-    _fetchStates();
+    _fetchConsumerAddress();
     super.initState();
   }
 
-  _init() {
-    city = new City(
-      stateId: "",
-      city: "--Select--",
-      cityId: "",
-      postcodeId: "",
-      postcode: "",
-    );
-    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
+  Future<void> _fetchConsumerAddress() async {
+    final response = await Api.bearerGet('shippingaddress');
+    // print("#fetchConsumerAddress RESPONSE: $response");
+    ShippingAddress? newAddress;
+
+    if (response['data'] != null) {
+      var shipAddress =
+          (response['data']['addresses'] as List).map((i) => ShippingAddress.fromJson(i)).toList();
+
+      if (response['data']['address_id'] != null) {
+        shipAddress.forEach((elem) {
+          if (response['data']['address_id'] == elem.addressId) {
+            newAddress = elem;
+          }
+        });
+
+        setState(() {
+          consumerAddress = newAddress;
+        });
+      }
+    }
   }
 
   _loadUser() async {
@@ -116,49 +124,6 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  Future<void> _fetchStates() async {
-    final response = await Api.bearerGet('provider/state.php', isCms: true);
-
-    var newStates = (response['states'] as List).map((i) => States.fromJson(i)).toList();
-
-    newStates.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
-
-    setState(() {
-      states = newStates;
-      state = newStates[0];
-    });
-  }
-
-  Future<void> _fetchCities(String stateId) async {
-    // print("#MASUK FETCHCITITES");
-
-    final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
-
-    var newCities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
-
-    newCities.insert(
-        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
-    // print("#CITIES: $cities");
-    var citySet = Set<String>();
-    List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
-
-    var postcodeSet = Set<String>();
-    List<String> tempPostcodes = [];
-
-    newCities.forEach((elem) {
-      if (elem.postcode != null) {
-        tempPostcodes.add(elem.postcode!);
-      }
-    });
-    List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
-    // print('#newPostcodes:  $newPostcodes');
-    setState(() {
-      cities = tempCities;
-      city = tempCities[0];
-      postcodes = newPostcodes;
-    });
-  }
-
   _loadVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String pkgVersion = packageInfo.version;
@@ -179,30 +144,16 @@ class _ProfileState extends State<Profile> {
     super.dispose();
   }
 
-  void _clearTextField() {
-    emailCT.clear();
-    mobileNoCT.clear();
-    passwordCT.clear();
-    address1CT.clear();
-    address2CT.clear();
-  }
-
-  void showEditField(name) {
-    setState(() {
-      if (name == 'mobile') {
-        canEditMobile = true;
-      } else if (name == 'email') {
-        canEditEmail = true;
-      } else if (name == 'dob') {
-        canEditDob = true;
-      } else if (name == 'address') {
-        canEditAddress = true;
-      }
-    });
-  }
+  // void _clearTextField() {
+  //   emailCT.clear();
+  //   mobileNoCT.clear();
+  //   passwordCT.clear();
+  //   address1CT.clear();
+  //   address2CT.clear();
+  // }
 
   void _handleUpdate() async {
-    print("#handleUpdate");
+    // print("#handleUpdate");
     Helpers.showAlert(context);
     // if (_formKey.currentState!.validate()) {
     final Map<String, String> map = {
@@ -211,7 +162,7 @@ class _ProfileState extends State<Profile> {
       'email': emailCT.text,
       'telephone': mobileNoCT.text,
     };
-    print("MAP: $map");
+    // print("MAP: $map");
 
     final response = await Api.customPut(
       'customer/${user!.id}',
@@ -279,7 +230,7 @@ class _ProfileState extends State<Profile> {
     if (picked != null && picked != selectedDob) {
       setState(() {
         selectedDob = picked;
-        dobCT.text = '${picked.day}/${picked.month}/${picked.year}';
+        dobCT.text = '${picked.year}-${picked.month}/${picked.day}';
       });
     }
   }

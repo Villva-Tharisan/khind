@@ -58,7 +58,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         'password': passwordCT.text,
         'confirm': confirmPasswordCT.text,
       };
-      print("MAP: $map");
+      // print("MAP: $map");
 
       final response = await Api.customPut(
         'customers/${widget.user!.id}',

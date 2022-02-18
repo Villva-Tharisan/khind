@@ -82,7 +82,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
     setState(() {
       city = new City(stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
     });
-
+    // print("STATEID: $stateId");
     var url = Uri.parse(Api.endpoint + Api.GET_CITIES + "?state_id=$stateId");
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
       Map resp = json.decode(response.body);
       var svcCenters = (resp['data'] as List)
           .map((i) => ServiceCenter.fromJson(i))
-          .where((elem) => elem.serviceCenterTypeId == "2")
+          // .where((elem) => elem.serviceCenterTypeId == "2")
           .toList();
 
       print(jsonEncode(svcCenters));

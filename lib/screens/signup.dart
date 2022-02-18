@@ -66,15 +66,15 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    // firstNameCT.text = "testB1";
-    // lastNameCT.text = "khind";
-    // mobileNoCT.text = "0156663229";
-    // emailCT.text = "testB1.khind@gmail.com";
-    // dobCT.text = "01-01-1990";
-    // address1CT.text = "No 44 Taman Murni";
-    // address2CT.text = "Taman Murni";
-    // confirmPasswordCT.text = "p455word";
-    // passwordCT.text = "p455word";
+    firstNameCT.text = "testD";
+    lastNameCT.text = "khind";
+    mobileNoCT.text = "0156663229";
+    emailCT.text = "testD1.khind@gmail.com";
+    dobCT.text = "1990-01-21";
+    address1CT.text = "No 44 Taman Murni";
+    address2CT.text = "Taman Murni";
+    confirmPasswordCT.text = "p455word";
+    passwordCT.text = "p455word";
     _init();
     _fetchStates();
     super.initState();
@@ -164,7 +164,7 @@ class _SignUpState extends State<SignUp> {
     if (picked != null && picked != selectedDob) {
       setState(() {
         selectedDob = picked;
-        dobCT.text = '${picked.day}/${picked.month}/${picked.year}';
+        dobCT.text = '${picked.year}-${picked.month}-${picked.day}';
       });
     }
   }
@@ -225,17 +225,19 @@ class _SignUpState extends State<SignUp> {
       'lastname': lastNameCT.text,
       'address_1': address1CT.text,
       'address_2': address2CT.text,
-      'postcode': postcode,
+      'postcode': postcode.postcode,
       'city': city?.cityId,
       'zone_id': state?.stateId,
-      'country_id': 'Malaysia',
+      'country_id': '129',
       'telephone': mobileNoCT.text,
       'password': passwordCT.text,
       'confirm': confirmPasswordCT.text,
+      'company': "",
+      'tax_id': 0,
       'agree': 1
     };
 
-    // print("MAP: $map");
+    // print("#MAPO2O: $map");
     // await _validateToken();
     await _fetchOauth();
 
@@ -260,9 +262,12 @@ class _SignUpState extends State<SignUp> {
         'city_id': city?.cityId,
         'postcode_id': postcode.id
       };
+
+      // print("#MAP REST: $map");
+
       final respRest =
           await Api.bearerPost('provider/register_user.php', isCms: true, queryParams: mapRest);
-      print("#RESP REST: ${jsonEncode(response['data'])}");
+      // print("#RESP REST: ${jsonEncode(response['data'])}");
 
       if (respRest['success']) {
         await storage.write(key: IS_AUTH, value: "1");
@@ -460,8 +465,8 @@ class _SignUpState extends State<SignUp> {
                   focusNode: focusDob,
                   keyboardType: TextInputType.text,
                   validator: (value) {
-                    RegExp regExp = new RegExp(
-                        r'^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$');
+                    RegExp regExp =
+                        new RegExp(r'^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$');
                     if (value!.isEmpty) {
                       return 'Please enter date of birth';
                     } else if (!regExp.hasMatch(value)) {

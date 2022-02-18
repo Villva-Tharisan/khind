@@ -16,7 +16,8 @@ import 'package:khind/util/helpers.dart';
 
 class UpdateAddress extends StatefulWidget {
   final User? user;
-  UpdateAddress({this.user});
+  final ShippingAddress? consumerAddress;
+  UpdateAddress({this.user, this.consumerAddress});
 
   @override
   _UpdateAddressState createState() => _UpdateAddressState();
@@ -31,7 +32,6 @@ class _UpdateAddressState extends State<UpdateAddress> {
   TextEditingController address1CT = new TextEditingController();
   TextEditingController address2CT = new TextEditingController();
   bool isLoading = false;
-  User? user;
   String errorMsg = "";
   List errors = [];
   final textStyle = TextStyle(fontSize: 14);
@@ -50,7 +50,8 @@ class _UpdateAddressState extends State<UpdateAddress> {
   void initState() {
     _init();
     _fetchStates();
-    _fetchConsumerAddress();
+    // _fetchConsumerAddress();
+    // print("#USER: ${jsonEncode(widget.user)}");
     super.initState();
   }
 
@@ -66,41 +67,53 @@ class _UpdateAddressState extends State<UpdateAddress> {
       state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
       postcode = new Postcode(id: "", postcode: "--Select--");
     });
-  }
-
-  Future<void> _fetchConsumerAddress() async {
-    final response = await Api.bearerGet('shippingaddress');
-    // print("#fetchConsumerAddress RESPONSE: $response");
-    ShippingAddress? newAddress;
-
-    if (response['data'] != null) {
-      var shipAddress =
-          (response['data']['addresses'] as List).map((i) => ShippingAddress.fromJson(i)).toList();
-
-      if (response['data']['address_id'] != null) {
-        shipAddress.forEach((elem) {
-          if (response['data']['address_id'] == elem.addressId) {
-            newAddress = elem;
-          }
-        });
-
-        // print('#NEW ADDRESS: ${newAddress.toString()}');
-
-        setState(() {
-          consumerAddress = newAddress;
-          if (newAddress?.address1 != null) {
-            address1CT.text = newAddress!.address1!;
-          }
-          if (newAddress?.address2 != null) {
-            address2CT.text = newAddress!.address2!;
-          }
-          if (newAddress?.city != null) {
-            // city= newAddress!.city!;
-          }
-        });
+    // print("#WIDGET>CONSUMERADDRESS: ${widget.consumerAddress}");
+    if (widget.consumerAddress != null) {
+      if (widget.consumerAddress?.address1 != null) {
+        address1CT.text = widget.consumerAddress!.address1!;
+      }
+      if (widget.consumerAddress?.address2 != null) {
+        address2CT.text = widget.consumerAddress!.address2!;
+      }
+      if (widget.consumerAddress?.city != null) {
+        // city= newAddress!.city!;
       }
     }
   }
+
+  // Future<void> _fetchConsumerAddress() async {
+  //   final response = await Api.bearerGet('shippingaddress');
+  //   print("#fetchConsumerAddress RESPONSE: $response");
+  //   ShippingAddress? newAddress;
+
+  //   if (response['data'] != null) {
+  //     var shipAddress =
+  //         (response['data']['addresses'] as List).map((i) => ShippingAddress.fromJson(i)).toList();
+
+  //     if (response['data']['address_id'] != null) {
+  //       shipAddress.forEach((elem) {
+  //         if (response['data']['address_id'] == elem.addressId) {
+  //           newAddress = elem;
+  //         }
+  //       });
+
+  //       // print('#NEW ADDRESS: ${newAddress.toString()}');
+
+  //       setState(() {
+  //         consumerAddress = newAddress;
+  //         if (newAddress?.address1 != null) {
+  //           address1CT.text = newAddress!.address1!;
+  //         }
+  //         if (newAddress?.address2 != null) {
+  //           address2CT.text = newAddress!.address2!;
+  //         }
+  //         if (newAddress?.city != null) {
+  //           // city= newAddress!.city!;
+  //         }
+  //       });
+  //     }
+  //   }
+  // }
 
   Future<void> _fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
@@ -160,66 +173,92 @@ class _UpdateAddressState extends State<UpdateAddress> {
   void _handleUpdate() async {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
-      final Map<String, dynamic> map = {
-        'address_line1': address1CT.text,
-        'address_line2': address2CT.text,
+      final Map<String, dynamic> mapO2O = {
+        'address_1': address1CT.text,
+        'address_': address2CT.text,
         'zone_id': state.stateId,
-        'city_id': city.cityId,
-        'postcode_id': postcode.id,
-        'email': widget.user?.email
+        'company': "",
+        'city': city.city,
+        'postcode': postcode.postcode,
+        'country': "Malaysia",
+        'country_id': "129",
+        "default": "1"
       };
+      print("#MAP: $mapO2O");
+      final respO2O = await Api.customPut('customers/${widget.user!.id}',
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
+          },
+          params: jsonEncode(mapO2O));
 
-      // print("MAP: $map");
+      print("#RESP020: $respO2O");
 
-      final response =
-          await Api.bearerPost('provider/update_address.php', queryParams: map, isCms: true);
+      if (respO2O != null && respO2O['success']) {
+        final Map<String, dynamic> map = {
+          'address_line1': address1CT.text,
+          'address_line2': address2CT.text,
+          'zone_id': state.stateId,
+          'city_id': city.cityId,
+          'postcode_id': postcode.id,
+          'email': widget.user?.email
+        };
 
-      setState(() {
-        isLoading = true;
-        errorMsg = "";
-        errors = [];
-      });
-      Navigator.pop(context);
+        final response =
+            await Api.bearerPost('provider/update_address.php', queryParams: map, isCms: true);
 
-      if (response['success']) {
-        Helpers.showAlert(context, title: 'Address successfully updated', hasAction: true,
-            onPressed: () {
-          // _clearTextField();
-          setState(() {
-            errors = [];
-          });
-          Navigator.pop(context);
-          Navigator.pop(context);
-        },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                    margin: EdgeInsets.only(left: 5),
-                    child: Text("Address has been successfully updated")),
-              ],
-            ));
-      } else {
-        if (response['error'] != null) {
-          setState(() {
-            isLoading = false;
-            errorMsg = "Internal server error!";
+        setState(() {
+          isLoading = true;
+          errorMsg = "";
+          errors = [];
+        });
+        Navigator.pop(context);
 
-            if (response['error'] is LinkedHashMap) {
-              (response['error'] as LinkedHashMap).forEach((key, value) {
-                errors.add(value);
-              });
-            }
-          });
+        if (response['success']) {
+          Helpers.showAlert(context, title: 'Address successfully updated', hasAction: true,
+              onPressed: () {
+            // _clearTextField();
+            setState(() {
+              errors = [];
+            });
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(left: 5),
+                      child: Text("Address has been successfully updated")),
+                ],
+              ));
         } else {
-          setState(() {
-            isLoading = false;
-            errors.add("Validation failed!");
-          });
+          if (response['error'] != null) {
+            setState(() {
+              isLoading = false;
+              errorMsg = "Internal Server Error!";
+
+              if (response['error'] is LinkedHashMap) {
+                (response['error'] as LinkedHashMap).forEach((key, value) {
+                  errors.add(value);
+                });
+              }
+            });
+          } else {
+            setState(() {
+              isLoading = false;
+              errors.add("Internal Server Error!");
+            });
+          }
         }
+      } else {
+        Navigator.pop(context);
       }
     } else {
-      Navigator.pop(context);
+      setState(() {
+        isLoading = false;
+        errors.add("Internal Server Error!");
+      });
     }
   }
 
