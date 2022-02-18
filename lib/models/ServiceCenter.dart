@@ -1,5 +1,6 @@
 class ServiceCenter {
   String? serviceCenterId;
+  String? serviceCenterTypeId;
   String? serviceCenterName;
   String? operatingHours;
   String? address;
@@ -9,6 +10,7 @@ class ServiceCenter {
 
   ServiceCenter(
       {this.serviceCenterId,
+      this.serviceCenterTypeId,
       this.serviceCenterName,
       this.operatingHours,
       this.address,
@@ -18,6 +20,7 @@ class ServiceCenter {
 
   ServiceCenter.fromJson(Map<String, dynamic> json) {
     this.serviceCenterId = json["service_center_id"];
+    this.serviceCenterTypeId = json["service_center_type_id"];
     this.serviceCenterName = json["service_center_name"];
     this.operatingHours = json["operating_hours"];
     this.address = json["address"];
@@ -29,6 +32,7 @@ class ServiceCenter {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data["service_center_id"] = this.serviceCenterId;
+    data["service_center_type_id"] = this.serviceCenterTypeId;
     data["service_center_name"] = this.serviceCenterName;
     data["operating_hours"] = this.operatingHours;
     data["address"] = this.address;

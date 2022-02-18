@@ -124,7 +124,10 @@ class _ServiceLocatorState extends State<ServiceLocator> {
 
     if (response.statusCode == 200) {
       Map resp = json.decode(response.body);
-      var svcCenters = (resp['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
+      var svcCenters = (resp['data'] as List)
+          .map((i) => ServiceCenter.fromJson(i))
+          .where((elem) => elem.serviceCenterTypeId == "2")
+          .toList();
 
       print(jsonEncode(svcCenters));
 
