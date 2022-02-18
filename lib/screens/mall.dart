@@ -13,44 +13,47 @@ class _MallState extends State<Mall> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                child: InAppWebView(
-                  androidOnPermissionRequest: (controller, origin, resources) async {
-                    return PermissionRequestResponse(
-                      resources: resources,
-                      action: PermissionRequestResponseAction.GRANT,
-                    );
-                  },
-                  initialUrlRequest: URLRequest(
-                    url: Uri.parse('https://www.khind.com.my/'),
+        child: Container(
+            height: MediaQuery.of(context).size.height * 0.85,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    // height: MediaQuery.of(context).size.height * 0.6,
+                    child: InAppWebView(
+                      androidOnPermissionRequest: (controller, origin, resources) async {
+                        return PermissionRequestResponse(
+                          resources: resources,
+                          action: PermissionRequestResponseAction.GRANT,
+                        );
+                      },
+                      initialUrlRequest: URLRequest(
+                        url: Uri.parse('https://www.khind.com.my/'),
+                      ),
+                      initialOptions: InAppWebViewGroupOptions(
+                        crossPlatform: InAppWebViewOptions(
+                          useShouldOverrideUrlLoading: false,
+                          mediaPlaybackRequiresUserGesture: false,
+                          useOnDownloadStart: true,
+                        ),
+                        android: AndroidInAppWebViewOptions(
+                          hardwareAcceleration: true,
+                        ),
+                        ios: IOSInAppWebViewOptions(
+                          allowsInlineMediaPlayback: true,
+                        ),
+                      ),
+                      onConsoleMessage: (controller, consoleMessage) {
+                        // print(consoleMessage);
+                      },
+                      onLoadStop: (controller, url) async {
+                        print('current url is $url');
+                      },
+                    ),
                   ),
-                  initialOptions: InAppWebViewGroupOptions(
-                    crossPlatform: InAppWebViewOptions(
-                      useShouldOverrideUrlLoading: false,
-                      mediaPlaybackRequiresUserGesture: false,
-                      useOnDownloadStart: true,
-                    ),
-                    android: AndroidInAppWebViewOptions(
-                      hardwareAcceleration: true,
-                    ),
-                    ios: IOSInAppWebViewOptions(
-                      allowsInlineMediaPlayback: true,
-                    ),
-                  ),
-                  onConsoleMessage: (controller, consoleMessage) {
-                    // print(consoleMessage);
-                  },
-                  onLoadStop: (controller, url) async {
-                    print('current url is $url');
-                  },
                 ),
-              ),
-            ),
-          ],
-        ),
+              ],
+            )),
       ),
     );
   }

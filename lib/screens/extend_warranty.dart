@@ -44,8 +44,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
     purchase = Helpers.purchase!;
     productWarranty = Helpers.productWarranty;
     purchaseDate = DateTime.parse(purchase.purchaseDate!);
-    endDate =
-        purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
+    endDate = purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
     serialNo.text = '';
   }
 
@@ -56,7 +55,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
-
+    print("##COST: ${productWarranty!.data![0].extendedWarrantyCharge1Yr}");
     return Scaffold(
       // appBar: AppBar(
       //   title: Text('Extend Warranty'),
@@ -89,10 +88,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 boxShadow: [
-                  BoxShadow(
-                      blurRadius: 5,
-                      color: Colors.grey[200]!,
-                      offset: Offset(0, 10)),
+                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -103,16 +99,13 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                     purchase.productGroupDescription!,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(purchase.modelDescription!,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(purchase.modelDescription!, style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 30),
                   Row(
                     children: [
                       Text('Serial Number:'),
                       SizedBox(width: 10),
-                      Text(purchase.serialNo != null
-                          ? purchase.serialNo.toString()
-                          : "-"),
+                      Text(purchase.serialNo != null ? purchase.serialNo.toString() : "-"),
                       // Expanded(
                       //   child: DropdownButton<String>(
                       //     items: productModel
@@ -143,8 +136,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                       Text('Warranty valid until:'),
                       SizedBox(width: 5),
                       Expanded(
-                          child: Text('${purchase.warrantyDate}',
-                              style: TextStyles.textDefaultBold)),
+                          child:
+                              Text('${purchase.warrantyDate}', style: TextStyles.textDefaultBold)),
                       // Expanded(
                       //   child: Text(
                       //       '${formatDate(purchaseDate, [
@@ -181,10 +174,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 boxShadow: [
-                  BoxShadow(
-                      blurRadius: 5,
-                      color: Colors.grey[200]!,
-                      offset: Offset(0, 10)),
+                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -194,9 +184,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   Row(
                     children: [
                       Text('Purchase Date : '),
-                      Text(
-                          formatDate(
-                              purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                      Text(formatDate(purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
                           style: TextStyles.textDefaultBold),
                     ],
                   ),
@@ -225,31 +213,35 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
               ),
             ),
 
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Container(
-                  // width: width * 0.3,
-                  child: Text('Serial Number : '),
-                ),
-                Expanded(
-                  child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: serialNo,
-                      onChanged: (value) {},
-                      validator: (value) {
-                        if (value == '' || value == null) {
-                          return 'Please key in Serial No.';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            productWarranty!.data![0].extendedWarrantyCharge1Yr != "0"
+                ? SizedBox(height: 20)
+                : Container(),
+            productWarranty!.data![0].extendedWarrantyCharge1Yr != "0"
+                ? Row(
+                    children: [
+                      Container(
+                        // width: width * 0.3,
+                        child: Text('Serial Number : '),
+                      ),
+                      Expanded(
+                        child: Form(
+                          key: _formKey,
+                          child: TextFormField(
+                            controller: serialNo,
+                            onChanged: (value) {},
+                            validator: (value) {
+                              if (value == '' || value == null) {
+                                return 'Please key in Serial No.';
+                              } else {
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
 
             SizedBox(height: 20),
 
@@ -317,10 +309,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
               Text('Warranty Cost : '),
               SizedBox(width: 2),
               productWarranty!.data![0].extendedWarrantyCharge1Yr != null &&
-                      productWarranty!.data![0].extendedWarrantyCharge1Yr !=
-                          "null"
-                  ? Text(
-                      'RM ${productWarranty!.data![0].extendedWarrantyCharge1Yr}',
+                      productWarranty!.data![0].extendedWarrantyCharge1Yr != "null"
+                  ? Text('RM ${productWarranty!.data![0].extendedWarrantyCharge1Yr}',
                       style: TextStyle(fontWeight: FontWeight.bold))
                   : Text("-")
             ]),
@@ -330,62 +320,74 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: GradientButton(
-                  height: 40,
-                  child: Text(
-                    "Apply",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  gradient: LinearGradient(
-                      colors: <Color>[Colors.white, Colors.grey[400]!],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      bool successExtend = await Repositories.sendExtend(
-                        warrantyId: purchase.warrantyRegistrationId,
-                      );
+                child: productWarranty!.data![0].extendedWarrantyCharge1Yr != "0"
+                    ? GradientButton(
+                        height: 40,
+                        child: Text(
+                          "Apply",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        gradient: LinearGradient(
+                            colors: <Color>[Colors.white, Colors.grey[400]!],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            bool successExtend = await Repositories.sendExtend(
+                              warrantyId: purchase.warrantyRegistrationId,
+                            );
 
-                      bool successSerial = await Repositories.sendSerialNumber(
-                        serialNo: serialNo.text,
-                        warrantyId: purchase.warrantyRegistrationId,
-                      );
+                            bool successSerial = await Repositories.sendSerialNumber(
+                              serialNo: serialNo.text,
+                              warrantyId: purchase.warrantyRegistrationId,
+                            );
 
-                      if (successExtend && successSerial) {
-                        Alert(
-                          context: context,
-                          // type: AlertType.info,
-                          title: "Warranty Extension Submitted",
-                          desc:
-                              "You will be notified in 2 days on the approval of the extension. Please ensure that payment is done within 7 days after approval",
-                          buttons: [
-                            DialogButton(
-                              child: Text(
-                                "Okay",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                              onPressed: () =>
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                'home',
-                                (route) => false,
-                                arguments: 0,
-                              ),
-                              width: 120,
-                            )
-                          ],
-                        ).show();
-                      } else {
-                        Fluttertoast.showToast(
-                          msg: 'Something went wrong, please try again',
-                          toastLength: Toast.LENGTH_LONG,
-                          gravity: ToastGravity.BOTTOM,
-                        );
-                      }
-                    }
-                  },
-                ),
+                            if (successExtend && successSerial) {
+                              Alert(
+                                context: context,
+                                // type: AlertType.info,
+                                title: "Warranty Extension Submitted",
+                                desc:
+                                    "You will be notified in 2 days on the approval of the extension. Please ensure that payment is done within 7 days after approval",
+                                buttons: [
+                                  DialogButton(
+                                    child: Text(
+                                      "Okay",
+                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                    ),
+                                    onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                                      'home',
+                                      (route) => false,
+                                      arguments: 0,
+                                    ),
+                                    width: 120,
+                                  )
+                                ],
+                              ).show();
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: 'Something went wrong, please try again',
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.BOTTOM,
+                              );
+                            }
+                          }
+                        },
+                      )
+                    : GradientButton(
+                        hideShadow: true,
+                        height: 40,
+                        child: Text(
+                          "Apply",
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        gradient: LinearGradient(
+                            colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                        onPressed: () {},
+                      ),
               ),
             ),
 
