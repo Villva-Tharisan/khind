@@ -178,6 +178,12 @@ class _ServiceTypeState extends State<ServiceType> {
       return [Container()];
     }
 
+    var productDescription = "-";
+
+    if (purchase!.productDescription! != null) {
+      productDescription = purchase!.productDescription!;
+    }
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -201,7 +207,7 @@ class _ServiceTypeState extends State<ServiceType> {
                     height: 10,
                   ),
                   Text(
-                    purchase!.productDescription!,
+                    productDescription,
                     style: TextStyle(
                         // height: 2,
                         fontSize: 16,

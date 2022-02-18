@@ -107,6 +107,20 @@ class _ProductModelState extends State<ProductModel> {
       storeId = purchase!.storeId;
     }
 
+    var productGroupDesc = "-";
+    if (purchase!.productGroupDescription != null) {
+      productGroupDesc = purchase!.productGroupDescription!;
+    }
+    var productModel = "-";
+    if (widget.data!.productModel! != null) {
+      productModel = widget.data!.productModel!;
+    }
+
+    var modelDesc = "-";
+    if (widget.data!.modelDescription! != null) {
+      modelDesc = widget.data!.modelDescription!;
+    }
+
     return Scaffold(
       appBar: Helpers.customAppBar(context, _scaffoldKey,
           title: "Product Model", hasActions: false, isBack: true),
@@ -133,18 +147,18 @@ class _ProductModelState extends State<ProductModel> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        purchase!.productGroupDescription!,
+                        productGroupDesc,
                         overflow: TextOverflow.visible,
                         style: TextStyles.textDefaultBold,
                       ),
                       SizedBox(
                         height: 5,
                       ),
-                      Text(widget.data!.productModel!),
+                      Text(productModel),
                       SizedBox(
                         height: 5,
                       ),
-                      Text(widget.data!.modelDescription!),
+                      Text(modelDesc),
                       // SizedBox(
                       //   height: 13,
                       // ),
