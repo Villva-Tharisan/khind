@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:khind/components/custom_card.dart';
@@ -10,9 +13,13 @@ import 'package:khind/cubit/postcode/postcode_cubit.dart';
 import 'package:khind/cubit/state/state_cubit.dart';
 import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/service_product.dart';
+import 'package:khind/models/shipping_address.dart';
+import 'package:khind/models/user.dart';
 import 'package:khind/services/repositories.dart';
 import 'package:khind/themes/text_styles.dart';
+import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
+import 'package:khind/util/key.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -28,24 +35,35 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
   late int index;
   late ServiceProduct serviceProduct;
   late ProductWarranty productWarranty;
+  ShippingAddress? consumerAddress;
 
   @override
   void initState() {
+    init();
+    super.initState();
+  }
+
+  void init() async {
     index = Helpers.productIndex!;
     serviceProduct = Helpers.serviceProduct!;
     productWarranty = Helpers.productWarranty!;
     context.read<StateCubit>().getState();
-    super.initState();
+
+    //getaddress
+    consumerAddress = Helpers.userAddress;
+
+    address1.text = consumerAddress!.address1 ?? '';
+    address2.text = consumerAddress!.address2 ?? '';
   }
 
   TextEditingController address1 = new TextEditingController();
   TextEditingController address2 = new TextEditingController();
 
-  // List<String> state = [
-  //   'state1',
-  //   'state2',
-  //   'state3',
-  // ];
+  List<String> state = [
+    'state1',
+    'state2',
+    'state3',
+  ];
   List<String> city = [
     'city1',
     'city2',
@@ -56,6 +74,9 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
     'postcode2',
     'postcode3',
   ];
+
+  //1983
+  //SELANGOR
 
   String? chosenState;
   String? chosenCity;
@@ -200,6 +221,31 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                               BlocBuilder<StateCubit, StateState>(
                                 builder: (context, state) {
                                   if (state is StateLoaded) {
+                                    // WidgetsBinding.instance!
+                                    //     .addPostFrameCallback((_) {
+                                    //   print('masuk post');
+
+                                    // });
+                                    if (consumerAddress?.state != null) {
+                                      for (var i = 0;
+                                          i < state.state.length;
+                                          i++) {
+                                        if (state.state[i].state!
+                                                .toLowerCase() ==
+                                            consumerAddress!.state!
+                                                .toLowerCase()) {
+                                          chosenState =
+                                              (state.state[i].stateId);
+                                          context
+                                              .read<CityCubit>()
+                                              .fetchCities(chosenState!);
+
+                                          break;
+                                        }
+                                      }
+                                    }
+
+                                    // print('chosenState is $chosenState');
                                     return Expanded(
                                       child: DropdownButton<String>(
                                         items: state.state.map((e) {
@@ -238,6 +284,21 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                           BlocBuilder<CityCubit, CityState>(
                             builder: (context, state) {
                               if (state is CityLoaded) {
+                                if (consumerAddress?.city != null) {
+                                  for (var i = 0;
+                                      i < state.cities.length;
+                                      i++) {
+                                    if (state.cities[i].city!.toLowerCase() ==
+                                        consumerAddress!.city!.toLowerCase()) {
+                                      chosenCity = (state.cities[i].cityId);
+                                      context.read<PostcodeCubit>().getPostcode(
+                                          state.cities[i].city!, chosenState!);
+
+                                      break;
+                                    }
+                                  }
+                                }
+
                                 return Row(
                                   children: [
                                     Container(
@@ -260,7 +321,7 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                                         isExpanded: true,
                                         value: chosenCity,
                                         onChanged: (value) {
-                                          print(value);
+                                          print('city id is $value');
                                           setState(() {
                                             chosenCity = value!;
                                           });
@@ -301,6 +362,20 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                           BlocBuilder<PostcodeCubit, PostcodeState>(
                             builder: (context, state) {
                               if (state is PostcodeLoaded) {
+                                if (consumerAddress?.postcode != null) {
+                                  for (var i = 0;
+                                      i < state.postcode.length;
+                                      i++) {
+                                    if (state.postcode[i].toString() ==
+                                        consumerAddress!.postcode) {
+                                      chosenPostcode =
+                                          (state.postcode[i].toString());
+
+                                      break;
+                                    }
+                                  }
+                                }
+
                                 return Row(
                                   children: [
                                     Container(

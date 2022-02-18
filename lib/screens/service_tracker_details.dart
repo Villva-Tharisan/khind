@@ -3,7 +3,9 @@ import 'package:khind/components/custom_card.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/service_product.dart';
+import 'package:khind/models/shipping_address.dart';
 import 'package:khind/themes/text_styles.dart';
+import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -225,7 +227,30 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         colors: <Color>[Colors.white, Colors.grey[400]!],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter),
-                    onPressed: () {
+                    onPressed: () async {
+                      //call api addres
+
+                      final response = await Api.bearerGet('shippingaddress');
+                      print("#fetchConsumerAddress RESPONSE: $response");
+                      ShippingAddress? newAddress;
+
+                      if (response['data'] != null) {
+                        var shipAddress =
+                            (response['data']['addresses'] as List)
+                                .map((i) => ShippingAddress.fromJson(i))
+                                .toList();
+
+                        if (response['data']['address_id'] != null) {
+                          shipAddress.forEach((elem) {
+                            if (response['data']['address_id'] ==
+                                elem.addressId) {
+                              newAddress = elem;
+                            }
+                          });
+                        }
+                      }
+
+                      Helpers.userAddress = newAddress;
                       Navigator.pushNamed(context, 'ServiceTrackerDelivery');
                     },
                   ),
