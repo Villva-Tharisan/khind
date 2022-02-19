@@ -30,6 +30,7 @@ class RequestDateDropIn extends StatefulWidget {
 class _RequestDateDropInState extends State<RequestDateDropIn> {
   static final GlobalKey<FormState> _basicFormKey = GlobalKey<FormState>();
   static final GlobalKey<FormState> _addressFormKey = GlobalKey<FormState>();
+  static final GlobalKey<FormState> _serviceFormKey = GlobalKey<FormState>();
   TextEditingController remarkCT = new TextEditingController();
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   // TextEditingController postCodeCT = new TextEditingController();
@@ -55,14 +56,17 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   late Purchase purchase;
   late DateTime _maxDate;
   bool showError = false;
+  bool dateError = false;
   @override
   void initState() {
     purchase = widget.data!;
-    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    state = new States(
+        countryId: "", state: "--Select--", stateId: "", stateCode: "");
 
-    serviceCenterState = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    serviceCenterState = new States(
+        countryId: "", state: "--Select--", stateId: "", stateCode: "");
 
-    _selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    // _selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     city = new City(
       stateId: "",
       city: "--Select--",
@@ -84,9 +88,13 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   Future<void> fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
 
-    var states = (response['states'] as List).map((i) => States.fromJson(i)).toList();
+    var states =
+        (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-    states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+    states.insert(
+        0,
+        new States(
+            countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
     setState(() {
       _states = states;
@@ -97,10 +105,13 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   }
 
   Future<void> fetchServiceCenter() async {
-    final response = await Api.bearerGet('provider/khind_service.php', isCms: true);
+    final response =
+        await Api.bearerGet('provider/khind_service.php', isCms: true);
 
     // print("RESPONSE: $response");
-    var svcCenters = (response['data'] as List).map((i) => ServiceCenter.fromJson(i)).toList();
+    var svcCenters = (response['data'] as List)
+        .map((i) => ServiceCenter.fromJson(i))
+        .toList();
 
     setState(() {
       _svcCenters = svcCenters;
@@ -109,14 +120,17 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   }
 
   Future<void> onSelectState(String stateId) async {
-    var filteredSvcCenter = _svcCenters.where((element) => element.stateId == stateId).toList();
+    var filteredSvcCenter =
+        _svcCenters.where((element) => element.stateId == stateId).toList();
 
     var initialName = "Choose City";
     if (filteredSvcCenter.length == 0) {
       initialName = "Not avaiable";
     }
     filteredSvcCenter.insert(
-        0, new ServiceCenter(serviceCenterId: "0", serviceCenterName: initialName));
+        0,
+        new ServiceCenter(
+            serviceCenterId: "0", serviceCenterName: initialName));
 
     setState(() {
       _filteredSvcCenters = filteredSvcCenter;
@@ -125,12 +139,20 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   }
 
   Future<void> fetchCities(String stateId) async {
-    final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
+    final response =
+        await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
 
-    var cities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
+    var cities =
+        (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
     cities.insert(
-        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
+        0,
+        new City(
+            stateId: "",
+            city: "--Select--",
+            cityId: "",
+            postcodeId: "",
+            postcode: ""));
 
     // print("#CITIES: $cities");
     var citySet = Set<String>();
@@ -142,7 +164,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
         tempPostcodes.add(elem.postcode!);
       }
     });
-    List<String> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e)).toList();
+    List<String> newPostcodes =
+        tempPostcodes.where((e) => postcodeSet.add(e)).toList();
     // print('#newPostcodes:  $newPostcodes');
     setState(() {
       _cities = newCities;
@@ -157,24 +180,31 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
     ShippingAddress? newAddress;
     if (response['data'] != null) {
       var addressId = response['data']['address_id'] as String;
-      var shipAddress =
-          (response['data']['addresses'] as List).map((i) => ShippingAddress.fromJson(i)).toList();
+      var shipAddress = (response['data']['addresses'] as List)
+          .map((i) => ShippingAddress.fromJson(i))
+          .toList();
 
       if (addressId != null) {
-        newAddress = shipAddress.where((e) => e.addressId == addressId).toList().first;
+        newAddress =
+            shipAddress.where((e) => e.addressId == addressId).toList().first;
 
         var currentState = _states
-            .where((element) => element.state!.toLowerCase() == newAddress!.state!.toLowerCase())
+            .where((element) =>
+                element.state!.toLowerCase() ==
+                newAddress!.state!.toLowerCase())
             .toList()
             .first;
 
         await this.fetchCities(currentState.stateId!);
 
-        var currentCity =
-            _cities.where((element) => element.city == newAddress!.city).toList().first;
+        var currentCity = _cities
+            .where((element) => element.city == newAddress!.city)
+            .toList()
+            .first;
 
-        var currentPostcode =
-            postcodes.where((element) => element == newAddress!.postcode).toList();
+        var currentPostcode = postcodes
+            .where((element) => element == newAddress!.postcode)
+            .toList();
         var selectedPostcode = "";
         if (currentPostcode.length == 0) {
           selectedPostcode = newAddress.postcode!;
@@ -207,7 +237,9 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
   Future<void> fetchProblems() async {
     final response = await Api.bearerGet('provider/problems.php', isCms: true);
 
-    var problems = (response['data'] as List).map((i) => ServiceProblem.fromJson(i)).toList();
+    var problems = (response['data'] as List)
+        .map((i) => ServiceProblem.fromJson(i))
+        .toList();
 
     setState(() {
       _problems = problems;
@@ -269,78 +301,97 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
           SizedBox(
             height: 10,
           ),
-          Container(
-            width: double.infinity,
-            // height: 140,
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                width: 0.4,
-                color: Colors.grey.withOpacity(0.5),
+          Form(
+            key: _serviceFormKey,
+            child: Container(
+              width: double.infinity,
+              // height: 140,
+              margin: EdgeInsets.only(bottom: 10),
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                  width: 0.4,
+                  color: Colors.grey.withOpacity(0.5),
+                ),
+                borderRadius: BorderRadius.circular(7.5),
+                boxShadow: [
+                  BoxShadow(
+                      blurRadius: 5,
+                      color: Colors.grey[200]!,
+                      offset: Offset(0, 10)),
+                ],
               ),
-              borderRadius: BorderRadius.circular(7.5),
-              boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
-              ],
-            ),
-            child: Row(
-              children: [
-                _states.isEmpty
-                    ? Container()
-                    : Container(
-                        padding: EdgeInsets.only(left: 10),
-                        width: width * 0.45,
-                        child: DropdownButton<States>(
-                          items: _states.map<DropdownMenuItem<States>>((e) {
-                            return DropdownMenuItem<States>(
-                              child: Text(
-                                e.state!,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              value: e,
-                            );
-                          }).toList(),
-                          isExpanded: true,
-                          value: serviceCenterState,
-                          onChanged: (value) {
-                            setState(() {
-                              serviceCenterState = value!;
-                              this.onSelectState(value.stateId!);
-                            });
-                          },
-                        ),
-                      ),
-                Flexible(
-                  child: Container(
-                    padding: EdgeInsets.only(left: 10),
-                    width: width * 0.45,
-                    child: !_filteredSvcCenters.isEmpty
-                        ? DropdownButton<ServiceCenter>(
-                            items: _filteredSvcCenters.map<DropdownMenuItem<ServiceCenter>>((e) {
-                              return DropdownMenuItem<ServiceCenter>(
+              child: Row(
+                children: [
+                  _states.isEmpty
+                      ? Container()
+                      : Container(
+                          padding: EdgeInsets.only(left: 10),
+                          width: width * 0.45,
+                          child: DropdownButtonFormField<States>(
+                            items: _states.map<DropdownMenuItem<States>>((e) {
+                              return DropdownMenuItem<States>(
                                 child: Text(
-                                  e.serviceCenterName!,
+                                  e.state!,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
                                 ),
                                 value: e,
                               );
                             }).toList(),
+                            validator: (value) {
+                              if (value!.stateId! == "") {
+                                return 'Please select state';
+                              }
+                              return null;
+                            },
                             isExpanded: true,
-                            value: _selectedServiceCenter,
+                            value: serviceCenterState,
                             onChanged: (value) {
                               setState(() {
-                                _selectedServiceCenter = value!;
+                                serviceCenterState = value!;
+                                this.onSelectState(value.stateId!);
                               });
                             },
-                          )
-                        : Container(),
-                  ),
-                )
-              ],
+                          ),
+                        ),
+                  Flexible(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 10),
+                      width: width * 0.45,
+                      child: !_filteredSvcCenters.isEmpty
+                          ? DropdownButtonFormField<ServiceCenter>(
+                              items: _filteredSvcCenters
+                                  .map<DropdownMenuItem<ServiceCenter>>((e) {
+                                return DropdownMenuItem<ServiceCenter>(
+                                  child: Text(
+                                    e.serviceCenterName!,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                  value: e,
+                                );
+                              }).toList(),
+                              isExpanded: true,
+                              value: _selectedServiceCenter,
+                              validator: (value) {
+                                if (value!.serviceCenterId! == "") {
+                                  return 'Please select service center';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedServiceCenter = value!;
+                                });
+                              },
+                            )
+                          : Container(),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
           SizedBox(
@@ -356,17 +407,19 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
           Container(
             height: MediaQuery.of(context).size.height * 0.3,
             child: SfDateRangePicker(
-              initialSelectedDate: DateTime.now(),
+              // initialSelectedDate: DateTime.now(),
               selectableDayPredicate: (DateTime date) {
-                if (date.weekday == DateTime.saturday || date.weekday == DateTime.sunday) {
+                if (date.weekday == DateTime.saturday ||
+                    date.weekday == DateTime.sunday) {
                   return false;
                 }
                 return true;
               },
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
-                  _selectedDate = DateFormat('yyyy-MM-dd')
-                      .format(DateFormat('yyyy-MM-dd hh:mm:ss').parse(args.value.toString()));
+                  _selectedDate = DateFormat('yyyy-MM-dd').format(
+                      DateFormat('yyyy-MM-dd hh:mm:ss')
+                          .parse(args.value.toString()));
                 });
               },
               minDate: DateTime.now(),
@@ -383,11 +436,30 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                 color: Colors.grey.withOpacity(0.5),
               ),
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
           ),
+          dateError
+              ? Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '*Please select date',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
+                )
+              : Container(),
           SizedBox(
             height: 20,
           ),
@@ -411,7 +483,10 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -433,7 +508,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                         width: width * 0.45,
                         child: !_timesSlot.isEmpty
                             ? DropdownButton<String>(
-                                items: _timesSlot.map<DropdownMenuItem<String>>((e) {
+                                items: _timesSlot
+                                    .map<DropdownMenuItem<String>>((e) {
                                   return DropdownMenuItem<String>(
                                     child: Text(
                                       e,
@@ -481,7 +557,10 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -503,7 +582,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                         width: width * 0.45,
                         child: !_problems.isEmpty
                             ? DropdownButton<ServiceProblem>(
-                                items: _problems.map<DropdownMenuItem<ServiceProblem>>((e) {
+                                items: _problems
+                                    .map<DropdownMenuItem<ServiceProblem>>((e) {
                                   return DropdownMenuItem<ServiceProblem>(
                                     child: Text(
                                       e.problem!,
@@ -545,12 +625,13 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                               },
                               controller: remarkCT,
                               onFieldSubmitted: (val) {
-                                FocusScope.of(context).requestFocus(new FocusNode());
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
                               },
                               decoration: InputDecoration(
                                 hintText: '',
-                                contentPadding:
-                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 5),
                               ),
                             ),
                           ],
@@ -583,7 +664,10 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                BoxShadow(
+                    blurRadius: 5,
+                    color: Colors.grey[200]!,
+                    offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -603,7 +687,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                         width: width * 0.45,
                         child: !_deliveryOptions.isEmpty
                             ? DropdownButton<String>(
-                                items: _deliveryOptions.map<DropdownMenuItem<String>>((e) {
+                                items: _deliveryOptions
+                                    .map<DropdownMenuItem<String>>((e) {
                                   return DropdownMenuItem<String>(
                                     child: Text(
                                       e,
@@ -629,10 +714,13 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                 SizedBox(height: 5),
                 Text(
                     "* Courier fee of RM 15.00 will be charged if delivery service after repair is needed",
-                    style: TextStyles.textWarning.copyWith(fontStyle: FontStyle.italic),
+                    style: TextStyles.textWarning
+                        .copyWith(fontStyle: FontStyle.italic),
                     textAlign: TextAlign.start),
                 //address
-                _selectedDelivery == "Yes" ? renderAddressForm(width, context) : Container(),
+                _selectedDelivery == "Yes"
+                    ? renderAddressForm(width, context)
+                    : Container(),
                 !showError
                     ? Container()
                     : Container(
@@ -668,11 +756,18 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                 onPressed: () {
                   setState(() {
                     showError = false;
+                    dateError = false;
                   });
                   if (_selectedServiceCenter == null ||
                       _selectedServiceCenter.serviceCenterId == "0") {
                     setState(() {
                       showError = true;
+                    });
+                    return;
+                  }
+                  if (_selectedDate == '') {
+                    setState(() {
+                      dateError = true;
                     });
                     return;
                   }
@@ -684,15 +779,6 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                     serviceRequestTime: _selectedTimeSlot,
                     serviceType: 'Drop-In',
                     remarks: remarkCT.text,
-                    address: new Address(
-                      addressLine1: address1CT.text,
-                      addressLine2: address2CT.text,
-                      city: city.city,
-                      cityId: city.cityId,
-                      postcode: postcode,
-                      stateId: state.stateId,
-                      state: state.state,
-                    ),
                     delivery: _selectedDelivery,
                     purchase: purchase,
                     serviceCenter: _selectedServiceCenter,
@@ -700,19 +786,34 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
 
                   if (_selectedDelivery == "Yes") {
                     if (_basicFormKey.currentState!.validate() &&
-                        _addressFormKey.currentState!.validate()) {
+                        _addressFormKey.currentState!.validate() &&
+                        _serviceFormKey.currentState!.validate()) {
+                      requestServiceArgs.address = new Address(
+                        addressLine1: address1CT.text,
+                        addressLine2: address2CT.text,
+                        city: city.city,
+                        cityId: city.cityId,
+                        postcode: postcode,
+                        stateId: state.stateId,
+                        state: state.state,
+                      );
                       Navigator.pushNamed(
                         context,
                         'review',
-                        arguments: requestServiceArgs != null ? requestServiceArgs : null,
+                        arguments: requestServiceArgs != null
+                            ? requestServiceArgs
+                            : null,
                       );
                     }
                   } else {
-                    if (_basicFormKey.currentState!.validate()) {
+                    if (_basicFormKey.currentState!.validate() &&
+                        _serviceFormKey.currentState!.validate()) {
                       Navigator.pushNamed(
                         context,
                         'review',
-                        arguments: requestServiceArgs != null ? requestServiceArgs : null,
+                        arguments: requestServiceArgs != null
+                            ? requestServiceArgs
+                            : null,
                       );
                     }
                   }
@@ -755,7 +856,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'eg: No 78 Jalan Mawar',
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                   ),
                 ),
               ),
@@ -783,7 +885,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'eg: Puchong Perdana',
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                   ),
                 ),
               ),
@@ -802,24 +905,25 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                 child: Container(
                   padding: EdgeInsets.only(left: 10),
                   width: width * 0.45,
-                  child: DropdownButton<States>(
-                    items: _states.map<DropdownMenuItem<States>>((e) {
-                      return DropdownMenuItem<States>(
-                        child: Text(
-                          e.state!,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                        value: e,
+                  child: DropdownButtonFormField<States>(
+                    isExpanded: true,
+                    hint: Text('State'),
+                    value: state,
+                    onChanged: (newValue) {
+                      setState(() {
+                        state = newValue!;
+                        this.fetchCities(newValue.stateId!);
+                      });
+                    },
+                    items: _states.map((item) {
+                      return DropdownMenuItem(
+                        child: new Text(item.state!),
+                        value: item,
                       );
                     }).toList(),
-                    isExpanded: true,
-                    value: state,
-                    onChanged: (value) {
-                      setState(() {
-                        state = value!;
-                        this.fetchCities(value.stateId!);
-                      });
+                    validator: (value) {
+                      if (value!.stateId! == "") return "Please enter state";
+                      return null;
                     },
                   ),
                 ),
@@ -840,7 +944,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                       child: Container(
                         padding: EdgeInsets.only(left: 10),
                         width: width * 0.45,
-                        child: DropdownButton<City>(
+                        child: DropdownButtonFormField<City>(
                           items: _cities.map<DropdownMenuItem<City>>((e) {
                             return DropdownMenuItem<City>(
                               child: Text(
@@ -858,6 +962,11 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                               city = value!;
                               this.onSelectCity(value.postcode!);
                             });
+                          },
+                          validator: (value) {
+                            if (value!.cityId! == "")
+                              return "Please enter city";
+                            return null;
                           },
                         ),
                       ),
@@ -878,7 +987,7 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                 child: Container(
                   padding: EdgeInsets.only(left: 10),
                   width: width * 0.45,
-                  child: DropdownButton<String>(
+                  child: DropdownButtonFormField<String>(
                     items: postcodes.map<DropdownMenuItem<String>>((e) {
                       return DropdownMenuItem<String>(
                         child: Text(
@@ -896,6 +1005,10 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                         postcode = value!;
                         // this.onSelectCity(value.postcode!);
                       });
+                    },
+                    validator: (value) {
+                      if (value == "") return "Please enter postcode";
+                      return null;
                     },
                   ),
                 ),

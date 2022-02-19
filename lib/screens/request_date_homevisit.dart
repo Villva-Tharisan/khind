@@ -52,6 +52,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
   TextEditingController address2CT = new TextEditingController();
   late City city;
   String fullAddress = "";
+  bool dateError = false;
   @override
   void initState() {
     // address1CT.text = 'address 1';
@@ -69,7 +70,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
     _cities = [city];
 
     purchase = widget.data!;
-    _selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    // _selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     var date = new DateTime.now();
     var firstDayMonth = new DateTime(date.year, date.month, 0);
     _maxDate = Jiffy(date).add(months: 1).dateTime;
@@ -262,7 +263,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
           Container(
             height: MediaQuery.of(context).size.height * 0.3,
             child: SfDateRangePicker(
-              initialSelectedDate: DateTime.now().add(Duration(days: 2)),
+              // initialSelectedDate: DateTime.now().add(Duration(days: 2)),
               minDate: DateTime.now().add(Duration(days: 2)),
               maxDate: _maxDate,
               selectableDayPredicate: (DateTime date) {
@@ -299,6 +300,22 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
               borderRadius: BorderRadius.circular(7.5),
             ),
           ),
+          dateError
+              ? Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '*Please select date',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
+                )
+              : Container(),
           SizedBox(
             height: 20,
           ),
@@ -595,7 +612,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                         child: Container(
                           padding: EdgeInsets.only(left: 10),
                           width: width * 0.45,
-                          child: DropdownButton<States>(
+                          child: DropdownButtonFormField<States>(
                             items: _states.map<DropdownMenuItem<States>>((e) {
                               return DropdownMenuItem<States>(
                                 child: Text(
@@ -613,6 +630,11 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                                 state = value!;
                                 this.fetchCities(value.stateId!);
                               });
+                            },
+                            validator: (value) {
+                              if (value!.stateId! == "")
+                                return "Please enter state";
+                              return null;
                             },
                           ),
                         ),
@@ -633,7 +655,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                               child: Container(
                                 padding: EdgeInsets.only(left: 10),
                                 width: width * 0.45,
-                                child: DropdownButton<City>(
+                                child: DropdownButtonFormField<City>(
                                   items:
                                       _cities.map<DropdownMenuItem<City>>((e) {
                                     return DropdownMenuItem<City>(
@@ -652,6 +674,11 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                                       city = value!;
                                       this.onSelectCity(value.postcode!);
                                     });
+                                  },
+                                  validator: (value) {
+                                    if (value!.cityId! == "")
+                                      return "Please enter city";
+                                    return null;
                                   },
                                 ),
                               ),
@@ -672,7 +699,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                         child: Container(
                           padding: EdgeInsets.only(left: 10),
                           width: width * 0.45,
-                          child: DropdownButton<String>(
+                          child: DropdownButtonFormField<String>(
                             items: postcodes.map<DropdownMenuItem<String>>((e) {
                               return DropdownMenuItem<String>(
                                 child: Text(
@@ -690,6 +717,10 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                                 postcode = value!;
                                 // this.onSelectCity(value.postcode!);
                               });
+                            },
+                            validator: (value) {
+                              if (value == "") return "Please enter postcode";
+                              return null;
                             },
                           ),
                         ),
@@ -731,6 +762,15 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter),
                 onPressed: () {
+                  setState(() {
+                    dateError = false;
+                  });
+                  if (_selectedDate == '') {
+                    setState(() {
+                      dateError = true;
+                    });
+                    return;
+                  }
                   if (_addressFormKey.currentState!.validate() &&
                       _basicFormKey.currentState!.validate()) {
                     var requestServiceArgs = new RequestServiceArgument(

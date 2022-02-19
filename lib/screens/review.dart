@@ -84,7 +84,11 @@ class _ReviewState extends State<Review> {
           title: 'You have successfully request service',
           hasAction: true, onPressed: () {
         Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, 'home', arguments: 2);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          'home',
+          (route) => false,
+          arguments: 2,
+        );
       });
     } else {
       Helpers.showAlert(context,

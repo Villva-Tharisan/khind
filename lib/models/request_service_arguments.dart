@@ -20,7 +20,7 @@ class RequestServiceArgument {
   final Purchase purchase;
   final ServiceCenter? serviceCenter;
   final ServiceProblem? serviceProblem;
-  final Address? address;
+  Address? address;
   final String? serviceRequestDate;
   final String? serviceRequestTime;
   final String? serviceType;
