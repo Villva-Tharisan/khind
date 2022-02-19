@@ -162,9 +162,18 @@ class _SignUpState extends State<SignUp> {
         lastDate: DateTime(now.year - 10, 12, 31));
     // print('PICKED: $picked');
     if (picked != null && picked != selectedDob) {
+      String fm = '${picked.month}';
+      String fd = '${picked.day}';
+
+      if (picked.month < 10) {
+        fm = '0${picked.month}';
+      }
+      if (picked.day < 10) {
+        fd = '0${picked.day}';
+      }
       setState(() {
         selectedDob = picked;
-        dobCT.text = '${picked.year}-${picked.month}-${picked.day}';
+        dobCT.text = '${picked.year}-$fm-$fd';
       });
     }
   }

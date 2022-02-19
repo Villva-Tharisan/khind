@@ -152,21 +152,22 @@ class _ProfileState extends State<Profile> {
   //   address2CT.clear();
   // }
 
-  void _handleUpdate() async {
+  void _handleUpdate({String field = 'Info'}) async {
     // print("#handleUpdate");
     Helpers.showAlert(context);
     // if (_formKey.currentState!.validate()) {
-    final Map<String, String> map = {
+    final Map<String, dynamic> map = {
       // 'firstname': firstnameCT.text,
       // 'lastname': lastnameCT.text,
-      'email': emailCT.text,
+      // 'email': emailCT.text,
       'telephone': mobileNoCT.text,
+      'dob': dobCT.text
     };
-    // print("MAP: $map");
+    print("#MAP: $map | ID: ${user?.id}");
 
     final response = await Api.customPut(
-      'customer/${user!.id}',
-      headers: {
+      'customers/${user?.id}',
+      headers: <String, String>{
         'Content-Type': 'application/json',
         'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
       },
@@ -178,9 +179,10 @@ class _ProfileState extends State<Profile> {
       errors = [];
     });
     Navigator.pop(context);
-
-    if (response['success']) {
-      Helpers.showAlert(context, hasAction: true, onPressed: () {
+    print("#RESP: ${jsonEncode(response)}");
+    if (response != null && response['success']) {
+      Helpers.showAlert(context, title: '$field successfully updated', hasAction: true,
+          onPressed: () {
         // _clearTextField();
         setState(() {
           errors = [];
@@ -228,9 +230,18 @@ class _ProfileState extends State<Profile> {
         lastDate: DateTime(now.year - 10, 12, 31));
     // print('PICKED: $picked');
     if (picked != null && picked != selectedDob) {
+      String fm = '${picked.month}';
+      String fd = '${picked.day}';
+
+      if (picked.month < 10) {
+        fm = '0${picked.month}';
+      }
+      if (picked.day < 10) {
+        fd = '0${picked.day}';
+      }
       setState(() {
         selectedDob = picked;
-        dobCT.text = '${picked.year}-${picked.month}/${picked.day}';
+        dobCT.text = '${picked.year}-$fm-$fd';
       });
     }
   }
@@ -320,7 +331,7 @@ class _ProfileState extends State<Profile> {
                               });
                               // print(canEditMobile);
                               if (!canEditMobile) {
-                                _handleUpdate();
+                                _handleUpdate(field: 'Mobile');
                               }
                             },
                             child: canEditMobile
@@ -332,8 +343,7 @@ class _ProfileState extends State<Profile> {
                                         color: AppColors.secondary,
                                         borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    child: Text(canEditMobile ? "View" : "Edit",
-                                        style: TextStyles.textWhiteSm)))
+                                    child: Text("Edit", style: TextStyles.textWhiteSm)))
                       ]))
                     ])),
                     SizedBox(height: 5),
@@ -347,7 +357,7 @@ class _ProfileState extends State<Profile> {
                             width: fieldSize,
                             child: TextFormField(
                               controller: emailCT,
-                              enabled: canEditEmail,
+                              enabled: false,
                               keyboardType: TextInputType.text,
                               validator: (value) {
                                 var regExp = RegExp(
@@ -363,23 +373,26 @@ class _ProfileState extends State<Profile> {
                               decoration: InputDecoration(
                                   border: InputBorder.none, hintText: 'eg: khind@gmail.com'),
                             )),
-                        Spacer(),
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                canEditEmail = !this.canEditEmail;
-                              });
-                              if (!canEditEmail) {
-                                _handleUpdate();
-                              }
-                            },
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    color: AppColors.secondary,
-                                    borderRadius: BorderRadius.circular(10)),
-                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                child: Text(canEditEmail ? "View" : "Edit",
-                                    style: TextStyles.textWhiteSm)))
+                        // Spacer(),
+                        // InkWell(
+                        //     onTap: () {
+                        //       setState(() {
+                        //         canEditEmail = !this.canEditEmail;
+                        //       });
+                        //       if (!canEditEmail) {
+                        //         _handleUpdate(field: 'Email Address');
+                        //       }
+                        //     },
+                        //     child: canEditEmail
+                        //         ? Container(
+                        //             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        //             child: Icon(Icons.check, color: Colors.green))
+                        //         : Container(
+                        //             decoration: BoxDecoration(
+                        //                 color: AppColors.secondary,
+                        //                 borderRadius: BorderRadius.circular(10)),
+                        //             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        //             child: Text("Edit", style: TextStyles.textWhiteSm)))
                       ]))
                     ])),
                     SizedBox(height: 5),
@@ -394,8 +407,8 @@ class _ProfileState extends State<Profile> {
                           enabled: canEditDob,
                           keyboardType: TextInputType.text,
                           validator: (value) {
-                            RegExp regExp = new RegExp(
-                                r'^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$');
+                            RegExp regExp =
+                                new RegExp(r'^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$');
                             if (value!.isEmpty) {
                               return 'Please enter date of birth';
                             } else if (!regExp.hasMatch(value)) {
@@ -419,14 +432,22 @@ class _ProfileState extends State<Profile> {
                                     setState(() {
                                       canEditDob = !this.canEditDob;
                                     });
+                                    if (!canEditDob) {
+                                      _handleUpdate(field: 'D.O.B');
+                                    }
                                   },
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                          color: AppColors.secondary,
-                                          borderRadius: BorderRadius.circular(10)),
-                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                      child: Text(canEditDob ? "View" : "Edit",
-                                          style: TextStyles.textWhiteSm)))
+                                  child: canEditDob
+                                      ? Container(
+                                          padding:
+                                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          child: Icon(Icons.check, color: Colors.green))
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                              color: AppColors.secondary,
+                                              borderRadius: BorderRadius.circular(10)),
+                                          padding:
+                                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          child: Text("Edit", style: TextStyles.textWhiteSm)))
                             ]))
                       ]))
                     ])),
@@ -448,14 +469,11 @@ class _ProfileState extends State<Profile> {
                                   },
                               child: CustomCard(
                                   borderRadius: BorderRadius.circular(5),
-                                  textStyle: TextStyles.textWhiteBold.copyWith(fontSize: 10),
                                   color: Colors.blue[700],
                                   child: _renderLabel("Update Address",
                                       textAlign: TextAlign.center,
-                                      width: MediaQuery.of(context).size.width * 0.3,
-                                      // padding: EdgeInsets.only(top: 10),
                                       textStyle: TextStyles.textWhite
-                                          .copyWith(fontWeight: FontWeight.w500)))),
+                                          .copyWith(fontWeight: FontWeight.w500, fontSize: 12)))),
                           SizedBox(width: 10),
                           InkWell(
                               onTap: () => {
@@ -470,14 +488,11 @@ class _ProfileState extends State<Profile> {
                                   },
                               child: CustomCard(
                                   borderRadius: BorderRadius.circular(5),
-                                  textStyle: TextStyles.textWhiteBold.copyWith(fontSize: 10),
                                   color: Colors.blue[700],
                                   child: _renderLabel("Change Password",
                                       textAlign: TextAlign.center,
-                                      width: MediaQuery.of(context).size.width * 0.3,
-                                      // padding: EdgeInsets.only(top: 10),
                                       textStyle: TextStyles.textWhite
-                                          .copyWith(fontWeight: FontWeight.w500)))),
+                                          .copyWith(fontWeight: FontWeight.w500, fontSize: 12)))),
                           // child: _renderLabel("Change Password",
                           //     width: MediaQuery.of(context).size.width * 0.4,
                           //     padding: EdgeInsets.only(top: 10),

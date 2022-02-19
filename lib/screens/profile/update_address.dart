@@ -185,7 +185,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
         "default": "1"
       };
       print("#MAP: $mapO2O");
-      final respO2O = await Api.customPut('customers/${widget.user!.id}',
+      final respO2O = await Api.customPut('customers/${widget.user?.id}',
           headers: <String, String>{
             'Content-Type': 'application/json',
             'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
