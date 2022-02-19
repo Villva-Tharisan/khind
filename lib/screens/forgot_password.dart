@@ -38,7 +38,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     super.dispose();
   }
 
-  void _handleForgotPwd() async {
+  void _handleUpdate() async {
     Helpers.showAlert(context);
 
     final Map<String, dynamic> map = {'email': emailCT.text};
@@ -58,12 +58,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       });
     } else {
       Helpers.showAlert(context,
-          title: "Temporary password has been sent to your email", hasAction: true, onPressed: () {
+          title: "Check out your new password at your email", hasAction: true, onPressed: () {
         setState(() {
           success = true;
           errors = [];
+          emailCT.text = "";
         });
-        Navigator.pop(context);
+        Navigator.of(context).pop();
+        // Navigator.of(context)
+        //   ..pop()
+        //   ..pop();
       });
     }
   }
@@ -121,7 +125,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               RoundButton(
                   // height: 40,
                   title: 'Send me my new password',
-                  onPressed: () => _handleForgotPwd()),
+                  onPressed: () => _handleUpdate()),
               SizedBox(height: 10),
               RoundButton(
                   color: AppColors.tertiery,
@@ -131,16 +135,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ])));
   }
 
-  _renderSuccess() {
-    return Container(
-        alignment: Alignment.center,
-        child: Container(
-            child: Text(
-          "Check out your new password within 12 hours",
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          textAlign: TextAlign.center,
-        )));
-  }
+  // _renderSuccess() {
+  //   return Container(
+  //       alignment: Alignment.center,
+  //       child: Container(
+  //           child: Text(
+  //         "Check out your new password at your email",
+  //         style: TextStyle(fontSize: 14, color: Colors.green, fontWeight: FontWeight.w500),
+  //         textAlign: TextAlign.center,
+  //       )));
+  // }
 
   _renderError() {
     return Column(
@@ -170,7 +174,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 _renderHeader(),
                 SizedBox(height: 50),
                 errors.length > 0 ? _renderError() : Container(),
-                success ? _renderSuccess() : Container(),
+                // success ? _renderSuccess() : Container(),
                 SizedBox(height: errors.length > 0 || success ? 20 : 0),
                 _renderForm(),
                 SizedBox(height: 50)
