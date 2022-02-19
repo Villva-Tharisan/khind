@@ -46,7 +46,7 @@ class User {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data["customer_id"] = this.id;
     data["first_name"] = this.firstname;
-    data["flast_name"] = this.lastname;
+    data["last_name"] = this.lastname;
     data["telephone"] = this.telephone;
     data["email"] = this.email;
     data["address"] = this.address;

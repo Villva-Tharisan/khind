@@ -29,6 +29,7 @@ class _ProfileState extends State<Profile> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final toolTipKey = GlobalKey<State<Tooltip>>();
   final storage = new FlutterSecureStorage();
+  TextEditingController nameCT = new TextEditingController();
   TextEditingController mobileNoCT = new TextEditingController();
   TextEditingController emailCT = new TextEditingController();
   TextEditingController dobCT = new TextEditingController();
@@ -36,6 +37,9 @@ class _ProfileState extends State<Profile> {
   TextEditingController postCodeCT = new TextEditingController();
   TextEditingController address1CT = new TextEditingController();
   TextEditingController address2CT = new TextEditingController();
+  FocusNode focusName = new FocusNode();
+  FocusNode focusMobile = new FocusNode();
+  FocusNode focusDob = new FocusNode();
   bool isLoading = false;
   User? user;
   String errorMsg = "";
@@ -43,6 +47,7 @@ class _ProfileState extends State<Profile> {
   DateTime now = DateTime.now();
   DateTime selectedDob = DateTime(DateTime.now().year - 10);
   final textStyle = TextStyle(fontSize: 14);
+  bool canEditName = false;
   bool canEditMobile = false;
   bool canEditEmail = false;
   bool canEditDob = false;
@@ -105,14 +110,25 @@ class _ProfileState extends State<Profile> {
     if (userStorage != null) {
       User userJson = User.fromJson(jsonDecode(userStorage));
 
+      print("##USERJSON: ${jsonEncode(userJson)}");
+
       setState(() {
         user = userJson;
+
+        if (userJson.firstname != null) {
+          String nameStr = userJson.firstname!;
+
+          if (userJson.lastname != null) {
+            nameStr += ' ${userJson.lastname}';
+          }
+          nameCT.text = nameStr;
+        }
 
         if (userJson.telephone != null) {
           mobileNoCT.text = userJson.telephone!;
         }
 
-        if (userJson.telephone != null) {
+        if (userJson.email != null) {
           emailCT.text = userJson.email!;
         }
 
@@ -156,13 +172,37 @@ class _ProfileState extends State<Profile> {
     // print("#handleUpdate");
     Helpers.showAlert(context);
     // if (_formKey.currentState!.validate()) {
-    final Map<String, dynamic> map = {
-      // 'firstname': firstnameCT.text,
-      // 'lastname': lastnameCT.text,
-      // 'email': emailCT.text,
-      'telephone': mobileNoCT.text,
-      'dob': dobCT.text
-    };
+    Map<String, dynamic> mapName = {};
+    // Map<String, dynamic> tempMap = {};
+    if (field == 'Name') {
+      if (nameCT.text.contains(" ")) {
+        mapName = {
+          'firstname': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
+          'lastname': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length),
+          'first_name': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
+          'last_name': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length)
+        };
+        // tempMap = {
+        //   'first_name': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
+        //   'last_name': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length)
+        // };
+      } else {
+        mapName = {'firstname': nameCT.text};
+        // tempMap = {'firstname': nameCT.text};
+      }
+    } else {
+      mapName = {
+        'firstname': user?.firstname,
+        'lastname': user?.lastname,
+      };
+    }
+
+    final Map<String, dynamic> map = {...mapName, 'telephone': mobileNoCT.text, 'dob': dobCT.text};
+    // final Map<String, dynamic> mapStore = {
+    //   ...mapName,
+    //   'telephone': mobileNoCT.text,
+    //   'dob': dobCT.text
+    // };
     print("#MAP: $map | ID: ${user?.id}");
 
     final response = await Api.customPut(
@@ -179,47 +219,66 @@ class _ProfileState extends State<Profile> {
       errors = [];
     });
     Navigator.pop(context);
-    print("#RESP: ${jsonEncode(response)}");
+    // print("#RESP: ${jsonEncode(response)}");
     if (response != null && response['success']) {
       Helpers.showAlert(context, title: '$field successfully updated', hasAction: true,
-          onPressed: () {
+          onPressed: () async {
         // _clearTextField();
+        var newUser = jsonEncode({...user!.toJson(), ...map});
+        print('#NEWUSER: ${newUser}');
+        await storage.write(key: USER, value: newUser);
         setState(() {
           errors = [];
         });
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, 'home');
-      },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                  margin: EdgeInsets.only(left: 5),
-                  child: Text("Your profile has been successfully updated")),
-            ],
-          ));
+      });
     } else {
       if (response['error'] != null) {
         setState(() {
           isLoading = false;
-          errorMsg = "Validation failed!";
+          errorMsg = "Internal Server Error!";
 
           if (response['error'] is LinkedHashMap) {
             (response['error'] as LinkedHashMap).forEach((key, value) {
               errors.add(value);
             });
           }
+          _showSnackBar();
         });
       } else {
         setState(() {
           isLoading = false;
-          errors.add("Validation failed!");
+          errors.add("Internal Server Error!");
+          _showSnackBar();
         });
       }
     }
     // } else {
     //   Navigator.pop(context);
     // }
+  }
+
+  void _showSnackBar({defaultMsg = 'Internal Server Error'}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: errors.length > 0
+            ? Container(
+                height: 50,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: errors.map((e) => Text(e)).toList()))
+            : Text(defaultMsg),
+        duration: const Duration(milliseconds: 5000),
+        // width: MediaQuery.of(context).size.width * 0.9,
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        margin: const EdgeInsets.only(bottom: 100, left: 20, right: 20),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+      ),
+    );
   }
 
   Future<void> _selectDob(BuildContext context) async {
@@ -240,6 +299,10 @@ class _ProfileState extends State<Profile> {
         fd = '0${picked.day}';
       }
       setState(() {
+        if (!this.canEditDob) {
+          canEditDob = !this.canEditDob;
+        }
+
         selectedDob = picked;
         dobCT.text = '${picked.year}-$fm-$fd';
       });
@@ -294,7 +357,55 @@ class _ProfileState extends State<Profile> {
                     SizedBox(height: 10),
                     _renderItemContainer(Row(children: [
                       _renderLabel("Name", textStyle: TextStyles.textDefault),
-                      _renderField(val: '${user?.firstname} ${user?.lastname}')
+                      // _renderField(val: '${user?.firstname} ${user?.lastname}')
+                      Flexible(
+                          child: Row(children: [
+                        Container(
+                            width: fieldSize,
+                            child: TextFormField(
+                                autofocus: true,
+                                focusNode: focusName,
+                                enabled: canEditName,
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Please enter name';
+                                  }
+                                  return null;
+                                },
+                                controller: nameCT,
+                                onFieldSubmitted: (val) {},
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                ))),
+                        Spacer(),
+                        InkWell(
+                            onTap: () async {
+                              setState(() {
+                                canEditName = !this.canEditName;
+                              });
+                              // print(canEditMobile);
+                              if (!canEditName) {
+                                print("#MASUK1");
+                                _handleUpdate(field: 'Name');
+                              } else {
+                                print("#MASUK2");
+                                // focusName.unfocus();
+                                await Future<void>.delayed(Duration(milliseconds: 3));
+                                focusName.requestFocus();
+                              }
+                            },
+                            child: canEditName
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    child: Icon(Icons.check, color: Colors.green))
+                                : Container(
+                                    decoration: BoxDecoration(
+                                        color: AppColors.secondary,
+                                        borderRadius: BorderRadius.circular(10)),
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    child: Text("Edit", style: TextStyles.textWhiteSm)))
+                      ]))
                     ])),
                     SizedBox(height: 5),
                     _renderDivider(),
@@ -306,6 +417,7 @@ class _ProfileState extends State<Profile> {
                         Container(
                             width: fieldSize,
                             child: TextFormField(
+                                focusNode: focusMobile,
                                 enabled: canEditMobile,
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
@@ -332,6 +444,8 @@ class _ProfileState extends State<Profile> {
                               // print(canEditMobile);
                               if (!canEditMobile) {
                                 _handleUpdate(field: 'Mobile');
+                              } else {
+                                FocusScope.of(context).requestFocus(focusMobile);
                               }
                             },
                             child: canEditMobile
@@ -403,6 +517,7 @@ class _ProfileState extends State<Profile> {
                       Flexible(
                           child: Stack(children: [
                         TextFormField(
+                          focusNode: focusDob,
                           controller: dobCT,
                           enabled: canEditDob,
                           keyboardType: TextInputType.text,
