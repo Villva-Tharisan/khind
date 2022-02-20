@@ -66,15 +66,15 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    firstNameCT.text = "testD";
-    lastNameCT.text = "khind";
-    mobileNoCT.text = "0156663229";
-    emailCT.text = "testD1.khind@gmail.com";
-    dobCT.text = "1990-01-21";
-    address1CT.text = "No 44 Taman Murni";
-    address2CT.text = "Taman Murni";
-    confirmPasswordCT.text = "p455word";
-    passwordCT.text = "p455word";
+    // firstNameCT.text = "testD";
+    // lastNameCT.text = "khind";
+    // mobileNoCT.text = "0156663229";
+    // emailCT.text = "testD1.khind@gmail.com";
+    // dobCT.text = "1990-01-21";
+    // address1CT.text = "No 44 Taman Murni";
+    // address2CT.text = "Taman Murni";
+    // confirmPasswordCT.text = "p455word";
+    // passwordCT.text = "p455word";
     _init();
     _fetchStates();
     super.initState();
@@ -290,9 +290,11 @@ class _SignUpState extends State<SignUp> {
             errors = [];
             agreeTerm = false;
           });
-          Navigator.pop(context);
+          Navigator.of(context)
+            ..pop()
+            ..pop();
 
-          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+          // Navigator.pushReplacementNamed(context, 'home', arguments: 0);
           // Timer(Duration(seconds: 1),
           //     () => Navigator.pushReplacementNamed(context, 'home', arguments: 0));
         });
