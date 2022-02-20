@@ -65,11 +65,14 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                   Text('Status :'),
                   SizedBox(width: 5),
                   CustomCard(
-                      color: getColor(serviceProduct.data![index]['service_request_status']!),
+                      color: getColor(serviceProduct.data![index]
+                          ['service_request_status']!),
                       borderRadius: BorderRadius.circular(5),
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 10),
                       textStyle: TextStyles.textWhiteSm,
-                      label: serviceProduct.data![index]['service_request_status']!),
+                      label: serviceProduct.data![index]
+                          ['service_request_status']!),
                   // Container(
                   //   padding: EdgeInsets.all(10),
                   //   decoration: BoxDecoration(
@@ -104,7 +107,10 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                     color: Colors.grey.withOpacity(0.5),
                   ),
                   boxShadow: [
-                    BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                    BoxShadow(
+                        blurRadius: 5,
+                        color: Colors.grey[200]!,
+                        offset: Offset(0, 10)),
                   ],
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -113,7 +119,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                   children: [
                     Text(productWarranty.data![0].productGroupDescription!,
                         style: TextStyles.textDefaultBold),
-                    Text(productWarranty.data![0].productDescription!,
+                    Text(productWarranty.data![0].modelDescription!,
                         style: TextStyles.textDefaultBold),
                     SizedBox(height: 15),
                     Row(
@@ -125,9 +131,11 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         serviceProduct.data![index]['serial_no'] != null &&
-                                serviceProduct.data![index]['serial_no'] != "null"
+                                serviceProduct.data![index]['serial_no'] !=
+                                    "null"
                             ? Expanded(
-                                child: Text(serviceProduct.data![index]['serial_no']!),
+                                child: Text(
+                                    serviceProduct.data![index]['serial_no']!),
                               )
                             : Text("-")
                       ],
@@ -143,7 +151,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(serviceProduct.data![index]['service_type']!),
+                          child: Text(
+                              serviceProduct.data![index]['service_type']!),
                         )
                       ],
                     ),
@@ -163,20 +172,21 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                       ],
                     ),
                     SizedBox(height: 15),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: width * 0.2,
-                          child: Text('Technician'),
-                        ),
-                        SizedBox(width: 30),
-                        Expanded(
-                          child: Text(productWarranty.data![0].technicianServiceGroup!),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 15),
+                    // Row(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     Container(
+                    //       width: width * 0.2,
+                    //       child: Text('Technician'),
+                    //     ),
+                    //     SizedBox(width: 30),
+                    //     Expanded(
+                    //       child: Text(
+                    //           productWarranty.data![0].technicianServiceGroup!),
+                    //     )
+                    //   ],
+                    // ),
+                    // SizedBox(height: 15),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -187,7 +197,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         SizedBox(width: 30),
                         serviceProduct.data![index]['problem'] != null
                             ? Expanded(
-                                child: Text(serviceProduct.data![index]['problem']!),
+                                child: Text(
+                                    serviceProduct.data![index]['problem']!),
                               )
                             : Text("-")
                       ],
@@ -209,7 +220,9 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                               // borderRadius: BorderRadius.circular(5),
                               border: Border.all(color: Colors.grey[300]!),
                             ),
-                            child: Text(serviceProduct.data![index]['remarks'] ?? 'null'),
+                            child: Text(serviceProduct.data![index]
+                                    ['remarks'] ??
+                                'null'),
                           ),
                         )
                       ],
@@ -219,7 +232,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
               ),
               SizedBox(height: 15),
 
-              if (serviceProduct.data![index]['service_request_status']! == 'Pending Collection')
+              if (serviceProduct.data![index]['service_request_status']! ==
+                  'Pending Collection')
                 //     'Collected')
 
                 Padding(
@@ -242,13 +256,15 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                       ShippingAddress? newAddress;
 
                       if (response['data'] != null) {
-                        var shipAddress = (response['data']['addresses'] as List)
-                            .map((i) => ShippingAddress.fromJson(i))
-                            .toList();
+                        var shipAddress =
+                            (response['data']['addresses'] as List)
+                                .map((i) => ShippingAddress.fromJson(i))
+                                .toList();
 
                         if (response['data']['address_id'] != null) {
                           shipAddress.forEach((elem) {
-                            if (response['data']['address_id'] == elem.addressId) {
+                            if (response['data']['address_id'] ==
+                                elem.addressId) {
                               newAddress = elem;
                             }
                           });
@@ -263,8 +279,10 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
 
               SizedBox(height: 15),
 
-              if (serviceProduct.data![index]['service_request_status']! == 'Pending Collection' ||
-                  serviceProduct.data![index]['service_request_status']! == 'Collected')
+              if (serviceProduct.data![index]['service_request_status']! ==
+                      'Pending Collection' ||
+                  serviceProduct.data![index]['service_request_status']! ==
+                      'Collected')
                 //     'Collected')
 
                 Padding(
@@ -283,7 +301,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                   ),
                 ),
 
-              if (serviceProduct.data![index]['service_request_status']! == 'Collected')
+              if (serviceProduct.data![index]['service_request_status']! ==
+                  'Collected')
                 Column(
                   children: [
                     SizedBox(height: 20),

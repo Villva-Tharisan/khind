@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:khind/components/gradient_button.dart';
 import 'package:khind/cubit/product_model/product_model_cubit.dart';
 import 'package:khind/cubit/store/store_cubit.dart';
@@ -26,6 +27,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
 
   late DateTime purchaseDate;
   late DateTime endDate;
+  late DateTime endDateExtended;
 
   ProductWarranty? productWarranty;
 
@@ -44,7 +46,14 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
     purchase = Helpers.purchase!;
     productWarranty = Helpers.productWarranty;
     purchaseDate = DateTime.parse(purchase.purchaseDate!);
-    endDate = purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
+    // endDate =
+    //     purchaseDate.add(Duration(days: int.parse(purchase.numPeriods!) * 365));
+    endDate = Jiffy(purchaseDate)
+        .add(years: int.parse(purchase.numPeriods!))
+        .dateTime;
+
+    endDateExtended = Jiffy(endDate).add(years: 1).dateTime;
+
     serialNo.text = '';
   }
 
@@ -88,7 +97,10 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 boxShadow: [
-                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                  BoxShadow(
+                      blurRadius: 5,
+                      color: Colors.grey[200]!,
+                      offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -99,7 +111,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                     purchase.productGroupDescription!,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(purchase.modelDescription!, style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(purchase.modelDescription!,
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   // Row(
                   //   children: [
@@ -136,8 +149,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                       Text('Warranty valid until:'),
                       SizedBox(width: 5),
                       Expanded(
-                          child:
-                              Text('${purchase.warrantyDate}', style: TextStyles.textDefaultBold)),
+                          child: Text('${purchase.warrantyDate}',
+                              style: TextStyles.textDefaultBold)),
                       // Expanded(
                       //   child: Text(
                       //       '${formatDate(purchaseDate, [
@@ -174,7 +187,10 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 boxShadow: [
-                  BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                  BoxShadow(
+                      blurRadius: 5,
+                      color: Colors.grey[200]!,
+                      offset: Offset(0, 10)),
                 ],
                 borderRadius: BorderRadius.circular(7.5),
               ),
@@ -184,7 +200,9 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   Row(
                     children: [
                       Text('Purchase Date : '),
-                      Text(formatDate(purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                      Text(
+                          formatDate(
+                              purchaseDate, ['dd', '-', 'mm', '-', 'yyyy']),
                           style: TextStyles.textDefaultBold),
                     ],
                   ),
@@ -198,7 +216,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                           'mm',
                           '-',
                           'yyyy'
-                        ])} - ${formatDate(endDate.add(Duration(days: 365)), [
+                        ])} - ${formatDate(endDateExtended, [
                           'dd',
                           '-',
                           'mm',
@@ -213,10 +231,10 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
               ),
             ),
 
-            productWarranty!.data![0].extendedWarrantyCharge1Yr != "0"
+            productWarranty!.data![0].extendedWarrantyCost != "0"
                 ? SizedBox(height: 20)
                 : Container(),
-            productWarranty!.data![0].extendedWarrantyCharge1Yr != "0"
+            productWarranty!.data![0].extendedWarrantyCost != "0"
                 ? Row(
                     children: [
                       Container(
@@ -309,9 +327,9 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             Row(children: [
               Text('Warranty Cost : '),
               SizedBox(width: 2),
-              productWarranty!.data![0].extendedWarrantyCharge1Yr != null &&
-                      productWarranty!.data![0].extendedWarrantyCharge1Yr != "null"
-                  ? Text('RM ${productWarranty!.data![0].extendedWarrantyCharge1Yr}',
+              productWarranty!.data![0].extendedWarrantyCost != null &&
+                      productWarranty!.data![0].extendedWarrantyCost != "null"
+                  ? Text('RM ${productWarranty!.data![0].extendedWarrantyCost}',
                       style: TextStyle(fontWeight: FontWeight.bold))
                   : Text("-")
             ]),
@@ -321,7 +339,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: productWarranty!.data![0].extendedWarrantyCharge1Yr != "0"
+                child: productWarranty!.data![0].extendedWarrantyCost != "0"
                     ? GradientButton(
                         height: 40,
                         child: Text(
@@ -339,7 +357,8 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                               warrantyId: purchase.warrantyRegistrationId,
                             );
 
-                            bool successSerial = await Repositories.sendSerialNumber(
+                            bool successSerial =
+                                await Repositories.sendSerialNumber(
                               serialNo: serialNo.text,
                               warrantyId: purchase.warrantyRegistrationId,
                             );
@@ -355,9 +374,11 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                                   DialogButton(
                                     child: Text(
                                       "Okay",
-                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
                                     ),
-                                    onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                                    onPressed: () => Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
                                       'home',
                                       (route) => false,
                                       arguments: 0,
@@ -381,10 +402,14 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                         height: 40,
                         child: Text(
                           "Apply",
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                         gradient: LinearGradient(
-                            colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
+                            colors: <Color>[
+                              Colors.grey[300]!,
+                              Colors.grey[300]!
+                            ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter),
                         onPressed: () {},
