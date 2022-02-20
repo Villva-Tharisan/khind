@@ -117,11 +117,11 @@ class _SignInState extends State<SignIn> {
                 newResp['telephone'] != null ? newResp['telephone'] : "",
           };
 
-          print("##MAP REST: $mapRest");
+          // print("##MAP REST: $mapRest");
           final respRest = await Api.bearerPost('provider/register_user.php',
               isCms: true, queryParams: mapRest);
 
-          print("##RESP REST: ${jsonEncode(respRest)}");
+          // print("##RESP REST: ${jsonEncode(respRest)}");
 
           if (respRest['success']) {
             await storage.write(key: USER, value: jsonEncode(newResp));
