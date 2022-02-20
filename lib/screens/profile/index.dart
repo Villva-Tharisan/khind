@@ -706,7 +706,7 @@ class _ProfileState extends State<Profile> {
                     hasCancel: true, onPressed: () async {
                   var response = await Api.bearerPost('logout');
 
-                  print("#LOGOUT RESPONSE: $response");
+                  // print("#LOGOUT RESPONSE: $response");
                   await storage.delete(key: IS_AUTH);
 
                   Navigator.pop(context);
