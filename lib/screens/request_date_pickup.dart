@@ -108,7 +108,16 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
       if (addressId != null) {
         newAddress =
             shipAddress.where((e) => e.addressId == addressId).toList().first;
-
+        if (_states == null ||
+            _states
+                    .where((element) =>
+                        element.state!.toLowerCase() ==
+                        newAddress!.state!.toLowerCase())
+                    .toList()
+                    .length ==
+                0) {
+          return;
+        }
         var currentState = _states
             .where((element) =>
                 element.state!.toLowerCase() ==
@@ -117,6 +126,14 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
             .first;
 
         await this.fetchCities(currentState.stateId!);
+        if (_cities == null ||
+            _cities
+                    .where((element) => element.city == newAddress!.city)
+                    .toList()
+                    .length ==
+                0) {
+          return;
+        }
 
         var currentCity = _cities
             .where((element) =>
