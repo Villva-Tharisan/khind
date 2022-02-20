@@ -207,7 +207,7 @@ class Purchase {
     this.lastDateOfEmployment = json["last_date_of_employment"];
     this.managerEmployeeCode = json["manager_employee_code"];
     this.lastLoginDatetime = json["last_login_datetime"];
-    this.storeName = json["store_name"];
+    this.storeName = json["store_id"];
     this.bpStatus = json["bp_status"];
     var purchaseDate = DateFormat('yyyy-MM-dd').parse(this.purchaseDate!);
     this.purchaseDateFormat = DateFormat('dd-MM-yyyy')
