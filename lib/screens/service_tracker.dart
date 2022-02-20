@@ -124,7 +124,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                 arguments: state.serviceProduct);
                                           },
                                           child: Container(
-                                            height: height * 0.1,
+                                            height: height * 0.15,
                                             decoration: BoxDecoration(
                                               border: Border.all(width: 0.1),
                                               color: Colors.white,
@@ -156,6 +156,31 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                                 ['model_description']!,
                                                             style: TextStyles.textDefaultBold,
                                                           ),
+                                                        ),
+                                                        SizedBox(height: 5),
+                                                        Align(
+                                                          alignment: Alignment.centerLeft,
+                                                          child: Text(
+                                                            state.serviceProduct.data![index]
+                                                                        ['product_model'] !=
+                                                                    null
+                                                                ? state.serviceProduct.data![index]
+                                                                    ['product_model']!
+                                                                : "",
+                                                            style: TextStyles.textDefaultBold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        Align(
+                                                          alignment: Alignment.centerLeft,
+                                                          child: Row(children: [
+                                                            Text("Ticket No. : "),
+                                                            Text(
+                                                              state.serviceProduct.data![index]
+                                                                  ['ticket_no']!,
+                                                              style: TextStyles.textDefault,
+                                                            )
+                                                          ]),
                                                         ),
                                                         SizedBox(height: 10),
                                                         Row(

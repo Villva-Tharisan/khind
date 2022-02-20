@@ -40,8 +40,7 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
 
     var payload = {
       "service_type": _requestServiceArgument.serviceType,
-      "warranty_registration_id":
-          _requestServiceArgument.purchase.warrantyRegistrationId,
+      "warranty_registration_id": _requestServiceArgument.purchase.warrantyRegistrationId,
       "product_id": _requestServiceArgument.purchase.productId,
       "problem_id": _requestServiceArgument.serviceProblem!.problemId,
       "user_id": _requestServiceArgument.purchase.userId,
@@ -64,24 +63,24 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
     queryParams = queryParams.substring(0, queryParams.length - 1);
     // print(queryParams);
 
-    final response = await Api.basicPost(
-        'provider/create_service_request.php$queryParams',
-        isCms: true);
+    final response =
+        await Api.basicPost('provider/create_service_request.php$queryParams', isCms: true);
 
     if (response['success']) {
       Helpers.showAlert(context,
-          title: 'You have successfully request service',
+          title:
+              'You have successfully submitted for a service request. You will be contacted shortly',
           hasAction: true, onPressed: () {
         Navigator.pop(context);
         Navigator.of(context).pushNamedAndRemoveUntil(
           'home',
           (route) => false,
-          arguments: 2,
+          arguments: 3,
         );
       });
     } else {
-      Helpers.showAlert(context,
-          title: 'Failed to request service', hasAction: true, onPressed: () {
+      Helpers.showAlert(context, title: 'Failed to request service', hasAction: true,
+          onPressed: () {
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, 'home');
       });
@@ -136,10 +135,7 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
@@ -147,7 +143,7 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _requestServiceArgument.purchase.productGroup!,
+                  _requestServiceArgument.purchase.productGroupDescription!,
                   overflow: TextOverflow.visible,
                   style: TextStyle(
                       // height: 2,
@@ -188,10 +184,7 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
@@ -244,8 +237,7 @@ class _ReviewHomeVisitState extends State<ReviewHomeVisit> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.50,
-                      child: Text(
-                          _requestServiceArgument.serviceProblem!.problem!),
+                      child: Text(_requestServiceArgument.serviceProblem!.problem!),
                     )
                   ],
                 ),

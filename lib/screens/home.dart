@@ -105,7 +105,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           children: [
             Icon(
               icons[index]['icon'] as IconData,
-              size: 12,
+              size: 25,
               color: color,
             ),
             SizedBox(height: 4),
@@ -157,15 +157,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.all(2),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // SizedBox(height: 5),
-                    // Image(image: AssetImage('assets/images/logo_sm.png')),
-                    Icon(Icons.add, size: 50),
-                    // SizedBox(height: 2),
-                    // Text("E-Warranty", style: TextStyle(fontSize: 6))
-                  ])),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                // SizedBox(height: 5),
+                // Image(image: AssetImage('assets/images/logo_sm.png')),
+                Icon(Icons.add, size: 50),
+                // SizedBox(height: 2),
+                // Text("E-Warranty", style: TextStyle(fontSize: 6))
+              ])),
           onPressed: () {
             setState(() {
               // tabIdx = 5;

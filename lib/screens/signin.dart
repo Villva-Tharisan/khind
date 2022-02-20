@@ -69,7 +69,6 @@ class _SignInState extends State<SignIn> {
       });
 
       // print("#LOGIN RESP: ${jsonEncode(response)}");
-
       if (response?.length > 0) {
         if (response['error'] != null) {
           if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
@@ -91,9 +90,34 @@ class _SignInState extends State<SignIn> {
           await storage.write(key: IS_AUTH, value: "1");
           var newResp = response['data'];
           newResp['email'] = emailCT.text;
-          await storage.write(key: USER, value: jsonEncode(newResp));
-          Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+
+          print('#NEWRESP: ${jsonEncode(newResp)}');
+
+          final Map<String, dynamic> mapRest = {
+            'first_name': newResp['firstname'] != null ? newResp['firstname'] : "",
+            'last_name': newResp['lastname'] != null ? newResp['lastname'] : "",
+            'email': newResp['email'],
+            'date_of_birth': newResp['dob'] != null ? newResp['dob'] : "",
+            'telephone': newResp['telephone'] != null ? newResp['telephone'] : "",
+          };
+
+          print("##MAP REST: $mapRest");
+          final respRest =
+              await Api.bearerPost('provider/register_user.php', isCms: true, queryParams: mapRest);
+
+          print("##RESP REST: ${jsonEncode(respRest)}");
+
+          if (respRest['success']) {
+            await storage.write(key: USER, value: jsonEncode(newResp));
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+          } else {
+            setState(() {
+              isLoading = false;
+              errorMsg = "Either server error or incorrect credentials";
+              Navigator.pop(context);
+            });
+          }
         }
       } else {
         setState(() {

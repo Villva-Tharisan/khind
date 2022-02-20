@@ -108,8 +108,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
             ),
             height: height,
             child: FutureBuilder(
-              future: Repositories.getProduct(
-                  productModel: widget.arguments['productModel']),
+              future: Repositories.getProduct(productModel: widget.arguments['productModel']),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   ProductWarranty productWarranty =
@@ -253,8 +252,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                   child: Text('Purchase Date '),
                                 ),
                                 Text(
-                                  formatDate(choosenDate,
-                                      ['dd', '-', 'mm', '-', 'yyyy']),
+                                  formatDate(choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(width: 10),
@@ -269,8 +267,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                       initialDate: DateTime.now(),
                                       firstDate: DateTime(2000, 1),
                                       lastDate: DateTime.now(),
-                                      initialEntryMode:
-                                          DatePickerEntryMode.calendar,
+                                      initialEntryMode: DatePickerEntryMode.calendar,
                                     );
 
                                     if (chosen != null) {
@@ -354,8 +351,7 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                     child: GestureDetector(
                                         behavior: HitTestBehavior.opaque,
                                         onTap: () {
-                                          final dynamic _toolTip =
-                                              toolTipKey.currentState;
+                                          final dynamic _toolTip = toolTipKey.currentState;
                                           _toolTip.ensureTooltipVisible();
                                         },
                                         child: Icon(
@@ -395,11 +391,9 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                             Row(
                               children: [
                                 ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.green),
+                                  style: ElevatedButton.styleFrom(primary: Colors.green),
                                   onPressed: () async {
-                                    FilePickerResult? result =
-                                        await FilePicker.platform.pickFiles(
+                                    FilePickerResult? result = await FilePicker.platform.pickFiles(
                                       type: FileType.custom,
                                       allowedExtensions: [
                                         'jpg',
@@ -568,15 +562,14 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                 email = emailTEC.text;
                               }
                               await Repositories.registerEwarranty(
-                                email: email,
-                                productModel:
-                                    productWarranty.data![0].productModel!,
-                                quantity: '$quantity',
-                                purchaseDate: formatDate(choosenDate,
-                                    ['yyyy', '-', 'mm', '-', 'dd']),
-                                referralCode: ref.text,
-                                receiptFile: receiptFile,
-                              );
+                                  email: email,
+                                  productModel: productWarranty.data![0].productModel!,
+                                  quantity: '$quantity',
+                                  purchaseDate:
+                                      formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                                  referralCode: ref.text,
+                                  receiptFile: receiptFile,
+                                  store: chosenStore != null ? chosenStore! : "");
 
                               // print(ref.text);
                               // FormData formData = new FormData.from({
@@ -595,11 +588,9 @@ class _EwarrantyProductState extends State<EwarrantyProduct> {
                                   DialogButton(
                                     child: Text(
                                       "Okay",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 20),
+                                      style: TextStyle(color: Colors.white, fontSize: 20),
                                     ),
-                                    onPressed: () => Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
+                                    onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
                                       'home',
                                       (route) => false,
                                       arguments: 0,

@@ -277,8 +277,8 @@ class _SignUpState extends State<SignUp> {
 
       final respRest =
           await Api.bearerPost('provider/register_user.php', isCms: true, queryParams: mapRest);
-      print("#SIGNUP REST: ${jsonEncode(respRest['data'])}");
-      print("#SIGNUP RESPONSE: ${jsonEncode(response['data'])}");
+      // print("#SIGNUP REST: ${jsonEncode(respRest['data'])}");
+      // print("#SIGNUP RESPONSE: ${jsonEncode(response['data'])}");
 
       if (respRest['success']) {
         await storage.write(key: IS_AUTH, value: "1");

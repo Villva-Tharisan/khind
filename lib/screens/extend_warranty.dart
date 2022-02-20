@@ -55,7 +55,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     // double height = MediaQuery.of(context).size.height;
-    print("##COST: ${productWarranty!.data![0].extendedWarrantyCharge1Yr}");
+    // print("##COST: ${productWarranty!.data![0].extendedWarrantyCharge1Yr}");
     return Scaffold(
       // appBar: AppBar(
       //   title: Text('Extend Warranty'),
@@ -100,37 +100,37 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(purchase.modelDescription!, style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(height: 30),
-                  Row(
-                    children: [
-                      Text('Serial Number:'),
-                      SizedBox(width: 10),
-                      Text(purchase.serialNo != null ? purchase.serialNo.toString() : "-"),
-                      // Expanded(
-                      //   child: DropdownButton<String>(
-                      //     items: productModel
-                      //         .map<DropdownMenuItem<String>>((String value) {
-                      //       return DropdownMenuItem<String>(
-                      //         value: value,
-                      //         child: Text(
-                      //           value,
-                      //           overflow: TextOverflow.ellipsis,
-                      //           maxLines: 2,
-                      //         ),
-                      //       );
-                      //     }).toList(),
-                      //     isExpanded: true,
-                      //     value: chosenProductModel,
-                      //     onChanged: (value) {
-                      //       setState(() {
-                      //         chosenProductModel = value.toString();
-                      //       });
-                      //     },
-                      //   ),
-                      // ),
-                    ],
-                  ),
                   SizedBox(height: 10),
+                  // Row(
+                  //   children: [
+                  //     Text('Serial Number:'),
+                  //     SizedBox(width: 10),
+                  //     Text(purchase.serialNo != null ? purchase.serialNo.toString() : "-"),
+                  //     // Expanded(
+                  //     //   child: DropdownButton<String>(
+                  //     //     items: productModel
+                  //     //         .map<DropdownMenuItem<String>>((String value) {
+                  //     //       return DropdownMenuItem<String>(
+                  //     //         value: value,
+                  //     //         child: Text(
+                  //     //           value,
+                  //     //           overflow: TextOverflow.ellipsis,
+                  //     //           maxLines: 2,
+                  //     //         ),
+                  //     //       );
+                  //     //     }).toList(),
+                  //     //     isExpanded: true,
+                  //     //     value: chosenProductModel,
+                  //     //     onChanged: (value) {
+                  //     //       setState(() {
+                  //     //         chosenProductModel = value.toString();
+                  //     //       });
+                  //     //     },
+                  //     //   ),
+                  //     // ),
+                  //   ],
+                  // ),
+                  // SizedBox(height: 10),
                   Row(
                     children: [
                       Text('Warranty valid until:'),
@@ -255,6 +255,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                   builder: (context, state) {
                     if (state is StoreLoaded) {
                       String storeName = '-';
+                      // print("STORE: ${state.store.data}");
 
                       for (var i = 0; i < state.store.data!.length; i++) {
                         if (purchase.storeId == state.store.data![i].storeId) {
