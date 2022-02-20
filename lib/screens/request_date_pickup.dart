@@ -80,8 +80,14 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   Future<void> fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
 
+    var allowedStates = ['WP PUTRAJAYA', 'WP KUALA LUMPUR', 'SELANGOR'];
+
     var states =
         (response['states'] as List).map((i) => States.fromJson(i)).toList();
+
+    states = states
+        .where((element) => allowedStates.contains(element.state))
+        .toList();
 
     states.insert(
         0,
@@ -278,7 +284,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
           Container(
             height: MediaQuery.of(context).size.height * 0.3,
             child: SfDateRangePicker(
-              minDate: DateTime.now(),
+              minDate: DateTime.now().add(Duration(days: 2)),
               maxDate: _maxDate,
               selectableDayPredicate: (DateTime date) {
                 if (date.weekday == DateTime.saturday ||

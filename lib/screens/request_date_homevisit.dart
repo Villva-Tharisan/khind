@@ -81,9 +81,14 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
 
   Future<void> fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
+    var allowedStates = ['WP PUTRAJAYA', 'WP KUALA LUMPUR', 'SELANGOR'];
 
     var states =
         (response['states'] as List).map((i) => States.fromJson(i)).toList();
+
+    states = states
+        .where((element) => allowedStates.contains(element.state))
+        .toList();
 
     states.insert(
         0,
