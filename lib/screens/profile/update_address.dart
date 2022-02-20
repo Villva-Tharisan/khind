@@ -174,17 +174,23 @@ class _UpdateAddressState extends State<UpdateAddress> {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> mapO2O = {
-        'address_1': address1CT.text,
-        'address_': address2CT.text,
-        'zone_id': state.stateId,
-        'company': "",
-        'city': city.city,
-        'postcode': postcode.postcode,
-        'country': "Malaysia",
-        'country_id': "129",
-        "default": "1"
+        'address': [
+          {
+            'firstname': widget.user?.firstname,
+            'lastname': widget.user?.lastname,
+            'address_1': address1CT.text,
+            'address_2': address2CT.text,
+            'zone_id': state.stateId,
+            'company': "",
+            'city': city.city,
+            'postcode': postcode.postcode,
+            'country': "Malaysia",
+            'country_id': "129",
+            "default": "1"
+          }
+        ]
       };
-      print("#MAP: $mapO2O");
+      print("#MAPO20: $mapO2O | USER: ${widget.user?.id}");
       final respO2O = await Api.customPut('customers/${widget.user?.id}',
           headers: <String, String>{
             'Content-Type': 'application/json',
@@ -196,13 +202,15 @@ class _UpdateAddressState extends State<UpdateAddress> {
 
       if (respO2O != null && respO2O['success']) {
         final Map<String, dynamic> map = {
-          'address_line1': address1CT.text,
-          'address_line2': address2CT.text,
+          'address_line_1': address1CT.text,
+          'address_line_2': address2CT.text,
           'zone_id': state.stateId,
           'city_id': city.cityId,
           'postcode_id': postcode.id,
           'email': widget.user?.email
         };
+
+        print("#MAP: $map");
 
         final response =
             await Api.bearerPost('provider/update_address.php', queryParams: map, isCms: true);

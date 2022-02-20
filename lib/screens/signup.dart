@@ -235,10 +235,11 @@ class _SignUpState extends State<SignUp> {
       'address_1': address1CT.text,
       'address_2': address2CT.text,
       'postcode': postcode.postcode,
-      'city': city?.cityId,
+      'city': city?.city,
       'zone_id': state?.stateId,
       'country_id': '129',
       'telephone': mobileNoCT.text,
+      'date_of_birth': dobCT.text,
       'password': passwordCT.text,
       'confirm': confirmPasswordCT.text,
       'company': "",
@@ -246,11 +247,11 @@ class _SignUpState extends State<SignUp> {
       'agree': 1
     };
 
-    // print("#MAPO2O: $map");
+    print("#MAPO2O: $map");
     // await _validateToken();
     await _fetchOauth();
 
-    final response = await Api.bearerPost('register_user.php', params: jsonEncode(map));
+    final response = await Api.bearerPost('register', params: jsonEncode(map));
     setState(() {
       isLoading = true;
       errorMsg = "";
@@ -276,7 +277,8 @@ class _SignUpState extends State<SignUp> {
 
       final respRest =
           await Api.bearerPost('provider/register_user.php', isCms: true, queryParams: mapRest);
-      // print("#RESP REST: ${jsonEncode(response['data'])}");
+      print("#SIGNUP REST: ${jsonEncode(respRest['data'])}");
+      print("#SIGNUP RESPONSE: ${jsonEncode(response['data'])}");
 
       if (respRest['success']) {
         await storage.write(key: IS_AUTH, value: "1");

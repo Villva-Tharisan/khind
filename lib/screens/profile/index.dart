@@ -110,7 +110,7 @@ class _ProfileState extends State<Profile> {
     if (userStorage != null) {
       User userJson = User.fromJson(jsonDecode(userStorage));
 
-      print("##USERJSON: ${jsonEncode(userJson)}");
+      // print("##USERJSON: ${jsonEncode(userJson)}");
 
       setState(() {
         user = userJson;
@@ -182,30 +182,28 @@ class _ProfileState extends State<Profile> {
           'first_name': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
           'last_name': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length)
         };
-        // tempMap = {
-        //   'first_name': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
-        //   'last_name': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length)
-        // };
       } else {
-        mapName = {'firstname': nameCT.text};
-        // tempMap = {'firstname': nameCT.text};
+        mapName = {'firstname': nameCT.text, 'first_name': nameCT.text};
       }
     } else {
       mapName = {
         'firstname': user?.firstname,
         'lastname': user?.lastname,
+        'first_name': user?.firstname,
+        'last_name': user?.lastname,
       };
     }
 
-    final Map<String, dynamic> map = {...mapName, 'telephone': mobileNoCT.text, 'dob': dobCT.text};
-    // final Map<String, dynamic> mapStore = {
-    //   ...mapName,
-    //   'telephone': mobileNoCT.text,
-    //   'dob': dobCT.text
-    // };
-    print("#MAP: $map | ID: ${user?.id}");
+    final Map<String, dynamic> map = {
+      ...mapName,
+      'telephone': mobileNoCT.text,
+      'dob': dobCT.text,
+      'email': user?.email,
+      'date_of_birth': dobCT.text
+    };
+    print("#MAP: $map | USER: ${jsonEncode(user)}");
 
-    final response = await Api.customPut(
+    final respO2O = await Api.customPut(
       'customers/${user?.id}',
       headers: <String, String>{
         'Content-Type': 'application/json',
@@ -220,27 +218,32 @@ class _ProfileState extends State<Profile> {
     });
     Navigator.pop(context);
     // print("#RESP: ${jsonEncode(response)}");
-    if (response != null && response['success']) {
-      Helpers.showAlert(context, title: '$field successfully updated', hasAction: true,
-          onPressed: () async {
-        // _clearTextField();
-        var newUser = jsonEncode({...user!.toJson(), ...map});
-        print('#NEWUSER: ${newUser}');
-        await storage.write(key: USER, value: newUser);
-        setState(() {
-          errors = [];
+    if (respO2O != null && respO2O['success']) {
+      final respRest =
+          await Api.bearerPost('provider/register_user.php', queryParams: map, isCms: true);
+      print("#RESP: $respRest");
+      if (respRest != null && respRest['success']) {
+        Helpers.showAlert(context, title: '$field successfully updated', hasAction: true,
+            onPressed: () async {
+          // _clearTextField();
+          var newUser = jsonEncode({...user!.toJson(), ...map});
+          print('#NEWUSER: ${newUser}');
+          await storage.write(key: USER, value: newUser);
+          setState(() {
+            errors = [];
+          });
+          Navigator.pop(context);
+          // Navigator.pushReplacementNamed(context, 'home');
         });
-        Navigator.pop(context);
-        // Navigator.pushReplacementNamed(context, 'home');
-      });
+      }
     } else {
-      if (response['error'] != null) {
+      if (respO2O['error'] != null) {
         setState(() {
           isLoading = false;
           errorMsg = "Internal Server Error!";
 
-          if (response['error'] is LinkedHashMap) {
-            (response['error'] as LinkedHashMap).forEach((key, value) {
+          if (respO2O['error'] is LinkedHashMap) {
+            (respO2O['error'] as LinkedHashMap).forEach((key, value) {
               errors.add(value);
             });
           }

@@ -43,7 +43,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
     final Map<String, dynamic> map = {'email': emailCT.text};
     final response = await Api.bearerPost('forgotten', params: jsonEncode(map));
-
+    print("#RESP: ${jsonEncode(response)}");
     Navigator.pop(context);
 
     setState(() {
