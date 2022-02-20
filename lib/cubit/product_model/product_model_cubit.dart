@@ -26,7 +26,7 @@ class ProductModelCubit extends Cubit<ProductModelState> {
 
     for (var i = 0; i < product.data!.length; i++) {
       // print(product.data![i]['product_id']);
-      productList.add(product.data![i]['product_description']!);
+      productList.add(product.data![i]['product_model']!);
       productDesc.add(product.data![i]['model_description']!);
       productModel.add(product.data![i]['product_model']!);
     }
