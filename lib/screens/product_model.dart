@@ -325,7 +325,8 @@ class _ProductModelState extends State<ProductModel> {
                       SizedBox(
                         height: 15,
                       ),
-
+                      // Text(
+                      //     "TEST: ${purchase?.extendedEwarrantyCost} | ${Helpers.purchase!.statusCode}"),
                       if (Helpers.purchase!.statusCode != '2' &&
                           purchase?.extendedEwarrantyCost != "0")
                         GradientButton(

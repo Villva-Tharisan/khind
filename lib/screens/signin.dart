@@ -32,10 +32,10 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    emailCT.text = 'khindtest1@gmail.com';
-    passwordCT.text = 'Abcd@1234';
-    // emailCT.text = 'khindcustomerservice@gmail.com';
-    // passwordCT.text = 'Khindanshin118';
+    // emailCT.text = 'khindtest1@gmail.com';
+    // passwordCT.text = 'Abcd@1234';
+    emailCT.text = 'khindcustomerservice@gmail.com';
+    passwordCT.text = 'Khindanshin118';
 
     super.initState();
     _loadVersion();
@@ -60,6 +60,7 @@ class _SignInState extends State<SignIn> {
   void _handleSignIn() async {
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
+      await Api.bearerPost('logout');
       final Map<String, dynamic> map = {'email': emailCT.text, 'password': passwordCT.text};
       final response = await Api.bearerPost('login', params: jsonEncode(map));
 
@@ -71,12 +72,20 @@ class _SignInState extends State<SignIn> {
       // print("#LOGIN RESP: ${jsonEncode(response)}");
       if (response?.length > 0) {
         if (response['error'] != null) {
-          if (response['error'].runtimeType == String && response['error'] == 'invalid_token') {
-            setState(() {
-              isLoading = false;
-              errorMsg = "Token has expired. Please restart the app";
-              Navigator.pop(context);
-            });
+          if (response['error'].runtimeType == String) {
+            if (response['error'] == 'invalid_token') {
+              setState(() {
+                isLoading = false;
+                errorMsg = "Token has expired. Please restart the app";
+                Navigator.pop(context);
+              });
+            } else {
+              setState(() {
+                isLoading = false;
+                errorMsg = response['error'];
+                Navigator.pop(context);
+              });
+            }
           } else {
             setState(() {
               isLoading = false;
@@ -91,21 +100,22 @@ class _SignInState extends State<SignIn> {
           var newResp = response['data'];
           newResp['email'] = emailCT.text;
 
-          // print('#NEWRESP: ${jsonEncode(newResp)}');
+          // // print('#NEWRESP: ${jsonEncode(newResp)}');
 
           final Map<String, dynamic> mapRest = {
             'first_name': newResp['firstname'] != null ? newResp['firstname'] : "",
             'last_name': newResp['lastname'] != null ? newResp['lastname'] : "",
-            'email': newResp['email'],
+            'email': newResp['email'] != null ? newResp['email'].toLowerCase() : '',
             'date_of_birth': newResp['dob'] != null ? newResp['dob'] : "",
+            // 'date_of_birth': "01-01-1998",
             'telephone': newResp['telephone'] != null ? newResp['telephone'] : "",
           };
 
-          // print("##MAP REST: $mapRest");
+          print("##MAP REST: $mapRest");
           final respRest =
               await Api.bearerPost('provider/register_user.php', isCms: true, queryParams: mapRest);
 
-          // print("##RESP REST: ${jsonEncode(respRest)}");
+          print("##RESP REST: ${jsonEncode(respRest)}");
 
           if (respRest['success']) {
             await storage.write(key: USER, value: jsonEncode(newResp));
