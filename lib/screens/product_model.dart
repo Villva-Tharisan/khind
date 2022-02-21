@@ -383,8 +383,11 @@ class _ProductModelState extends State<ProductModel> {
                       ),
                       // Text(
                       //     "TEST: ${purchase?.extendedEwarrantyCost} | ${Helpers.purchase!.statusCode}"),
-                      if (Helpers.purchase!.statusCode != '2' &&
-                          purchase?.extendedEwarrantyCost == "0")
+                      // if (Helpers.purchase!.statusCode != '2' &&
+                      //     purchase?.extendedEwarrantyCost == "0")
+                      if (purchase?.extendedEwarrantyCost != "0" &&
+                          purchase?.extendedEwarrantyCost != "null" &&
+                          purchase?.extendedEwarrantyCost != null)
                         GradientButton(
                           height: 40,
                           child: Text(
@@ -398,10 +401,8 @@ class _ProductModelState extends State<ProductModel> {
                           onPressed: () {
                             Navigator.of(context).pushNamed('ExtendWarranty');
                           },
-                        ),
-
-                      if (Helpers.purchase!.statusCode == '2' ||
-                          purchase?.extendedEwarrantyCost == "0")
+                        )
+                      else
                         GradientButton(
                           hideShadow: true,
                           height: 40,
