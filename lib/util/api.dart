@@ -134,8 +134,15 @@ class Api {
         response = await client.post(url.toUri());
       }
       print('Bearer Response: ${response.body}');
+      try {
+        json.decode(response.body) as Map<String, dynamic>;
 
-      return jsonDecode(response.body);
+        return json.decode(response.body);
+      } on FormatException catch (e) {
+        return response.body;
+        // return {'success': false};
+        // print('The provided string is not valid JSON');
+      }
     } catch (e) {
       print('Post error : $e');
       return {'error': e.toString()};

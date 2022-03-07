@@ -13,6 +13,7 @@ import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
+import 'package:khind/util/key.dart';
 
 class UpdateAddress extends StatefulWidget {
   final User? user;
@@ -45,6 +46,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
   String version = "";
   String buildNo = "";
   ShippingAddress? consumerAddress;
+  String? token;
 
   @override
   void initState() {
@@ -52,6 +54,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
     _fetchStates();
     // _fetchConsumerAddress();
     // print("#USER: ${jsonEncode(widget.user)}");
+    _loadToken();
     super.initState();
   }
 
@@ -79,6 +82,14 @@ class _UpdateAddressState extends State<UpdateAddress> {
         // city= newAddress!.city!;
       }
     }
+  }
+
+  _loadToken() async {
+    final accessToken = await storage.read(key: TOKEN);
+
+    setState(() {
+      token = accessToken;
+    });
   }
 
   // Future<void> _fetchConsumerAddress() async {
@@ -190,7 +201,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
           }
         ]
       };
-      print("#MAPO20: $mapO2O | USER: ${widget.user?.id}");
+      // print("#MAPO20: $mapO2O | USER: ${widget.user?.id}");
       final respO2O = await Api.customPut('customers/${widget.user?.id}',
           headers: <String, String>{
             'Content-Type': 'application/json',
@@ -198,7 +209,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
           },
           params: jsonEncode(mapO2O));
 
-      print("#RESP020: $respO2O");
+      // print("#RESP020: $respO2O");
 
       if (respO2O != null && respO2O['success']) {
         final Map<String, dynamic> map = {
@@ -207,7 +218,8 @@ class _UpdateAddressState extends State<UpdateAddress> {
           'zone_id': state.stateId,
           'city_id': city.cityId,
           'postcode_id': postcode.id,
-          'email': widget.user?.email
+          'email': widget.user?.email,
+          'token': token
         };
 
         print("#MAP: $map");

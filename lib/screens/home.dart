@@ -153,7 +153,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         child: FloatingActionButton(
           // clipBehavior: Clip.hardEdge,
           elevation: 8,
-          backgroundColor: AppColors.secondary,
+          backgroundColor: AppColors.primary,
           child: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.all(2),

@@ -12,17 +12,17 @@ class BgPainter extends CustomPainter {
     final width = size.width;
     Paint paint = Paint();
 
-    Path mainBg = Path();
-    mainBg.addRect(Rect.fromLTRB(0, 0, width, size.height));
-    paint.color = Colors.grey.shade300;
-    canvas.drawPath(mainBg, paint);
+    // Path mainBg = Path();
+    // mainBg.addRect(Rect.fromLTRB(0, 0, width, size.height));
+    // paint.color = Colors.white;
+    // canvas.drawPath(mainBg, paint);
 
     Path rectPath = Path();
-    rectPath.addRect(Rect.fromLTRB(0, 0, width, height * 0.5));
+    rectPath.addRect(Rect.fromLTRB(0, height, width, height / 2));
     paint.color = AppColors.primary;
     canvas.drawPath(rectPath, paint);
 
-    paint.color = AppColors.primary;
+    paint.color = Colors.white;
     Path path = Path();
     path.moveTo(0, height / 2);
     path.quadraticBezierTo(width / 2, height * 0.6, width, height * 0.5);

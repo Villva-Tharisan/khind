@@ -63,20 +63,22 @@ class _SignUpState extends State<SignUp> {
   List<Postcode> postcodes = [];
   City? city;
   States? state;
+  String? token;
 
   @override
   void initState() {
-    // firstNameCT.text = "testD";
-    // lastNameCT.text = "khind";
-    // mobileNoCT.text = "0156663229";
-    // emailCT.text = "testD1.khind@gmail.com";
-    // dobCT.text = "1990-01-21";
-    // address1CT.text = "No 44 Taman Murni";
-    // address2CT.text = "Taman Murni";
-    // confirmPasswordCT.text = "p455word";
-    // passwordCT.text = "p455word";
+    firstNameCT.text = "testEA1";
+    lastNameCT.text = "khind";
+    mobileNoCT.text = "0156663229";
+    emailCT.text = "testEA1.khind@gmail.com";
+    dobCT.text = "1990-01-21";
+    address1CT.text = "No 44 Taman Murni";
+    address2CT.text = "Taman Murni";
+    confirmPasswordCT.text = "p455word";
+    passwordCT.text = "p455word";
     _init();
     _fetchStates();
+    _loadToken();
     super.initState();
   }
 
@@ -102,6 +104,14 @@ class _SignUpState extends State<SignUp> {
     passwordCT.dispose();
     confirmPasswordCT.dispose();
     super.dispose();
+  }
+
+  _loadToken() async {
+    final accessToken = await storage.read(key: TOKEN);
+
+    setState(() {
+      token = accessToken;
+    });
   }
 
   _fetchStates() async {
@@ -270,10 +280,11 @@ class _SignUpState extends State<SignUp> {
         'address_line2': address2CT.text,
         'zone_id': state?.stateId,
         'city_id': city?.cityId,
-        'postcode_id': postcode.id
+        'postcode_id': postcode.id,
+        'token': token
       };
 
-      // print("#MAP REST: $map");
+      print("#MAP REST: $map");
 
       final respRest =
           await Api.bearerPost('provider/register_user.php', isCms: true, queryParams: mapRest);

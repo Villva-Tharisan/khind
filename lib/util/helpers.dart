@@ -27,7 +27,7 @@ class Helpers {
               okTitle != null ? okTitle : "Ok",
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-            color: AppColors.secondary,
+            color: AppColors.primary,
             onPressed: () => onPressed(),
             // gradient: LinearGradient(
             //     colors: [Color.fromRGBO(116, 116, 191, 1.0), Color.fromRGBO(52, 138, 199, 1.0)]
@@ -72,8 +72,7 @@ class Helpers {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(),
-            Container(
-                margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
+            Container(margin: EdgeInsets.only(left: 5), child: Text("Loading...")),
           ],
         ),
       );
@@ -102,18 +101,13 @@ class Helpers {
     );
   }
 
-  static AppBar customAppBar(
-      BuildContext ctx, GlobalKey<ScaffoldState> scaffoldKey,
-      {String title = "",
-      Widget? customTitle,
-      bool isBack = false,
-      hasActions = true}) {
+  static AppBar customAppBar(BuildContext ctx, GlobalKey<ScaffoldState> scaffoldKey,
+      {String title = "", Widget? customTitle, bool isBack = false, hasActions = true}) {
     return AppBar(
       leadingWidth: isBack ? 50 : 20,
       leading: isBack
           ? IconButton(
-              icon: Icon(Icons.arrow_back_ios_new,
-                  color: AppColors.tertiery, size: 20),
+              icon: Icon(Icons.arrow_back_ios_new, color: AppColors.secondary, size: 20),
               onPressed: () {
                 if (!isBack) {
                   scaffoldKey.currentState!.openDrawer();
@@ -130,23 +124,20 @@ class Helpers {
           ? customTitle
           : Text(
               title,
-              style: TextStyle(
-                  color: AppColors.tertiery, fontWeight: FontWeight.bold),
+              style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.bold),
             ),
       actions: hasActions
           ? [
-              new IconButton(
-                  color: Colors.transparent,
-                  icon: Image(
-                      image: AssetImage('assets/icons/location.png'),
-                      height: 22),
-                  onPressed: () {
+              new InkWell(
+                  // color: Colors.transparent,
+                  // icon: Image(image: AssetImage('assets/icons/location.png'), height: 22),
+                  child: Icon(Icons.location_pin, size: 27, color: AppColors.secondary),
+                  onTap: () {
                     Navigator.pushNamed(ctx, 'service_locator');
                   }),
               SizedBox(width: 5),
               new InkWell(
-                  child: Icon(Icons.account_circle_rounded,
-                      size: 27, color: AppColors.tertiery),
+                  child: Icon(Icons.account_circle_rounded, size: 27, color: AppColors.secondary),
                   onTap: () {
                     Navigator.pushNamed(ctx, 'profile');
                   }),
@@ -171,10 +162,7 @@ class Helpers {
 
   static Future<void> launchInWebViewOrVC(String url) async {
     if (!await launch(url,
-        forceSafariVC: true,
-        forceWebView: true,
-        enableDomStorage: true,
-        enableJavaScript: true)) {
+        forceSafariVC: true, forceWebView: true, enableDomStorage: true, enableJavaScript: true)) {
       throw 'Could not launch $url';
     }
   }
