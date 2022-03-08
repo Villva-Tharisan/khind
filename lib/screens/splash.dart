@@ -27,12 +27,12 @@ class SplashScreenState extends State<SplashScreen> {
 
   _redirect() async {
     String? isAuth = await storage.read(key: IS_AUTH);
-    Navigator.pushReplacementNamed(context, 'home', arguments: 0);
-    // if (isAuth != null && isAuth == '1') {
-    //   Navigator.pushReplacementNamed(context, 'home', arguments: 0);
-    // } else {
-    //   Navigator.pushReplacementNamed(context, 'signin');
-    // }
+    // Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+    if (isAuth != null && isAuth == '1') {
+      Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+    } else {
+      Navigator.pushReplacementNamed(context, 'signin');
+    }
   }
 
   _fetchOauth() async {

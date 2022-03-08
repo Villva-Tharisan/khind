@@ -67,15 +67,15 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    firstNameCT.text = "testEA1";
-    lastNameCT.text = "khind";
-    mobileNoCT.text = "0156663229";
-    emailCT.text = "testEA1.khind@gmail.com";
-    dobCT.text = "1990-01-21";
-    address1CT.text = "No 44 Taman Murni";
-    address2CT.text = "Taman Murni";
-    confirmPasswordCT.text = "p455word";
-    passwordCT.text = "p455word";
+    // firstNameCT.text = "testEA1";
+    // lastNameCT.text = "khind";
+    // mobileNoCT.text = "0156663229";
+    // emailCT.text = "testEA1.khind@gmail.com";
+    // dobCT.text = "1990-01-21";
+    // address1CT.text = "No 44 Taman Murni";
+    // address2CT.text = "Taman Murni";
+    // confirmPasswordCT.text = "p455word";
+    // passwordCT.text = "p455word";
     _init();
     _fetchStates();
     _loadToken();
