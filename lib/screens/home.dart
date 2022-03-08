@@ -5,8 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:khind/cubit/product_group/product_group_cubit.dart';
+import 'package:khind/cubit/product_model/product_model_cubit.dart';
+import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/cubit/tracker/tracker_cubit.dart';
 import 'package:khind/screens/ewarranty.dart';
+import 'package:khind/screens/ewarranty_product_manual.dart';
 import 'package:khind/screens/mall.dart';
 import 'package:khind/screens/mypurchases.dart';
 import 'package:khind/screens/news_landing.dart';
@@ -25,7 +29,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final List<Widget> _tabs = [
     const NewsLanding(),
     const MyPurchases(),
-    const Ewarranty(),
+    // const Ewarranty(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ProductGroupCubit(),
+        ),
+        BlocProvider(
+          create: (context) => ProductModelCubit(),
+        ),
+        BlocProvider(
+          create: (context) => StoreCubit(),
+        ),
+      ],
+      child: EwarrantyProductManual(isFromWarranty: false),
+    ),
     BlocProvider(
       create: (context) => TrackerCubit(),
       child: ServiceTracker(),

@@ -27,12 +27,12 @@ class SplashScreenState extends State<SplashScreen> {
 
   _redirect() async {
     String? isAuth = await storage.read(key: IS_AUTH);
-
-    if (isAuth != null && isAuth == '1') {
-      Navigator.pushReplacementNamed(context, 'home', arguments: 0);
-    } else {
-      Navigator.pushReplacementNamed(context, 'signin');
-    }
+    Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+    // if (isAuth != null && isAuth == '1') {
+    //   Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+    // } else {
+    //   Navigator.pushReplacementNamed(context, 'signin');
+    // }
   }
 
   _fetchOauth() async {
@@ -43,12 +43,9 @@ class SplashScreenState extends State<SplashScreen> {
 
       if (response['expires_in'] != null) {
         var curDate = new DateTime.now();
-        var expDate =
-            curDate.add(Duration(milliseconds: response['expires_in']));
+        var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
 
-        await storage.write(
-            key: TOKEN_EXPIRY,
-            value: (expDate.millisecondsSinceEpoch).toString());
+        await storage.write(key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
       }
     }
   }
@@ -88,11 +85,9 @@ class SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        _renderHeader(),
-        SizedBox(height: 50),
-        _renderLoading()
-      ])),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [_renderHeader(), SizedBox(height: 50), _renderLoading()])),
     );
   }
 }
@@ -102,8 +97,8 @@ class SignInPageRoute extends CupertinoPageRoute {
 
   // OPTIONAL IF YOU WISH TO HAVE SOME EXTRA ANIMATION WHILE ROUTING
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
+  Widget buildPage(
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
     return new ScaleTransition(scale: animation, child: new SignIn());
     // return new FadeTransition(opacity: animation, child: new SignIn());
   }

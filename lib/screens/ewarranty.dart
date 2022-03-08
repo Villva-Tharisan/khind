@@ -83,10 +83,7 @@ class _EwarrantyState extends State<Ewarranty> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter),
               onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  'EwarrantyProductManual',
-                );
+                Navigator.pushNamed(context, 'EwarrantyProductManual', arguments: true);
               },
             ),
           ),

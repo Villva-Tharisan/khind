@@ -14,7 +14,7 @@ class AuthInterceptor implements InterceptorContract {
       String username = FlutterConfig.get("CLIENT_USERNAME");
       String password = FlutterConfig.get("CLIENT_PASSWORD") as String;
       String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
-      // print('BasicAuth $basicAuth');
+      print('BasicAuth $basicAuth');
       data.headers['Content-Type'] = 'application/json';
       data.headers['authorization'] = basicAuth;
     } catch (e) {
