@@ -51,7 +51,7 @@ class Helpers {
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             onPressed: () => onPressed(),
-            color: AppColors.secondary,
+            color: AppColors.primary,
           )
         ];
       }

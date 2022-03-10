@@ -84,7 +84,7 @@ class _ReviewState extends State<Review> {
         Navigator.of(context).pushNamedAndRemoveUntil(
           'home',
           (route) => false,
-          arguments: 3,
+          arguments: 2,
         );
       });
     } else {

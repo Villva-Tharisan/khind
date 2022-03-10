@@ -33,8 +33,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    // emailCT.text = 'khindtest1@gmail.com';
-    // passwordCT.text = 'Abcd@1234';
+    emailCT.text = 'khindtest1@gmail.com';
+    passwordCT.text = 'Abcd@1234';
     // emailCT.text = 'khindcustomerservice@gmail.com';
     // passwordCT.text = 'Khindanshin118';
 
@@ -131,7 +131,7 @@ class _SignInState extends State<SignIn> {
           // if (respRest['success'] != null) {
           await storage.write(key: USER, value: jsonEncode(newResp));
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+          Navigator.pushReplacementNamed(context, 'home', arguments: 3);
           // } else {
           //   setState(() {
           //     isLoading = false;
@@ -273,7 +273,8 @@ class _SignInState extends State<SignIn> {
               title: "Activate My E-Warranty",
               onPressed: () {
                 Helpers.fromSignIn = true;
-                Navigator.of(context).pushNamed('ewarranty');
+                // Navigator.of(context).pushNamed('ewarranty');
+                Navigator.pushNamed(context, 'EwarrantyProductManual', arguments: true);
               },
             ),
           ],

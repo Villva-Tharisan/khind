@@ -76,10 +76,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         page = 1;
         tabIdx = 1;
       } else if (widget.data == 2) {
-        page = 2;
+        page = 3;
         tabIdx = 2;
       } else if (widget.data == 3) {
-        page = 3;
+        page = 4;
         tabIdx = 3;
       }
     }

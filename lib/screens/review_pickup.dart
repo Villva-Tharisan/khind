@@ -75,7 +75,7 @@ class _ReviewPickupState extends State<ReviewPickup> {
         Navigator.of(context).pushNamedAndRemoveUntil(
           'home',
           (route) => false,
-          arguments: 3,
+          arguments: 2,
         );
       });
     } else {

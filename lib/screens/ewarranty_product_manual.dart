@@ -564,7 +564,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       Row(
                         children: [
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(primary: AppColors.secondary),
+                            style: ElevatedButton.styleFrom(primary: AppColors.primary),
                             onPressed: () async {
                               FilePickerResult? result = await FilePicker.platform.pickFiles(
                                 type: FileType.custom,
