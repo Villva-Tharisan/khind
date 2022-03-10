@@ -31,7 +31,7 @@ class SplashScreenState extends State<SplashScreen> {
     if (isAuth != null && isAuth == '1') {
       Navigator.pushReplacementNamed(context, 'home', arguments: 0);
     } else {
-      Navigator.pushReplacementNamed(context, 'signin');
+      Navigator.pushReplacementNamed(context, 'landing');
     }
   }
 

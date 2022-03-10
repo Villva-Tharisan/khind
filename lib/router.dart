@@ -9,11 +9,13 @@ import 'package:khind/cubit/state/state_cubit.dart';
 import 'package:khind/cubit/store/store_cubit.dart';
 import 'package:khind/models/news.dart';
 import 'package:khind/models/service_product.dart';
+import 'package:khind/screens/landing.dart';
 import 'package:khind/screens/ewarranty.dart';
 import 'package:khind/screens/ewarranty_product.dart';
 import 'package:khind/screens/ewarranty_product_manual.dart';
 import 'package:khind/screens/ewarranty_scanner.dart';
 import 'package:khind/screens/extend_warranty.dart';
+import 'package:khind/screens/mall.dart';
 import 'package:khind/screens/news_landing.dart';
 import 'package:khind/screens/news_detail.dart';
 import 'package:khind/screens/product_model.dart';
@@ -47,6 +49,8 @@ class AppRouter {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(builder: (_) => SplashScreen());
+      case 'landing':
+        return MaterialPageRoute(builder: (_) => Landing());
       case 'signin':
         return MaterialPageRoute(builder: (_) => SignIn());
       case 'signup':

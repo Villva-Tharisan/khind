@@ -131,7 +131,7 @@ class _SignInState extends State<SignIn> {
           // if (respRest['success'] != null) {
           await storage.write(key: USER, value: jsonEncode(newResp));
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home', arguments: 3);
+          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
           // } else {
           //   setState(() {
           //     isLoading = false;
@@ -255,21 +255,27 @@ class _SignInState extends State<SignIn> {
               ),
             ),
             SizedBox(height: 30),
-            RoundButton(height: 40, title: "Sign In", onPressed: () => _handleSignIn()),
+            RoundButton(
+                height: 40,
+                title: "Sign In",
+                titleStyles: TextStyles.textDefault,
+                onPressed: () => _handleSignIn()),
             SizedBox(height: 15),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Expanded(child: Divider(color: AppColors.greyLight)),
               Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Text("OR",
-                      style: TextStyles.textDefault.copyWith(fontWeight: FontWeight.w500)),
-                  decoration: BoxDecoration(
-                      color: Colors.grey[300], borderRadius: BorderRadius.circular(15))),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child:
+                    Text("OR", style: TextStyles.textDefault.copyWith(fontWeight: FontWeight.w500)),
+                // decoration: BoxDecoration(
+                //     color: Colors.grey[300], borderRadius: BorderRadius.circular(15))
+              ),
               Expanded(child: Divider(color: AppColors.greyLight)),
             ]),
             SizedBox(height: 15),
             RoundButton(
-              color: AppColors.tertiery,
+              color: AppColors.primary,
+              titleStyles: TextStyles.textDefault,
               title: "Activate My E-Warranty",
               onPressed: () {
                 Helpers.fromSignIn = true;
@@ -300,7 +306,7 @@ class _SignInState extends State<SignIn> {
       Text("New to KHIND?", style: TextStyles.textDefault),
       SizedBox(height: 3),
       InkWell(
-          child: Text("REGISTER", style: TextStyles.textDefaultBold.copyWith(fontSize: 18)),
+          child: Text("JOIN US HERE", style: TextStyles.textDefaultBold.copyWith(fontSize: 18)),
           onTap: () {
             setState(() {
               errorMsg = "";
