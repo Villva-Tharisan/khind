@@ -52,7 +52,7 @@ class AppRouter {
       case 'landing':
         return MaterialPageRoute(builder: (_) => Landing());
       case 'signin':
-        return MaterialPageRoute(builder: (_) => SignIn());
+        return MaterialPageRoute(builder: (_) => SignIn(data: arguments as int));
       case 'signup':
         return MaterialPageRoute(builder: (_) => SignUp());
       case 'forgot':

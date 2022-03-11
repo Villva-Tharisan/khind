@@ -35,10 +35,10 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
   late CurvedAnimation curve;
   List icons = [
+    {'icon': CupertinoIcons.shopping_cart, 'label': 'Mall'},
     {'icon': CupertinoIcons.list_bullet, 'label': 'News'},
     {'icon': CupertinoIcons.purchased, 'label': 'My Purchases'},
-    {'icon': CupertinoIcons.time, 'label': 'Service Tracker'},
-    {'icon': CupertinoIcons.shopping_cart, 'label': 'Mall'},
+    {'icon': CupertinoIcons.time, 'label': 'Service Tracker'}
   ];
 
   @override
@@ -99,13 +99,24 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
           ],
         ));
       },
-      gapWidth: 60,
+      gapWidth: 50,
       backgroundColor: AppColors.primary,
       gapLocation: GapLocation.center,
       notchSmoothness: NotchSmoothness.defaultEdge,
       activeIndex: tabIdx,
       onTap: (index) {
-        Navigator.pushNamed(context, 'signin');
+        print("IDX: $index");
+        int param = 0;
+        if (index == 0) {
+          param = 3;
+        } else if (index == 1) {
+          param = 0;
+        } else if (index == 2) {
+          param = 1;
+        } else if (index == 3) {
+          param = 2;
+        }
+        Navigator.pushReplacementNamed(context, 'signin', arguments: param);
       },
     );
   }

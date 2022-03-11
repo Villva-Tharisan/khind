@@ -13,6 +13,9 @@ import 'package:khind/util/helpers.dart';
 import 'package:khind/util/key.dart';
 
 class SignIn extends StatefulWidget {
+  int? data;
+  SignIn({this.data});
+
   @override
   _SignInState createState() => _SignInState();
 }
@@ -131,7 +134,9 @@ class _SignInState extends State<SignIn> {
           // if (respRest['success'] != null) {
           await storage.write(key: USER, value: jsonEncode(newResp));
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+          print('#PAGEINDEX:${widget.data}');
+          Navigator.pushReplacementNamed(context, 'home',
+              arguments: widget.data != null ? widget.data : 0);
           // } else {
           //   setState(() {
           //     isLoading = false;

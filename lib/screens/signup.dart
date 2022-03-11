@@ -243,7 +243,7 @@ class _SignUpState extends State<SignUp> {
       'firstname': firstNameCT.text,
       'lastname': lastNameCT.text,
       'address_1': address1CT.text,
-      'address_2': address2CT.text,
+      'address_2': address2CT.text != null ? address2CT.text : "",
       'postcode': postcode.postcode,
       'city': city?.city,
       'zone_id': state?.stateId,
@@ -598,12 +598,6 @@ class _SignUpState extends State<SignUp> {
               TextFormField(
                 focusNode: focusAddress2,
                 keyboardType: TextInputType.text,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter address 2';
-                  }
-                  return null;
-                },
                 controller: address2CT,
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
