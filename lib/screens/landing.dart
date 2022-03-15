@@ -105,17 +105,6 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
       notchSmoothness: NotchSmoothness.defaultEdge,
       activeIndex: tabIdx,
       onTap: (index) {
-        // print("IDX: $index");
-        // int param = 0;
-        // if (index == 0) {
-        //   param = 0;
-        // } else if (index == 1) {
-        //   param = 1;
-        // } else if (index == 2) {
-        //   param = 3;
-        // } else if (index == 3) {
-        //   param = 4;
-        // }
         Navigator.pushReplacementNamed(context, 'signin', arguments: index);
       },
     );
@@ -166,33 +155,43 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
             )));
   }
 
+  Future<bool> _onWillPop() async {
+    setState(() {
+      tabIdx = 0;
+      page = 0;
+    });
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     // print("###PAGE: $page");
-    return Scaffold(
-      body: _renderBody(),
-      floatingActionButton: ScaleTransition(
-        scale: animation,
-        child: FloatingActionButton(
-          // clipBehavior: Clip.hardEdge,
-          elevation: 8,
-          backgroundColor: AppColors.primary,
-          child: Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(2),
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Icon(Icons.add, size: 50),
-              ])),
-          onPressed: () {
-            // Navigator.pushNamed(context, 'EwarrantyProductManual', arguments: true);
-            Navigator.pushReplacementNamed(context, 'signin', arguments: 4);
-            // _animationController.reset();
-            // _animationController.forward();
-          },
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _renderBottomNav(),
-    );
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          body: _renderBody(),
+          floatingActionButton: ScaleTransition(
+            scale: animation,
+            child: FloatingActionButton(
+              // clipBehavior: Clip.hardEdge,
+              elevation: 8,
+              backgroundColor: AppColors.primary,
+              child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(2),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Icon(Icons.add, size: 50),
+                  ])),
+              onPressed: () {
+                // Navigator.pushNamed(context, 'EwarrantyProductManual', arguments: true);
+                Navigator.pushReplacementNamed(context, 'signin', arguments: 4);
+                // _animationController.reset();
+                // _animationController.forward();
+              },
+            ),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: _renderBottomNav(),
+        ));
   }
 }

@@ -173,39 +173,50 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
+  Future<bool> _onWillPop() async {
+    setState(() {
+      isTabPress = true;
+      tabIdx = 0;
+      page = 0;
+    });
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     // print("###PAGE: $page");
-    return Scaffold(
-      body: IndexedStack(children: _tabs, index: page),
-      floatingActionButton: ScaleTransition(
-        scale: animation,
-        child: FloatingActionButton(
-          // clipBehavior: Clip.hardEdge,
-          elevation: 8,
-          backgroundColor: AppColors.primary,
-          child: Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(2),
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                // SizedBox(height: 5),
-                // Image(image: AssetImage('assets/images/logo_sm.png')),
-                Icon(Icons.add, size: 50),
-                // SizedBox(height: 2),
-                // Text("E-Warranty", style: TextStyle(fontSize: 6))
-              ])),
-          onPressed: () {
-            setState(() {
-              isTabPress = true;
-              page = 2;
-            });
-            _animationController.reset();
-            _animationController.forward();
-          },
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _renderBottomNav(),
-    );
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          body: IndexedStack(children: _tabs, index: page),
+          floatingActionButton: ScaleTransition(
+            scale: animation,
+            child: FloatingActionButton(
+              // clipBehavior: Clip.hardEdge,
+              elevation: 8,
+              backgroundColor: AppColors.primary,
+              child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(2),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    // SizedBox(height: 5),
+                    // Image(image: AssetImage('assets/images/logo_sm.png')),
+                    Icon(Icons.add, size: 50),
+                    // SizedBox(height: 2),
+                    // Text("E-Warranty", style: TextStyle(fontSize: 6))
+                  ])),
+              onPressed: () {
+                setState(() {
+                  isTabPress = true;
+                  page = 2;
+                });
+                _animationController.reset();
+                _animationController.forward();
+              },
+            ),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: _renderBottomNav(),
+        ));
   }
 }

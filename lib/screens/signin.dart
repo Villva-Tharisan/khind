@@ -36,8 +36,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    emailCT.text = 'khindtest1@gmail.com';
-    passwordCT.text = 'Abcd@1234';
+    // emailCT.text = 'khindtest1@gmail.com';
+    // passwordCT.text = 'Abcd@1234';
     // emailCT.text = 'khindcustomerservice@gmail.com';
     // passwordCT.text = 'Khindanshin118';
 
@@ -134,7 +134,7 @@ class _SignInState extends State<SignIn> {
           // if (respRest['success'] != null) {
           await storage.write(key: USER, value: jsonEncode(newResp));
           Navigator.pop(context);
-          print('#PAGEINDEX:${widget.data}');
+          // print('#PAGEINDEX:${widget.data}');
           Navigator.pushReplacementNamed(context, 'home',
               arguments: widget.data != null ? widget.data : 0);
           // } else {
