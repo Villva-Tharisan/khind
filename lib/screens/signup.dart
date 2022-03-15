@@ -304,10 +304,6 @@ class _SignUpState extends State<SignUp> {
           Navigator.of(context)
             ..pop()
             ..pop();
-
-          // Navigator.pushReplacementNamed(context, 'home', arguments: 0);
-          // Timer(Duration(seconds: 1),
-          //     () => Navigator.pushReplacementNamed(context, 'home', arguments: 0));
         });
       } else {
         setState(() {

@@ -705,7 +705,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
                               'home',
                               (route) => false,
-                              arguments: 1,
+                              arguments: 2,
                             ),
                             width: 120,
                           )

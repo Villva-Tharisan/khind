@@ -221,19 +221,18 @@ class _ProfileState extends State<Profile> {
     if (respO2O != null && respO2O['success']) {
       final respRest =
           await Api.bearerPost('provider/register_user.php', queryParams: map, isCms: true);
-      print("#RESP: $respRest");
+      // print("#RESP: $respRest");
       if (respRest != null && respRest['success']) {
         Helpers.showAlert(context, title: '$field successfully updated', hasAction: true,
             onPressed: () async {
           // _clearTextField();
           var newUser = jsonEncode({...user!.toJson(), ...map});
-          print('#NEWUSER: ${newUser}');
+          // print('#NEWUSER: ${newUser}');
           await storage.write(key: USER, value: newUser);
           setState(() {
             errors = [];
           });
           Navigator.pop(context);
-          // Navigator.pushReplacementNamed(context, 'home');
         });
       }
     } else {

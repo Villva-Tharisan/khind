@@ -27,9 +27,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final List<Widget> _tabs = [
+    const Mall(),
     const NewsLanding(),
-    const MyPurchases(),
-    // const Ewarranty(),
     MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -44,11 +43,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ],
       child: EwarrantyProductManual(isFromWarranty: false),
     ),
+    const MyPurchases(),
     BlocProvider(
       create: (context) => TrackerCubit(),
       child: ServiceTracker(),
-    ),
-    const Mall()
+    )
   ];
   final autoSizeGroup = AutoSizeGroup();
   int page = 0;
@@ -58,30 +57,41 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
   late CurvedAnimation curve;
   List icons = [
+    {'icon': CupertinoIcons.shopping_cart, 'label': 'Mall'},
     {'icon': CupertinoIcons.list_bullet, 'label': 'News'},
     {'icon': CupertinoIcons.purchased, 'label': 'My Purchases'},
-    // {'icon': CupertinoIcons.home, 'label': 'Mall'},
     {'icon': CupertinoIcons.time, 'label': 'Service Tracker'},
-    {'icon': CupertinoIcons.shopping_cart, 'label': 'Mall'},
   ];
+  bool isTabPress = false;
 
   @override
   void initState() {
     // print("##WIDGET DATA: ${widget.data}");
     if (widget.data != null) {
+      bool triggerTabPress = false;
       if (widget.data == 0) {
+        triggerTabPress = true;
         page = 0;
         tabIdx = 0;
       } else if (widget.data == 1) {
+        triggerTabPress = true;
         page = 1;
         tabIdx = 1;
       } else if (widget.data == 2) {
+        triggerTabPress = true;
         page = 3;
         tabIdx = 2;
       } else if (widget.data == 3) {
+        triggerTabPress = true;
         page = 4;
         tabIdx = 3;
+      } else if (widget.data == 4) {
+        page = 2;
+        tabIdx = 0;
       }
+      setState(() {
+        isTabPress = triggerTabPress;
+      });
     }
 
     _animationController = AnimationController(
@@ -115,7 +125,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       // leftCornerRadius: 32,
       // rightCornerRadius: 32,
       tabBuilder: (int index, bool isActive) {
-        final color = isActive ? AppColors.secondary : AppColors.tertiery;
+        // print("IDX: $index |${widget.data}");
+        final color = isActive && isTabPress ? AppColors.secondary : AppColors.tertiery;
         return Container(
             child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -123,7 +134,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           children: [
             Icon(
               icons[index]['icon'] as IconData,
-              size: 18,
+              size: 20,
               color: color,
             ),
             SizedBox(height: 4),
@@ -154,6 +165,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           newPage = 4;
         }
         setState(() {
+          isTabPress = true;
           tabIdx = index;
           page = newPage;
         });
@@ -184,7 +196,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ])),
           onPressed: () {
             setState(() {
-              // tabIdx = 5;
+              isTabPress = true;
               page = 2;
             });
             _animationController.reset();

@@ -117,10 +117,7 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                     color: Colors.grey.withOpacity(0.5),
                   ),
                   boxShadow: [
-                    BoxShadow(
-                        blurRadius: 5,
-                        color: Colors.grey[200]!,
-                        offset: Offset(0, 10)),
+                    BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                   ],
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -167,12 +164,10 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                                   controller: address1,
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey),
+                                      borderSide: BorderSide(color: Colors.grey),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.black),
+                                      borderSide: BorderSide(color: Colors.black),
                                     ),
                                     // border: OutlineInputBorder(),
                                   ),
@@ -194,12 +189,10 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                                   controller: address2,
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey),
+                                      borderSide: BorderSide(color: Colors.grey),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.black),
+                                      borderSide: BorderSide(color: Colors.black),
                                     ),
                                     // border: OutlineInputBorder(),
                                   ),
@@ -227,18 +220,11 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
 
                                     // });
                                     if (consumerAddress?.state != null) {
-                                      for (var i = 0;
-                                          i < state.state.length;
-                                          i++) {
-                                        if (state.state[i].state!
-                                                .toLowerCase() ==
-                                            consumerAddress!.state!
-                                                .toLowerCase()) {
-                                          chosenState =
-                                              (state.state[i].stateId);
-                                          context
-                                              .read<CityCubit>()
-                                              .fetchCities(chosenState!);
+                                      for (var i = 0; i < state.state.length; i++) {
+                                        if (state.state[i].state!.toLowerCase() ==
+                                            consumerAddress!.state!.toLowerCase()) {
+                                          chosenState = (state.state[i].stateId);
+                                          context.read<CityCubit>().fetchCities(chosenState!);
 
                                           break;
                                         }
@@ -265,9 +251,7 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                                           //reset city
                                           chosenCity = null;
                                           chosenPostcode = null;
-                                          context
-                                              .read<CityCubit>()
-                                              .fetchCities(value!);
+                                          context.read<CityCubit>().fetchCities(value!);
                                         },
                                       ),
                                     );
@@ -285,14 +269,13 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                             builder: (context, state) {
                               if (state is CityLoaded) {
                                 if (consumerAddress?.city != null) {
-                                  for (var i = 0;
-                                      i < state.cities.length;
-                                      i++) {
+                                  for (var i = 0; i < state.cities.length; i++) {
                                     if (state.cities[i].city!.toLowerCase() ==
                                         consumerAddress!.city!.toLowerCase()) {
                                       chosenCity = (state.cities[i].cityId);
-                                      context.read<PostcodeCubit>().getPostcode(
-                                          state.cities[i].city!, chosenState!);
+                                      context
+                                          .read<PostcodeCubit>()
+                                          .getPostcode(state.cities[i].city!, chosenState!);
 
                                       break;
                                     }
@@ -305,8 +288,7 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                                       width: width * 0.25,
                                       child: Text(
                                         'City : ',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     SizedBox(width: 20),
@@ -328,19 +310,15 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
 
                                           String cityName = '';
 
-                                          for (var i = 0;
-                                              i < state.cities.length;
-                                              i++) {
-                                            if (state.cities[i].cityId ==
-                                                value) {
+                                          for (var i = 0; i < state.cities.length; i++) {
+                                            if (state.cities[i].cityId == value) {
                                               cityName = state.cities[i].city!;
                                             }
                                           }
 
                                           context
                                               .read<PostcodeCubit>()
-                                              .getPostcode(
-                                                  cityName, chosenState!);
+                                              .getPostcode(cityName, chosenState!);
 
                                           //reset
                                           chosenPostcode = null;
@@ -363,13 +341,9 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                             builder: (context, state) {
                               if (state is PostcodeLoaded) {
                                 if (consumerAddress?.postcode != null) {
-                                  for (var i = 0;
-                                      i < state.postcode.length;
-                                      i++) {
-                                    if (state.postcode[i].toString() ==
-                                        consumerAddress!.postcode) {
-                                      chosenPostcode =
-                                          (state.postcode[i].toString());
+                                  for (var i = 0; i < state.postcode.length; i++) {
+                                    if (state.postcode[i].toString() == consumerAddress!.postcode) {
+                                      chosenPostcode = (state.postcode[i].toString());
 
                                       break;
                                     }
@@ -382,8 +356,7 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                                       width: width * 0.25,
                                       child: Text(
                                         'Postcode : ',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     SizedBox(width: 20),
@@ -438,10 +411,7 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                   onPressed: () async {
                     // Navigator.pushNamed(context, 'ServiceTrackerDelivery');
                     bool status = await Repositories.sendRequestforDelivery(
-                        address1.text,
-                        address2.text,
-                        chosenCity!,
-                        chosenPostcode!);
+                        address1.text, address2.text, chosenCity!, chosenPostcode!);
 
                     if (status) {
                       Alert(
@@ -453,14 +423,12 @@ class _ServiceTrackerDeliveryState extends State<ServiceTrackerDelivery> {
                           DialogButton(
                             child: Text(
                               "Okay",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
+                              style: TextStyle(color: Colors.white, fontSize: 20),
                             ),
-                            onPressed: () =>
-                                Navigator.of(context).pushNamedAndRemoveUntil(
+                            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
                               'home',
                               (route) => false,
-                              arguments: 2,
+                              arguments: 3,
                             ),
                             width: 120,
                           )

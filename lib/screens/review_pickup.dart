@@ -75,14 +75,13 @@ class _ReviewPickupState extends State<ReviewPickup> {
         Navigator.of(context).pushNamedAndRemoveUntil(
           'home',
           (route) => false,
-          arguments: 2,
+          arguments: 3,
         );
       });
     } else {
       Helpers.showAlert(context, title: 'Failed to request service', hasAction: true,
           onPressed: () {
         Navigator.pop(context);
-        // Navigator.pushReplacementNamed(context, 'home');
       });
     }
   }

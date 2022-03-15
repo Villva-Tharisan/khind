@@ -82,7 +82,7 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
           children: [
             Icon(
               icons[index]['icon'] as IconData,
-              size: 25,
+              size: 20,
               color: color,
             ),
             SizedBox(height: 4),
@@ -105,18 +105,18 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
       notchSmoothness: NotchSmoothness.defaultEdge,
       activeIndex: tabIdx,
       onTap: (index) {
-        print("IDX: $index");
-        int param = 0;
-        if (index == 0) {
-          param = 3;
-        } else if (index == 1) {
-          param = 0;
-        } else if (index == 2) {
-          param = 1;
-        } else if (index == 3) {
-          param = 2;
-        }
-        Navigator.pushReplacementNamed(context, 'signin', arguments: param);
+        // print("IDX: $index");
+        // int param = 0;
+        // if (index == 0) {
+        //   param = 0;
+        // } else if (index == 1) {
+        //   param = 1;
+        // } else if (index == 2) {
+        //   param = 3;
+        // } else if (index == 3) {
+        //   param = 4;
+        // }
+        Navigator.pushReplacementNamed(context, 'signin', arguments: index);
       },
     );
   }
@@ -184,9 +184,10 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                 Icon(Icons.add, size: 50),
               ])),
           onPressed: () {
-            Navigator.pushNamed(context, 'EwarrantyProductManual', arguments: true);
-            _animationController.reset();
-            _animationController.forward();
+            // Navigator.pushNamed(context, 'EwarrantyProductManual', arguments: true);
+            Navigator.pushReplacementNamed(context, 'signin', arguments: 4);
+            // _animationController.reset();
+            // _animationController.forward();
           },
         ),
       ),
