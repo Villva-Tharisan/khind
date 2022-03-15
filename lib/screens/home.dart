@@ -123,7 +123,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           children: [
             Icon(
               icons[index]['icon'] as IconData,
-              size: 25,
+              size: 18,
               color: color,
             ),
             SizedBox(height: 4),

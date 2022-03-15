@@ -907,7 +907,7 @@ class _SignUpState extends State<SignUp> {
                           child: Container(
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: agreeTerm ? AppColors.secondary : Colors.white,
+                                color: agreeTerm ? AppColors.primary : Colors.white,
                                 border: Border.all(color: AppColors.primary, width: 1)),
                             child: Container(
                                 padding: const EdgeInsets.all(2.0),
