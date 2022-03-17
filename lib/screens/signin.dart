@@ -335,31 +335,38 @@ class _SignInState extends State<SignIn> {
         ));
   }
 
+  Future<bool> _onWillPop() async {
+    Navigator.pop(context);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
-      body: CustomPaint(
-          painter: BgPainter(),
-          child: SingleChildScrollView(
-              // physics: ClampingScrollPhysics(parent: NeverScrollableScrollPhysics()),
-              child: ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
-                  child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
-                      decoration: new BoxDecoration(color: Colors.white.withOpacity(0.0)),
-                      child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                        SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                        _renderHeader(),
-                        SizedBox(height: errorMsg != "" ? 20 : 50),
-                        errorMsg != "" ? _renderError() : Container(),
-                        _renderForm(),
-                        SizedBox(height: 10),
-                        _renderBottom(),
-                        version != "" ? Spacer() : Container(),
-                        version != "" ? _renderVersion() : Container()
-                      ]))))),
-    );
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          key: _scaffoldKey,
+          resizeToAvoidBottomInset: false,
+          body: CustomPaint(
+              painter: BgPainter(),
+              child: SingleChildScrollView(
+                  // physics: ClampingScrollPhysics(parent: NeverScrollableScrollPhysics()),
+                  child: ConstrainedBox(
+                      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
+                      child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+                          decoration: new BoxDecoration(color: Colors.white.withOpacity(0.0)),
+                          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                            _renderHeader(),
+                            SizedBox(height: errorMsg != "" ? 20 : 50),
+                            errorMsg != "" ? _renderError() : Container(),
+                            _renderForm(),
+                            SizedBox(height: 10),
+                            _renderBottom(),
+                            version != "" ? Spacer() : Container(),
+                            version != "" ? _renderVersion() : Container()
+                          ]))))),
+        ));
   }
 }

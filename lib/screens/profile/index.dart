@@ -709,8 +709,7 @@ class _ProfileState extends State<Profile> {
                   await storage.delete(key: IS_AUTH);
 
                   Navigator.pop(context);
-                  Navigator.pushNamedAndRemoveUntil(context, 'signin', (route) => false,
-                      arguments: 0);
+                  Navigator.pushNamedAndRemoveUntil(context, 'landing', (route) => false);
                 });
               })
         ]));

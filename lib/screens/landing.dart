@@ -105,7 +105,7 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
       notchSmoothness: NotchSmoothness.defaultEdge,
       activeIndex: tabIdx,
       onTap: (index) {
-        Navigator.pushReplacementNamed(context, 'signin', arguments: index);
+        Navigator.pushNamed(context, 'signin', arguments: index);
       },
     );
   }
@@ -184,7 +184,7 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                   ])),
               onPressed: () {
                 // Navigator.pushNamed(context, 'EwarrantyProductManual', arguments: true);
-                Navigator.pushReplacementNamed(context, 'signin', arguments: 4);
+                Navigator.pushNamed(context, 'signin', arguments: 4);
                 // _animationController.reset();
                 // _animationController.forward();
               },
