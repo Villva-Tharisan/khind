@@ -15,8 +15,11 @@ import 'package:khind/util/helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:http/http.dart' as http;
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:khind/models/states.dart';
 import 'dart:convert';
+
+import '../models/Postcodes.dart';
 
 class RequestDateHomeVisit extends StatefulWidget {
   Purchase? data;
@@ -37,6 +40,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
   List<States> _states = [];
   List<City> _cities = [];
   List<String> postcodes = [];
+  List<Postcodes> postcodeModels = [];
   String postcode = "";
   List<ServiceProblem> _problems = [];
   List<String> _deliveryOptions = ["Yes", "No"];
@@ -75,8 +79,48 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
     var firstDayMonth = new DateTime(date.year, date.month, 0);
     _maxDate = Jiffy(date).add(months: 1).dateTime;
     super.initState();
-    this.fetchStates();
-    this.fetchProblems();
+    _fetchMasterData();
+  }
+
+  Future<void> _fetchMasterData() async {
+    await this.fetchStates();
+    await this.fetchPostcode();
+    await this.fetchProblems();
+  }
+
+  Future<void> fetchPostcode() async {
+    final response = await Api.bearerGet('provider/postcode.php', isCms: true);
+
+    var postcodeList = (response['postcodes'] as List)
+        .map((i) => Postcodes.fromJson(i))
+        .toList();
+
+    var availableStates = _states.map((e) => e.stateId).toSet().toList();
+    var availablePostcodes =
+        postcodeList.where((e) => availableStates.contains(e.stateId)).toList();
+
+    setState(() {
+      postcodes = availablePostcodes.map((e) => e.postcode!).toList();
+      postcodeModels = availablePostcodes;
+    });
+  }
+
+  Future<void> onSelectPostcode(postcode) async {
+    var selectedPostcode =
+        postcodeModels.where((e) => e.postcode == postcode).first;
+
+    await this.fetchCities(selectedPostcode.stateId!);
+    var selectedCity =
+        _cities.where((e) => e.cityId == selectedPostcode.cityId).first;
+
+    var selectedState = _states
+        .where((element) => element.stateId == selectedPostcode.stateId)
+        .first;
+
+    setState(() {
+      city = selectedCity;
+      state = selectedState;
+    });
   }
 
   Future<void> fetchStates() async {
@@ -195,22 +239,11 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
             postcode: ""));
 
     var citySet = Set<String>();
-    var postcodeSet = Set<String>();
-    List<String> tempPostcodes = [];
     List<City> newCities = cities.where((e) => citySet.add(e.city!)).toList();
-    newCities.forEach((elem) {
-      if (elem.postcode != null) {
-        tempPostcodes.add(elem.postcode!);
-      }
-    });
-    List<String> newPostcodes =
-        tempPostcodes.where((e) => postcodeSet.add(e)).toList();
 
     setState(() {
       _cities = newCities;
       city = newCities[0];
-      postcodes = newPostcodes;
-      postcode = newPostcodes.first;
     });
   }
 
@@ -626,40 +659,39 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                       Container(
                         padding: EdgeInsets.only(top: 15),
                         width: width * 0.30,
-                        child: Text('State'),
+                        child: Text('Postcode'),
                       ),
                       SizedBox(width: 15),
                       Flexible(
                         child: Container(
                           padding: EdgeInsets.only(left: 10),
                           width: width * 0.45,
-                          child: DropdownButtonFormField<States>(
-                            items: _states.map<DropdownMenuItem<States>>((e) {
-                              return DropdownMenuItem<States>(
-                                child: Text(
-                                  e.state!,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                ),
-                                value: e,
-                              );
-                            }).toList(),
-                            isExpanded: true,
-                            value: state,
+                          child: DropdownSearch<String>(
+                            mode: Mode.DIALOG,
+                            showSearchBox: true,
+                            // showSelectedItem: true,
+                            items: postcodes,
+                            selectedItem: postcode,
                             onChanged: (value) {
                               setState(() {
-                                state = value!;
-                                this.fetchCities(value.stateId!);
+                                postcode = value!;
+                                this.onSelectPostcode(value);
                               });
                             },
                             validator: (value) {
-                              if (value!.stateId! == "")
-                                return "Please enter state";
+                              if (value == "") return "Please enter postcode";
                               return null;
                             },
+                            dropdownSearchDecoration: InputDecoration(
+                              hintText: "Select a country",
+                              contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.cyan),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      )
                     ],
                   ),
                   _cities.length > 0
@@ -693,7 +725,7 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                                   onChanged: (value) {
                                     setState(() {
                                       city = value!;
-                                      this.onSelectCity(value.postcode!);
+                                      // this.onSelectCity(value.postcode!);
                                     });
                                   },
                                   validator: (value) {
@@ -713,39 +745,37 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
                       Container(
                         padding: EdgeInsets.only(top: 15),
                         width: width * 0.30,
-                        child: Text('Postcode'),
+                        child: Text('State'),
                       ),
                       SizedBox(width: 15),
                       Flexible(
                         child: Container(
                           padding: EdgeInsets.only(left: 10),
                           width: width * 0.45,
-                          child: DropdownButtonFormField<String>(
-                            items: postcodes.map<DropdownMenuItem<String>>((e) {
-                              return DropdownMenuItem<String>(
-                                child: Text(
-                                  e,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                ),
-                                value: e,
-                              );
-                            }).toList(),
+                          child: DropdownButtonFormField<States>(
                             isExpanded: true,
-                            value: postcode,
-                            onChanged: (value) {
+                            hint: Text('State'),
+                            value: state,
+                            onChanged: (newValue) {
                               setState(() {
-                                postcode = value!;
-                                // this.onSelectCity(value.postcode!);
+                                state = newValue!;
+                                // this.fetchCities(newValue.stateId!);
                               });
                             },
+                            items: _states.map((item) {
+                              return DropdownMenuItem(
+                                child: new Text(item.state!),
+                                value: item,
+                              );
+                            }).toList(),
                             validator: (value) {
-                              if (value == "") return "Please enter postcode";
+                              if (value!.stateId! == "")
+                                return "Please enter state";
                               return null;
                             },
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],
