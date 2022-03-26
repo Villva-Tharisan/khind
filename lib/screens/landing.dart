@@ -1,22 +1,9 @@
 import 'dart:io' show Platform;
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:hexcolor/hexcolor.dart';
-import 'package:khind/cubit/product_group/product_group_cubit.dart';
-import 'package:khind/cubit/product_model/product_model_cubit.dart';
-import 'package:khind/cubit/store/store_cubit.dart';
-import 'package:khind/cubit/tracker/tracker_cubit.dart';
-import 'package:khind/screens/ewarranty.dart';
-import 'package:khind/screens/ewarranty_product_manual.dart';
-import 'package:khind/screens/mall.dart';
-import 'package:khind/screens/mypurchases.dart';
-import 'package:khind/screens/news_landing.dart';
 import 'package:khind/themes/app_colors.dart';
-import 'package:khind/screens/service_tracker.dart';
 
 class Landing extends StatefulWidget {
   int? data = 0;
@@ -35,10 +22,10 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
   late CurvedAnimation curve;
   List icons = [
-    {'icon': CupertinoIcons.shopping_cart, 'label': 'Mall'},
-    {'icon': CupertinoIcons.list_bullet, 'label': 'News'},
-    {'icon': CupertinoIcons.purchased, 'label': 'My Purchases'},
-    {'icon': CupertinoIcons.time, 'label': 'Service Tracker'}
+    {'icon': 'assets/icons/mall.png', 'label': 'Mall'},
+    {'icon': 'assets/icons/news.png', 'label': 'News'},
+    {'icon': 'assets/icons/my_purchases.png', 'label': 'My Purchases'},
+    {'icon': 'assets/icons/service_tracker.png', 'label': 'Service Tracker'}
   ];
 
   @override
@@ -80,11 +67,11 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icons[index]['icon'] as IconData,
-              size: 20,
-              color: color,
-            ),
+            Image(
+                image: AssetImage(icons[index]['icon'] as String),
+                width: 20,
+                height: 20,
+                color: color),
             SizedBox(height: 4),
             Container(
               // padding: const EdgeInsets.symmetric(horizontal: 8),

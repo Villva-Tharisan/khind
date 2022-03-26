@@ -21,7 +21,13 @@ class MyApp extends StatelessWidget {
       // Remove the debug banner
       debugShowCheckedModeBanner: false,
       title: 'Kindacode.com',
-      // theme: ThemeData(primaryColor: Colors.white),
+      theme: ThemeData(
+          fontFamily: 'Avant',
+          textTheme: TextTheme(
+              bodyText1: TextStyle(fontSize: 12.0),
+              bodyText2: TextStyle(fontSize: 12.0),
+              button: TextStyle(fontSize: 12.0) // and so on for every text style
+              )),
       initialRoute: AppRouter.initialRoute,
       onGenerateRoute: AppRouter.generateRoute,
     );

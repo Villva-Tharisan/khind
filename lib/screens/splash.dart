@@ -20,7 +20,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 2), () {
+    Timer(Duration(seconds: 3), () {
       _validateToken();
     });
   }
@@ -73,7 +73,7 @@ class SplashScreenState extends State<SplashScreen> {
     return Container(
         alignment: Alignment.center,
         child: Image(
-            image: AssetImage('assets/images/logo_text.png'),
+            image: AssetImage('assets/images/logo_new.png'),
             height: MediaQuery.of(context).size.width * 0.2));
   }
 
@@ -81,14 +81,24 @@ class SplashScreenState extends State<SplashScreen> {
     return CircularProgressIndicator(color: AppColors.primary);
   }
 
+  Widget _renderBanner() {
+    return Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(image: AssetImage("assets/images/banner.png"), fit: BoxFit.cover),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+        body: SafeArea(
+      child: Container(
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [_renderHeader(), SizedBox(height: 50), _renderLoading()])),
-    );
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [_renderHeader(), SizedBox(height: 50), _renderBanner()])),
+    ));
   }
 }
 

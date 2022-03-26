@@ -57,10 +57,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
   late CurvedAnimation curve;
   List icons = [
-    {'icon': CupertinoIcons.shopping_cart, 'label': 'Mall'},
-    {'icon': CupertinoIcons.list_bullet, 'label': 'News'},
-    {'icon': CupertinoIcons.purchased, 'label': 'My Purchases'},
-    {'icon': CupertinoIcons.time, 'label': 'Service Tracker'},
+    {'icon': 'assets/icons/mall.png', 'label': 'Mall'},
+    {'icon': 'assets/icons/news.png', 'label': 'News'},
+    {'icon': 'assets/icons/my_purchases.png', 'label': 'My Purchases'},
+    {'icon': 'assets/icons/service_tracker.png', 'label': 'Service Tracker'}
   ];
   bool isTabPress = false;
 
@@ -132,11 +132,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icons[index]['icon'] as IconData,
-              size: 20,
-              color: color,
-            ),
+            Image(
+                image: AssetImage(icons[index]['icon'] as String),
+                width: 20,
+                height: 20,
+                color: color),
             SizedBox(height: 4),
             Container(
               // padding: const EdgeInsets.symmetric(horizontal: 8),
