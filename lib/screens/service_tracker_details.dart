@@ -302,7 +302,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                 ),
 
               if (serviceProduct.data![index]['service_request_status']! ==
-                  'Collected')
+                      'Collected' ||
+                  serviceProduct.data![index]['service_type_id']! == '2')
                 Column(
                   children: [
                     SizedBox(height: 20),

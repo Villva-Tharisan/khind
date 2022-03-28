@@ -17,7 +17,9 @@ import 'package:khind/util/key.dart';
 
 class Repositories {
   static Future<String> getProduct({required String productModel}) async {
-    var url = Uri.parse(Api.endpoint + Api.GET_PRODUCT_WARRANTY + "?product_model=$productModel");
+    var url = Uri.parse(Api.endpoint +
+        Api.GET_PRODUCT_WARRANTY +
+        "?product_model=$productModel");
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
       'Authorization': Api.defaultToken,
@@ -75,7 +77,8 @@ class Repositories {
     request.fields.addAll(data);
     request.headers.addAll(authHeader);
 
-    var multipartFile = await http.MultipartFile.fromPath('receipt_file', receiptFile.path);
+    var multipartFile =
+        await http.MultipartFile.fromPath('receipt_file', receiptFile.path);
     request.files.add(multipartFile);
 
     http.StreamedResponse response = await request.send();
@@ -110,7 +113,8 @@ class Repositories {
 
     String queryString = Uri(queryParameters: queryParameters).query;
 
-    var url = Uri.parse(Api.endpoint + Api.GET_SERVICE_PRODUCT + '?' + queryString);
+    var url =
+        Uri.parse(Api.endpoint + Api.GET_SERVICE_PRODUCT + '?' + queryString);
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
       'Authorization': Api.defaultToken,
@@ -165,9 +169,11 @@ class Repositories {
     return productGroup;
   }
 
-  static Future<ProductGroupModel> getProductModel({required String productGroup}) async {
-    var url =
-        Uri.parse(Api.endpoint + Api.GET_PRODUCT_WARRANTY + "?product_group_desc=$productGroup");
+  static Future<ProductGroupModel> getProductModel(
+      {required String productGroup}) async {
+    var url = Uri.parse(Api.endpoint +
+        Api.GET_PRODUCT_WARRANTY +
+        "?product_group_desc=$productGroup");
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
       'Authorization': Api.defaultToken,
@@ -194,8 +200,9 @@ class Repositories {
   }
 
   static Future<bool> sendExtend({required String warrantyId}) async {
-    var url =
-        Uri.parse(Api.endpoint + Api.EXTEND_WARRANTY + "?warranty_registration_id=$warrantyId");
+    var url = Uri.parse(Api.endpoint +
+        Api.EXTEND_WARRANTY +
+        "?warranty_registration_id=$warrantyId");
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
       'Authorization': Api.defaultToken,
@@ -280,7 +287,21 @@ class Repositories {
     return store;
   }
 
-  static Future<List<String>> getProductModelList(List<String> productModel, String pattern) async {
+  static Future<List<String>> getProductModelList(
+      List<String> productModel, String pattern) async {
+    List<String> matchedModel = [];
+    for (var i = 0; i < productModel.length; i++) {
+      if (productModel[i].toLowerCase().contains(pattern.toLowerCase())) {
+        matchedModel.add(productModel[i]);
+      }
+    }
+    print('##MATCHMODEL: $matchedModel');
+
+    return matchedModel;
+  }
+
+  static Future<List<String>> getProductGroupList(
+      List<String> productModel, String pattern) async {
     List<String> matchedModel = [];
     for (var i = 0; i < productModel.length; i++) {
       if (productModel[i].toLowerCase().contains(pattern.toLowerCase())) {
@@ -311,7 +332,8 @@ class Repositories {
     String productId = serviceProduct.data![index]['product_id']!;
 
     //get current date
-    String currentDate = formatDate(DateTime.now(), ['yyyy', '-', 'mm', '-', 'dd']);
+    String currentDate =
+        formatDate(DateTime.now(), ['yyyy', '-', 'mm', '-', 'dd']);
 
     String getAMPM = formatDate(DateTime.now(), ['am']);
 
@@ -335,7 +357,8 @@ class Repositories {
 
     String queryString = Uri(queryParameters: queryParameters).query;
 
-    var url = Uri.parse(Api.endpoint + Api.CREATE_SERVICE_REQUEST + '?' + queryString);
+    var url = Uri.parse(
+        Api.endpoint + Api.CREATE_SERVICE_REQUEST + '?' + queryString);
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
       'Authorization': Api.defaultToken,

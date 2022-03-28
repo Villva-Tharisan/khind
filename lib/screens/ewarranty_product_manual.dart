@@ -85,11 +85,14 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
 
   TextEditingController ref = new TextEditingController();
   TextEditingController emailTEC = new TextEditingController();
+  TextEditingController productGroup = new TextEditingController();
   TextEditingController product = new TextEditingController();
 
   late File receiptFile;
 
   int? index;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -123,55 +126,387 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
               children: [
                 Text('Please provide us with your product information'),
                 SizedBox(height: 20),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(width: 0.1),
-                    boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
-                    ],
-                    borderRadius: BorderRadius.circular(7.5),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: width * 0.3,
-                            child: Text('Product Group'),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: BlocBuilder<ProductGroupCubit, ProductGroupState>(
-                              builder: (context, state) {
-                                if (state is ProductGroupLoaded) {
-                                  return DropdownButton<String>(
-                                    items: state.productModel
-                                        .map<DropdownMenuItem<String>>((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(
-                                          value,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
+                Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(width: 0.1),
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 5,
+                            color: Colors.grey[200]!,
+                            offset: Offset(0, 10)),
+                      ],
+                      borderRadius: BorderRadius.circular(7.5),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: width * 0.3,
+                              child: Text('Product Group'),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: BlocBuilder<ProductGroupCubit,
+                                  ProductGroupState>(
+                                builder: (context, state) {
+                                  if (state is ProductGroupLoaded) {
+                                    return TypeAheadField(
+                                      hideSuggestionsOnKeyboardHide: false,
+                                      textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                        controller: productGroup,
+                                        autofocus: false,
+                                        style: DefaultTextStyle.of(context)
+                                            .style
+                                            .copyWith(
+                                                fontStyle: FontStyle.italic),
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
                                         ),
-                                      );
-                                    }).toList(),
-                                    isExpanded: true,
-                                    value: chosenProductGroup,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        chosenProductGroup = value!;
-                                        chosenProductModel = null;
-                                      });
-                                      context
-                                          .read<ProductModelCubit>()
-                                          .getProductModel(productGroup: value!);
-                                      product.text = '';
-                                    },
+                                      ),
+                                      suggestionsCallback: (pattern) async {
+                                        return await Repositories
+                                            .getProductModelList(
+                                                state.productModel, pattern);
+                                      },
+                                      itemBuilder: (context, suggestion) {
+                                        // return Text(suggestion.toString());
+                                        return ListTile(
+                                          leading: Icon(Icons.shopping_cart),
+                                          title: Text(suggestion
+                                              .toString()
+                                              .toUpperCase()),
+                                          // subtitle: Text(
+                                        );
+                                      },
+                                      onSuggestionSelected: (suggestion) async {
+                                        productGroup.text =
+                                            suggestion.toString();
+                                        setState(() {
+                                          chosenProductGroup =
+                                              suggestion.toString();
+                                          chosenProductModel = null;
+                                        });
+                                        context
+                                            .read<ProductModelCubit>()
+                                            .getProductModel(
+                                                productGroup:
+                                                    suggestion.toString());
+                                        product.text = '';
+                                      },
+                                    );
+                                  } else {
+                                    return SpinKitFadingCircle(
+                                      color: Colors.black,
+                                      size: 20,
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            // Expanded(
+                            //   child: BlocBuilder<ProductGroupCubit,
+                            //       ProductGroupState>(
+                            //     builder: (context, state) {
+                            //       if (state is ProductGroupLoaded) {
+                            //         return DropdownButtonFormField<String>(
+                            //           validator: (value) {
+                            //             if (value == null || value == '') {
+                            //               return "Please select product group";
+                            //             }
+
+                            //             return null;
+                            //           },
+                            //           items: state.productModel
+                            //               .map<DropdownMenuItem<String>>(
+                            //                   (String value) {
+                            //             return DropdownMenuItem<String>(
+                            //               value: value,
+                            //               child: Text(
+                            //                 value,
+                            //                 overflow: TextOverflow.ellipsis,
+                            //                 maxLines: 2,
+                            //               ),
+                            //             );
+                            //           }).toList(),
+                            //           isExpanded: true,
+                            //           value: chosenProductGroup,
+                            //           onChanged: (value) {
+                            //             setState(() {
+                            //               chosenProductGroup = value!;
+                            //               chosenProductModel = null;
+                            //             });
+                            //             context
+                            //                 .read<ProductModelCubit>()
+                            //                 .getProductModel(
+                            //                     productGroup: value!);
+                            //             product.text = '';
+                            //           },
+                            //         );
+                            //       } else {
+                            //         return SpinKitFadingCircle(
+                            //           color: Colors.black,
+                            //           size: 20,
+                            //         );
+                            //       }
+                            //     },
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                        BlocBuilder<ProductModelCubit, ProductModelState>(
+                          builder: (context, state) {
+                            if (state is ProductModelLoaded) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: width * 0.3,
+                                        child: Text('Product Model'),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: TypeAheadField(
+                                          hideSuggestionsOnKeyboardHide: false,
+                                          textFieldConfiguration:
+                                              TextFieldConfiguration(
+                                            controller: product,
+                                            autofocus: true,
+                                            style: DefaultTextStyle.of(context)
+                                                .style
+                                                .copyWith(
+                                                    fontStyle:
+                                                        FontStyle.italic),
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          ),
+                                          suggestionsCallback: (pattern) async {
+                                            print(
+                                                "#PRODUCTNAME: ${state.productName}");
+                                            return await Repositories
+                                                .getProductModelList(
+                                                    state.productName, pattern);
+                                            // return await BackendService
+                                            //     .getSuggestions(pattern);
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            // return Text(suggestion.toString());
+                                            return ListTile(
+                                              leading:
+                                                  Icon(Icons.shopping_cart),
+                                              title: Text(suggestion
+                                                  .toString()
+                                                  .toUpperCase()),
+                                              // subtitle: Text(
+                                              //   '\$${suggestion['price']}',
+                                              // ),
+                                            );
+                                          },
+                                          onSuggestionSelected:
+                                              (suggestion) async {
+                                            product.text =
+                                                suggestion.toString();
+                                            print(suggestion.toString());
+
+                                            setState(() {
+                                              chosenProductModel =
+                                                  suggestion.toString();
+                                              index = state.productName
+                                                  .indexOf(chosenProductModel!);
+
+                                              productModel =
+                                                  state.productModel[index!];
+
+                                              // print(productModel);
+                                            });
+
+                                            Helpers.productWarranty =
+                                                productWarrantyFromJson(
+                                                    await Repositories
+                                                        .getProduct(
+                                                            productModel:
+                                                                productModel!));
+
+                                            setState(() {
+                                              monthsWarranty = int.parse(Helpers
+                                                  .productWarranty!
+                                                  .data![0]
+                                                  .warrantyMonths!);
+                                            });
+                                          },
+                                        ),
+                                        // child: DropdownButton<String>(
+                                        //   items: state.productName
+                                        //       .map<DropdownMenuItem<String>>(
+                                        //           (String value) {
+                                        //     return DropdownMenuItem<String>(
+                                        //       value: value,
+                                        //       child: Text(
+                                        //         value,
+                                        //         overflow: TextOverflow.ellipsis,
+                                        //         maxLines: 2,
+                                        //       ),
+                                        //     );
+                                        //   }).toList(),
+                                        //   isExpanded: true,
+                                        //   value: chosenProductModel,
+                                        //   onChanged: (value) {
+                                        //     print(value);
+                                        //     setState(() {
+                                        //       chosenProductModel = value!;
+                                        //       index = state.productName
+                                        //           .indexOf(chosenProductModel!);
+
+                                        //       productModel =
+                                        //           state.productModel[index!];
+
+                                        //       print(productModel);
+                                        //     });
+                                        //   },
+                                        // ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 15),
+                                  Text('Product Description'),
+                                  SizedBox(height: 5),
+                                  index != null
+                                      ? Text(
+                                          state.modelDescription[index!],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Container(),
+                                ],
+                              );
+                            } else if (state is ProductModelInitial) {
+                              return Container();
+                            } else {
+                              return SpinKitFadingCircle(
+                                color: Colors.black,
+                                size: 20,
+                              );
+                            }
+                          },
+                        ),
+
+                        // SizedBox(height: 1),
+
+                        //quantity
+                        SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Text('Quantity'),
+                            SizedBox(width: 30),
+                            // Text
+
+                            GestureDetector(
+                              onTap: () {
+                                if (quantity > 1) {
+                                  setState(() {
+                                    quantity--;
+                                  });
+                                }
+                              },
+                              child: Container(
+                                // decoration: BoxDecoration(
+                                //   color: Colors.grey.shade300,
+                                //   border: Border.all(color: Colors.grey),
+                                // ),
+                                child: Icon(
+                                  Icons.remove,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(width: 7.5),
+                            Text(
+                              quantity.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 7.5),
+                            GestureDetector(
+                              onTap: () {
+                                if (quantity < 5) {
+                                  setState(() {
+                                    quantity++;
+                                  });
+                                }
+                              },
+                              child: Container(
+                                // decoration: BoxDecoration(
+                                //   color: Colors.grey.shade300,
+                                //   border: Border.all(color: Colors.grey),
+                                // ),
+                                child: Icon(
+                                  Icons.add,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Container(
+                              width: width * 0.3,
+                              child: Text('Purchase from'),
+                            ),
+                            BlocBuilder<StoreCubit, StoreState>(
+                              builder: (context, state) {
+                                if (state is StoreLoaded) {
+                                  return Expanded(
+                                    child: DropdownButtonFormField<String>(
+                                      validator: (value) {
+                                        if (value == null || value == '') {
+                                          return 'Please select purchase from';
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+
+                                      items: state.store.data!.map((e) {
+                                        return DropdownMenuItem(
+                                          child: Text(e.storeName!),
+                                          value: e.storeName,
+                                        );
+                                      }).toList(),
+                                      // items: state.store.data
+                                      //     .map<DropdownMenuItem<String>>(
+                                      //         (String value) {
+                                      //   return DropdownMenuItem<String>(
+                                      //     value: value,
+                                      //     child: Text(
+                                      //       value,
+                                      //       overflow: TextOverflow.ellipsis,
+                                      //       maxLines: 2,
+                                      //     ),
+                                      //   );
+                                      // }).toList(),
+                                      isExpanded: true,
+                                      value: chosenStore,
+                                      onChanged: (value) {
+                                        print(value);
+                                        setState(() {
+                                          chosenStore = value!;
+                                        });
+                                      },
+                                    ),
                                   );
                                 } else {
                                   return SpinKitFadingCircle(
@@ -181,239 +516,10 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                 }
                               },
                             ),
-                          ),
-                        ],
-                      ),
-                      BlocBuilder<ProductModelCubit, ProductModelState>(
-                        builder: (context, state) {
-                          if (state is ProductModelLoaded) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: width * 0.3,
-                                      child: Text('Product Model'),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Expanded(
-                                      child: TypeAheadField(
-                                        hideSuggestionsOnKeyboardHide: false,
-                                        textFieldConfiguration: TextFieldConfiguration(
-                                          controller: product,
-                                          autofocus: true,
-                                          style: DefaultTextStyle.of(context)
-                                              .style
-                                              .copyWith(fontStyle: FontStyle.italic),
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(),
-                                          ),
-                                        ),
-                                        suggestionsCallback: (pattern) async {
-                                          print("#PRODUCTNAME: ${state.productName}");
-                                          return await Repositories.getProductModelList(
-                                              state.productName, pattern);
-                                          // return await BackendService
-                                          //     .getSuggestions(pattern);
-                                        },
-                                        itemBuilder: (context, suggestion) {
-                                          // return Text(suggestion.toString());
-                                          return ListTile(
-                                            leading: Icon(Icons.shopping_cart),
-                                            title: Text(suggestion.toString().toUpperCase()),
-                                            // subtitle: Text(
-                                            //   '\$${suggestion['price']}',
-                                            // ),
-                                          );
-                                        },
-                                        onSuggestionSelected: (suggestion) async {
-                                          product.text = suggestion.toString();
-                                          print(suggestion.toString());
-
-                                          setState(() {
-                                            chosenProductModel = suggestion.toString();
-                                            index = state.productName.indexOf(chosenProductModel!);
-
-                                            productModel = state.productModel[index!];
-
-                                            // print(productModel);
-                                          });
-
-                                          Helpers.productWarranty = productWarrantyFromJson(
-                                              await Repositories.getProduct(
-                                                  productModel: productModel!));
-
-                                          setState(() {
-                                            monthsWarranty = int.parse(
-                                                Helpers.productWarranty!.data![0].warrantyMonths!);
-                                          });
-                                        },
-                                      ),
-                                      // child: DropdownButton<String>(
-                                      //   items: state.productName
-                                      //       .map<DropdownMenuItem<String>>(
-                                      //           (String value) {
-                                      //     return DropdownMenuItem<String>(
-                                      //       value: value,
-                                      //       child: Text(
-                                      //         value,
-                                      //         overflow: TextOverflow.ellipsis,
-                                      //         maxLines: 2,
-                                      //       ),
-                                      //     );
-                                      //   }).toList(),
-                                      //   isExpanded: true,
-                                      //   value: chosenProductModel,
-                                      //   onChanged: (value) {
-                                      //     print(value);
-                                      //     setState(() {
-                                      //       chosenProductModel = value!;
-                                      //       index = state.productName
-                                      //           .indexOf(chosenProductModel!);
-
-                                      //       productModel =
-                                      //           state.productModel[index!];
-
-                                      //       print(productModel);
-                                      //     });
-                                      //   },
-                                      // ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 15),
-                                Text('Product Description'),
-                                SizedBox(height: 5),
-                                index != null
-                                    ? Text(
-                                        state.modelDescription[index!],
-                                        style: TextStyle(fontWeight: FontWeight.bold),
-                                      )
-                                    : Container(),
-                              ],
-                            );
-                          } else if (state is ProductModelInitial) {
-                            return Container();
-                          } else {
-                            return SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 20,
-                            );
-                          }
-                        },
-                      ),
-
-                      // SizedBox(height: 1),
-
-                      //quantity
-                      SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Text('Quantity'),
-                          SizedBox(width: 30),
-                          // Text
-
-                          GestureDetector(
-                            onTap: () {
-                              if (quantity > 1) {
-                                setState(() {
-                                  quantity--;
-                                });
-                              }
-                            },
-                            child: Container(
-                              // decoration: BoxDecoration(
-                              //   color: Colors.grey.shade300,
-                              //   border: Border.all(color: Colors.grey),
-                              // ),
-                              child: Icon(
-                                Icons.remove,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(width: 7.5),
-                          Text(
-                            quantity.toString(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 7.5),
-                          GestureDetector(
-                            onTap: () {
-                              if (quantity < 5) {
-                                setState(() {
-                                  quantity++;
-                                });
-                              }
-                            },
-                            child: Container(
-                              // decoration: BoxDecoration(
-                              //   color: Colors.grey.shade300,
-                              //   border: Border.all(color: Colors.grey),
-                              // ),
-                              child: Icon(
-                                Icons.add,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Container(
-                            width: width * 0.3,
-                            child: Text('Purchase from'),
-                          ),
-                          BlocBuilder<StoreCubit, StoreState>(
-                            builder: (context, state) {
-                              if (state is StoreLoaded) {
-                                return Expanded(
-                                  child: DropdownButton<String>(
-                                    items: state.store.data!.map((e) {
-                                      return DropdownMenuItem(
-                                        child: Text(e.storeName!),
-                                        value: e.storeName,
-                                      );
-                                    }).toList(),
-                                    // items: state.store.data
-                                    //     .map<DropdownMenuItem<String>>(
-                                    //         (String value) {
-                                    //   return DropdownMenuItem<String>(
-                                    //     value: value,
-                                    //     child: Text(
-                                    //       value,
-                                    //       overflow: TextOverflow.ellipsis,
-                                    //       maxLines: 2,
-                                    //     ),
-                                    //   );
-                                    // }).toList(),
-                                    isExpanded: true,
-                                    value: chosenStore,
-                                    onChanged: (value) {
-                                      print(value);
-                                      setState(() {
-                                        chosenStore = value!;
-                                      });
-                                    },
-                                  ),
-                                );
-                              } else {
-                                return SpinKitFadingCircle(
-                                  color: Colors.black,
-                                  size: 20,
-                                );
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 15),
@@ -424,7 +530,10 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                     color: Colors.white,
                     border: Border.all(width: 0.1),
                     boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey[200]!,
+                          offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -438,7 +547,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             child: Text('Purchase Date '),
                           ),
                           Text(
-                            formatDate(choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                            formatDate(
+                                choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(width: 10),
@@ -449,7 +559,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   initialDate: DateTime.now(),
                                   firstDate: DateTime(2000, 1),
                                   lastDate: DateTime.now(),
-                                  initialEntryMode: DatePickerEntryMode.calendar,
+                                  initialEntryMode:
+                                      DatePickerEntryMode.calendar,
                                 );
 
                                 if (chosen != null) {
@@ -458,7 +569,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   });
                                 }
                               },
-                              icon: Icon(Icons.date_range, size: 20, color: Colors.black)),
+                              icon: Icon(Icons.date_range,
+                                  size: 20, color: Colors.black)),
                           // ElevatedButton(
                           //   style: ElevatedButton.styleFrom(
                           //     primary: Colors.blue,
@@ -494,7 +606,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                     'mm',
                                     '-',
                                     'yyyy'
-                                  ])} to ${formatDate(Jiffy(choosenDate).add(months: monthsWarranty!).dateTime, [
+                                  ])} to ${formatDate(Jiffy(choosenDate).add(months: monthsWarranty!).dateTime.subtract(Duration(days: 1)), [
                                     'dd',
                                     '-',
                                     'mm',
@@ -529,7 +641,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                               child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
-                                    final dynamic _toolTip = toolTipKey.currentState;
+                                    final dynamic _toolTip =
+                                        toolTipKey.currentState;
                                     _toolTip.ensureTooltipVisible();
                                   },
                                   child: Icon(
@@ -564,9 +677,11 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       Row(
                         children: [
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(primary: AppColors.primary),
+                            style: ElevatedButton.styleFrom(
+                                primary: AppColors.primary),
                             onPressed: () async {
-                              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
                                 type: FileType.custom,
                                 allowedExtensions: [
                                   'jpg',
@@ -666,57 +781,62 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter),
                   onPressed: () async {
-                    String email = '';
-                    if (emailTEC.text == '') {
-                      email = user!.email!.toLowerCase();
-                    } else {
-                      email = emailTEC.text;
-                    }
+                    if (_formKey.currentState!.validate()) {
+                      String email = '';
+                      if (emailTEC.text == '') {
+                        email = user!.email!.toLowerCase();
+                      } else {
+                        email = emailTEC.text;
+                      }
 
-                    bool response = await Repositories.registerEwarranty(
-                        email: email,
-                        productModel: productModel!,
-                        quantity: '$quantity',
-                        purchaseDate: formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
-                        referralCode: ref.text,
-                        receiptFile: receiptFile,
-                        store: chosenStore != null ? chosenStore! : "");
+                      bool response = await Repositories.registerEwarranty(
+                          email: email,
+                          productModel: productModel!,
+                          quantity: '$quantity',
+                          purchaseDate: formatDate(
+                              choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                          referralCode: ref.text,
+                          receiptFile: receiptFile,
+                          store: chosenStore != null ? chosenStore! : "");
 
-                    // print(ref.text);
-                    // FormData formData = new FormData.from({
-                    //   "name": "wendux",
-                    //   "file1": new UploadFileInfo(
-                    //       new File("./upload.jpg"), "upload1.jpg")
-                    // });
-                    // response = await dio.post("/info", data: formData);
+                      // print(ref.text);
+                      // FormData formData = new FormData.from({
+                      //   "name": "wendux",
+                      //   "file1": new UploadFileInfo(
+                      //       new File("./upload.jpg"), "upload1.jpg")
+                      // });
+                      // response = await dio.post("/info", data: formData);
 
-                    if (response) {
-                      Alert(
-                        context: context,
-                        // type: AlertType.info,
-                        title: "Register Product",
-                        desc: "Your product is registered",
-                        buttons: [
-                          DialogButton(
-                            child: Text(
-                              "Okay",
-                              style: TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                              'home',
-                              (route) => false,
-                              arguments: 2,
-                            ),
-                            width: 120,
-                          )
-                        ],
-                      ).show();
-                    } else {
-                      Fluttertoast.showToast(
-                        msg: 'Something went wrong, please try again',
-                        toastLength: Toast.LENGTH_LONG,
-                        gravity: ToastGravity.BOTTOM,
-                      );
+                      if (response) {
+                        Alert(
+                          context: context,
+                          // type: AlertType.info,
+                          title: "Register Product",
+                          desc: "Your product is registered",
+                          buttons: [
+                            DialogButton(
+                              child: Text(
+                                "Okay",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
+                              onPressed: () =>
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                'home',
+                                (route) => false,
+                                arguments: 2,
+                              ),
+                              width: 120,
+                            )
+                          ],
+                        ).show();
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: 'Something went wrong, please try again',
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.BOTTOM,
+                        );
+                      }
                     }
                   },
                 ),

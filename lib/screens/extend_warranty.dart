@@ -87,6 +87,13 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              '* The extended warranty only applies to general warranty',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(10),
@@ -381,7 +388,7 @@ class _ExtendWarrantyState extends State<ExtendWarranty> {
                                         .pushNamedAndRemoveUntil(
                                       'home',
                                       (route) => false,
-                                      arguments: 0,
+                                      arguments: 2,
                                     ),
                                     width: 120,
                                   )
