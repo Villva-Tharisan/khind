@@ -42,7 +42,7 @@ class _ReviewState extends State<Review> {
       "service_center_id": _requestServiceArgument.serviceCenter!.serviceCenterId,
       "service_type": _requestServiceArgument.serviceType,
       "warranty_registration_id": _requestServiceArgument.purchase.warrantyRegistrationId,
-      "product_id": _requestServiceArgument.purchase.productGroupId,
+      "product_id": _requestServiceArgument.purchase.productId,
       "problem_id": _requestServiceArgument.serviceProblem!.problemId,
       "user_id": _requestServiceArgument.purchase.userId,
       "service_request_date": _requestServiceArgument.serviceRequestDate,
