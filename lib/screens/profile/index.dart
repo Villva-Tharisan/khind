@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -41,7 +42,7 @@ class _ProfileState extends State<Profile> {
   FocusNode focusMobile = new FocusNode();
   FocusNode focusDob = new FocusNode();
   bool isLoading = false;
-  User? user;
+  // User? user;
   String errorMsg = "";
   List errors = [];
   DateTime now = DateTime.now();
@@ -56,29 +57,24 @@ class _ProfileState extends State<Profile> {
   String version = "";
   String buildNo = "";
   ShippingAddress? consumerAddress;
+  String? token;
+  User? user;
 
   @override
   void initState() {
-    // firstNameCT.text = "test";
-    // lastNameCT.text = "khind";
-    // mobileNoCT.text = "0156663229";
-    // emailCT.text = "test.khind@gmail.com";
-    // passwordCT.text = "p455word";
-    // dobCT.text = "01-01-1990";
-    // confirmPasswordCT.text = "p455word";
-    // setState(() {
-    //   user = User.fromJson({
-    //     'id': "1",
-    //     'name': 'Khind',
-    //     'mobile': '0167332333',
-    //     'email': 'khindcustomerservice@gmail.com',
-    //     'address': 'Nu Sentral'
-    //   });
-    // });
     _loadUser();
     _loadVersion();
+    _loadToken();
     _fetchConsumerAddress();
     super.initState();
+  }
+
+  _loadToken() async {
+    final accessToken = await storage.read(key: TOKEN);
+
+    setState(() {
+      token = accessToken;
+    });
   }
 
   Future<void> _fetchConsumerAddress() async {
@@ -110,7 +106,7 @@ class _ProfileState extends State<Profile> {
     if (userStorage != null) {
       User userJson = User.fromJson(jsonDecode(userStorage));
 
-      // print("##USERJSON: ${jsonEncode(userJson)}");
+      print("##USERJSON: ${jsonEncode(userJson)}");
 
       setState(() {
         user = userJson;
@@ -194,14 +190,25 @@ class _ProfileState extends State<Profile> {
       };
     }
 
-    final Map<String, dynamic> map = {
+    final Map<String, dynamic> mapO2O = {
       ...mapName,
       'telephone': mobileNoCT.text,
       'dob': dobCT.text,
-      'email': user?.email,
-      'date_of_birth': dobCT.text
+      'email': user?.email
     };
-    print("#MAP: $map | USER: ${jsonEncode(user)}");
+
+    final Map<String, dynamic> map = {
+      ...mapName,
+      'telephone': mobileNoCT.text,
+      'email': user?.email,
+      'date_of_birth': dobCT.text,
+      // 'postcode_id': '',
+      'token': token,
+      'platform': Platform.isAndroid ? 'Android' : 'iOS',
+      // 'device_token': ''
+    };
+
+    print("#MAP: $map | #MAPO2O  :$mapO2O | USER: ${jsonEncode(user)}");
 
     final respO2O = await Api.customPut(
       'customers/${user?.id}',
@@ -209,7 +216,7 @@ class _ProfileState extends State<Profile> {
         'Content-Type': 'application/json',
         'X-Oc-Restadmin-Id': FlutterConfig.get("CLIENT_PASSWORD")
       },
-      params: jsonEncode(map),
+      params: jsonEncode(mapO2O),
     );
     setState(() {
       isLoading = true;
@@ -221,7 +228,7 @@ class _ProfileState extends State<Profile> {
     if (respO2O != null && respO2O['success']) {
       final respRest =
           await Api.bearerPost('provider/register_user.php', queryParams: map, isCms: true);
-      // print("#RESP: $respRest");
+      print("#RESP: $respRest");
       if (respRest != null && respRest['success']) {
         Helpers.showAlert(context, title: '$field successfully updated', hasAction: true,
             onPressed: () async {
@@ -306,7 +313,7 @@ class _ProfileState extends State<Profile> {
         }
 
         selectedDob = picked;
-        dobCT.text = '${picked.year}-$fm-$fd';
+        dobCT.text = '$fd/$fm/${picked.year}';
       });
     }
   }
@@ -388,10 +395,8 @@ class _ProfileState extends State<Profile> {
                               });
                               // print(canEditMobile);
                               if (!canEditName) {
-                                print("#MASUK1");
                                 _handleUpdate(field: 'Name');
                               } else {
-                                print("#MASUK2");
                                 // focusName.unfocus();
                                 await Future<void>.delayed(Duration(milliseconds: 3));
                                 focusName.requestFocus();
@@ -488,27 +493,7 @@ class _ProfileState extends State<Profile> {
                               onFieldSubmitted: (val) {},
                               decoration: InputDecoration(
                                   border: InputBorder.none, hintText: 'eg: khind@gmail.com'),
-                            )),
-                        // Spacer(),
-                        // InkWell(
-                        //     onTap: () {
-                        //       setState(() {
-                        //         canEditEmail = !this.canEditEmail;
-                        //       });
-                        //       if (!canEditEmail) {
-                        //         _handleUpdate(field: 'Email Address');
-                        //       }
-                        //     },
-                        //     child: canEditEmail
-                        //         ? Container(
-                        //             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        //             child: Icon(Icons.check, color: Colors.green))
-                        //         : Container(
-                        //             decoration: BoxDecoration(
-                        //                 color: AppColors.secondary,
-                        //                 borderRadius: BorderRadius.circular(10)),
-                        //             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        //             child: Text("Edit", style: TextStyles.textWhiteSm)))
+                            ))
                       ]))
                     ])),
                     SizedBox(height: 5),
@@ -524,8 +509,8 @@ class _ProfileState extends State<Profile> {
                           enabled: canEditDob,
                           keyboardType: TextInputType.text,
                           validator: (value) {
-                            RegExp regExp =
-                                new RegExp(r'^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$');
+                            RegExp regExp = new RegExp(
+                                r'^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$');
                             if (value!.isEmpty) {
                               return 'Please enter date of birth';
                             } else if (!regExp.hasMatch(value)) {

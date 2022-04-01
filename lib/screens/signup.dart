@@ -6,7 +6,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:khind/components/bg_painter.dart';
 import 'package:khind/components/round_button.dart';
-import 'package:khind/models/Postcode.dart';
+// import 'package:khind/models/Postcode.dart';
+import 'package:khind/models/Postcodes.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/states.dart';
 import 'package:khind/themes/app_colors.dart';
@@ -59,26 +60,27 @@ class _SignUpState extends State<SignUp> {
   bool agreeTerm = false;
   late List<States> states = [];
   late List<City> cities = [];
-  late Postcode postcode;
-  List<Postcode> postcodes = [];
+  Postcodes postcode = new Postcodes(postcodeId: "", postcode: "--Select--");
+  List<Postcodes> postcodes = [];
+  // List<Postcodes> postcodeModels = [];
   City? city;
   States? state;
   String? token;
 
   @override
   void initState() {
-    // firstNameCT.text = "test35";
+    // firstNameCT.text = "test36";
     // lastNameCT.text = "khind";
     // mobileNoCT.text = "0156663229";
-    // emailCT.text = "test35@gmail.com";
-    // dobCT.text = "1990-01-21";
+    // emailCT.text = "test36@gmail.com";
+    // dobCT.text = "20/01/1990";
     // address1CT.text = "No 44 Taman Murni";
     // address2CT.text = "Taman Murni";
     // confirmPasswordCT.text = "p455word";
     // passwordCT.text = "p455word";
     _init();
-    _fetchStates();
     _loadToken();
+    _fetchLocation();
     super.initState();
   }
 
@@ -91,7 +93,7 @@ class _SignUpState extends State<SignUp> {
       postcode: "",
     );
     state = new States(countryId: "", state: "--Select State--", stateId: "", stateCode: "");
-    postcode = new Postcode(id: "", postcode: "--Select--");
+    // postcode = new Postcodes(postcodeId: "", postcode: "--Select--");
   }
 
   @override
@@ -114,15 +116,44 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  _fetchStates() async {
-    final response = await Api.bearerGet('provider/state.php', isCms: true);
-    var newStates = (response['states'] as List).map((i) => States.fromJson(i)).toList();
+  Future<void> _fetchLocation() async {
+    await _fetchStates();
+    await _fetchPostcode();
+  }
 
-    newStates.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+  Future<void> _fetchPostcode() async {
+    final response = await Api.bearerGet('provider/postcode.php', isCms: true);
+
+    var postcodeList = (response['postcodes'] as List).map((i) => Postcodes.fromJson(i)).toList();
+
+    var availableStates = states.map((e) => e.stateId).toSet().toList();
+    var availablePostcodes =
+        postcodeList.where((e) => availableStates.contains(e.stateId)).toList();
+
+    // print('POSTCODES: ${jsonEncode(availablePostcodes)}');
 
     setState(() {
-      states = newStates;
-      state = newStates[0];
+      // postcodes = availablePostcodes.map((e) => e.postcode!).toList();
+      postcodes = availablePostcodes;
+      postcode = availablePostcodes[0];
+    });
+  }
+
+  Future<void> onSelectPostcode(postcode) async {
+    // print('#POSTCODE1: ${jsonEncode(postcode)}');
+    var selectedPostcode = postcodes.where((e) => e.postcode == postcode?.postcode).first;
+
+    // print('#POSTCODE2: ${jsonEncode(selectedPostcode)}');
+
+    await _fetchCities(selectedPostcode.stateId!);
+    var selectedCity = cities.where((e) => e.cityId == selectedPostcode.cityId).first;
+
+    var selectedState =
+        states.where((element) => element.stateId == selectedPostcode.stateId).first;
+
+    setState(() {
+      city = selectedCity;
+      state = selectedState;
     });
   }
 
@@ -137,22 +168,34 @@ class _SignUpState extends State<SignUp> {
     var citySet = Set<String>();
     List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
 
-    var postcodeSet = Set<String>();
-    List<Postcode> tempPostcodes = [];
-    tempPostcodes.insert(0, new Postcode(id: "", postcode: "--Select--"));
-    newCities.forEach((elem) {
-      if (elem.postcode != null && elem.postcode != "") {
-        tempPostcodes
-            .add(Postcode.fromJson({'postcode_id': elem.postcodeId, 'postcode': elem.postcode}));
-      }
-    });
-    List<Postcode> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e.postcode!)).toList();
+    // var postcodeSet = Set<String>();
+    // List<Postcode> tempPostcodes = [];
+    // tempPostcodes.insert(0, new Postcode(id: "", postcode: "--Select--"));
+    // newCities.forEach((elem) {
+    //   if (elem.postcode != null && elem.postcode != "") {
+    //     tempPostcodes
+    //         .add(Postcode.fromJson({'postcode_id': elem.postcodeId, 'postcode': elem.postcode}));
+    //   }
+    // });
+    // List<Postcode> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e.postcode!)).toList();
     // log('#newPostcodes:  ${jsonEncode(newPostcodes)}');
     setState(() {
       cities = tempCities;
       city = tempCities[0];
-      postcodes = newPostcodes;
-      postcode = newPostcodes[0];
+      // postcodes = newPostcodes;
+      // postcode = newPostcodes[0];
+    });
+  }
+
+  _fetchStates() async {
+    final response = await Api.bearerGet('provider/state.php', isCms: true);
+    var newStates = (response['states'] as List).map((i) => States.fromJson(i)).toList();
+
+    newStates.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+
+    setState(() {
+      states = newStates;
+      state = newStates[0];
     });
   }
 
@@ -183,7 +226,7 @@ class _SignUpState extends State<SignUp> {
       }
       setState(() {
         selectedDob = picked;
-        dobCT.text = '${picked.year}-$fm-$fd';
+        dobCT.text = '$fd/$fm/${picked.year}/';
       });
     }
   }
@@ -197,28 +240,6 @@ class _SignUpState extends State<SignUp> {
     passwordCT.clear();
     confirmPasswordCT.clear();
   }
-
-  // _validateToken() async {
-  //   String? token = await storage.read(key: TOKEN);
-
-  //   if (token != null) {
-  //     return;
-  //   } else {
-  //     final response = await Api.basicPost('oauth2/token/client_credentials');
-
-  //     if (response['access_token'] != null) {
-  //       await storage.write(key: TOKEN, value: response['access_token']);
-
-  //       if (response['expires_in'] != null) {
-  //         var curDate = new DateTime.now();
-  //         var expDate = curDate.add(Duration(milliseconds: response['expires_in']));
-
-  //         await storage.write(
-  //             key: TOKEN_EXPIRY, value: (expDate.millisecondsSinceEpoch).toString());
-  //       }
-  //     }
-  //   }
-  // }
 
   _fetchOauth() async {
     final response = await Api.basicPost('oauth2/token/client_credentials');
@@ -280,7 +301,7 @@ class _SignUpState extends State<SignUp> {
         'address_line2': address2CT.text,
         'zone_id': state?.stateId,
         'city_id': city?.cityId,
-        'postcode_id': postcode.id,
+        'postcode_id': postcode.postcodeId,
         'token': token,
         'platform': Platform.isAndroid ? 'Android' : 'iOS'
       };
@@ -486,8 +507,8 @@ class _SignUpState extends State<SignUp> {
                   focusNode: focusDob,
                   keyboardType: TextInputType.text,
                   validator: (value) {
-                    RegExp regExp =
-                        new RegExp(r'^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$');
+                    RegExp regExp = new RegExp(
+                        r'^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$');
                     if (value!.isEmpty) {
                       return 'Please enter date of birth';
                     } else if (!regExp.hasMatch(value)) {
@@ -615,45 +636,37 @@ class _SignUpState extends State<SignUp> {
                             color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
               ),
               SizedBox(height: 5),
-              states.length > 0
-                  ? DropdownButtonFormField(
-                      focusNode: focusState,
-                      // onTap: () {
-                      //   FocusScope.of(context).requestFocus(focusState);
-                      // },
-                      style: TextStyles.textDefault,
-                      decoration: InputDecoration(
-                        labelText: 'State',
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.primary, width: 2, style: BorderStyle.solid),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
-                        ),
-                        border: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
-                      ),
-                      // dropdownColor: Colors.blueAccent,
-                      value: state != null ? state : null,
-                      onChanged: (val) {
-                        setState(() {
-                          cities = [];
-                          postcodes = [];
-                          city = new City(
-                              stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
-                          // postcode = "";
-                          state = (val as States);
-                          _fetchCities(val.stateId);
-                        });
-                      },
-                      items: states
-                          .map((e) => DropdownMenuItem(
-                              child: Text(e.state!), value: e, key: Key(jsonEncode(e))))
-                          .toList())
-                  : Container(),
+              DropdownButtonFormField(
+                focusNode: focusPostcode,
+                style: TextStyles.textDefault,
+                decoration: InputDecoration(
+                  labelText: 'Postcode',
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+                  ),
+                  border: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
+                ),
+                value: postcode != null ? postcode : null,
+                items: postcodes
+                    .map((e) => DropdownMenuItem(
+                        child: Text(e.postcode as String),
+                        value: e,
+                        key: Key(e.postcodeId as String)))
+                    .toList(),
+                onChanged: (val) {
+                  setState(() {
+                    postcode = val as Postcodes;
+                    this.onSelectPostcode(val);
+                  });
+                },
+              ),
               SizedBox(height: 5),
               cities.length > 0
                   ? DropdownButtonFormField(
@@ -688,13 +701,16 @@ class _SignUpState extends State<SignUp> {
                               child: Text(e.city!), value: e, key: Key(jsonEncode(e))))
                           .toList())
                   : Container(),
-              postcodes.length > 0 ? SizedBox(width: 10) : Container(),
-              postcodes.length > 0
+              SizedBox(height: 5),
+              states.length > 0
                   ? DropdownButtonFormField(
-                      focusNode: focusPostcode,
+                      focusNode: focusState,
+                      // onTap: () {
+                      //   FocusScope.of(context).requestFocus(focusState);
+                      // },
                       style: TextStyles.textDefault,
                       decoration: InputDecoration(
-                        labelText: 'Postcode',
+                        labelText: 'State',
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: AppColors.primary, width: 2, style: BorderStyle.solid),
@@ -707,55 +723,24 @@ class _SignUpState extends State<SignUp> {
                             borderSide: BorderSide(
                                 color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
                       ),
-                      value: postcode != null ? postcode : null,
-                      items: postcodes
-                          .map((e) => DropdownMenuItem(
-                              child: Text(e.postcode as String),
-                              value: e,
-                              key: Key(e.id as String)))
-                          .toList(),
+                      // dropdownColor: Colors.blueAccent,
+                      value: state != null ? state : null,
                       onChanged: (val) {
                         setState(() {
-                          postcode = val as Postcode;
-                          // this.onSelectCity(value.postcode!);
+                          // cities = [];
+                          // postcodes = [];
+                          // city = new City(
+                          //     stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
+                          // // postcode = "";
+                          state = (val as States);
+                          // _fetchCities(val.stateId);
                         });
                       },
-                    )
+                      items: states
+                          .map((e) => DropdownMenuItem(
+                              child: Text(e.state!), value: e, key: Key(jsonEncode(e))))
+                          .toList())
                   : Container(),
-              // TextFormField(
-              //   focusNode: focusPostcode,
-              //   keyboardType: TextInputType.number,
-              //   validator: (value) {
-              //     RegExp regExp = new RegExp(r'^(^[0-9]*$)');
-              //     if (value!.isEmpty) {
-              //       return 'Please enter postcode';
-              //     } else if (!regExp.hasMatch(value)) {
-              //       return 'Invalid postcode format';
-              //     }
-              //     return null;
-              //   },
-              //   controller: postcodeCT,
-              //   // onFieldSubmitted: (val) {
-              //   //   FocusScope.of(context).requestFocus(new FocusNode());
-              //   // },
-              //   style: TextStyles.textDefault,
-              //   decoration: InputDecoration(
-              //       focusedBorder: UnderlineInputBorder(
-              //         borderSide:
-              //             BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
-              //       ),
-              //       enabledBorder: UnderlineInputBorder(
-              //         borderSide: BorderSide(
-              //             color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
-              //       ),
-              //       hintText: 'Postcode',
-              //       hintStyle:
-              //           focusPostcode.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
-              //       contentPadding: const EdgeInsets.symmetric(vertical: 5),
-              //       border: UnderlineInputBorder(
-              //           borderSide: BorderSide(
-              //               color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
-              // ),
               SizedBox(height: 30),
               RoundButton(
                   title: "Next",

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:khind/models/Postcode.dart';
+import 'package:khind/models/Postcodes.dart';
 import 'package:khind/models/city.dart';
 import 'package:khind/models/shipping_address.dart';
 import 'package:khind/models/states.dart';
@@ -39,10 +40,10 @@ class _UpdateAddressState extends State<UpdateAddress> {
   bool canEditAddress = false;
   List<City> cities = [];
   List<States> states = [];
-  List<Postcode> postcodes = [];
+  Postcodes postcode = new Postcodes(postcodeId: "", postcode: "--Select--");
+  List<Postcodes> postcodes = [];
   late States state;
   late City city;
-  late Postcode postcode;
   String version = "";
   String buildNo = "";
   ShippingAddress? consumerAddress;
@@ -51,9 +52,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
   @override
   void initState() {
     _init();
-    _fetchStates();
-    // _fetchConsumerAddress();
-    // print("#USER: ${jsonEncode(widget.user)}");
+    _fetchLocation();
     _loadToken();
     super.initState();
   }
@@ -68,7 +67,6 @@ class _UpdateAddressState extends State<UpdateAddress> {
         postcode: "",
       );
       state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
-      postcode = new Postcode(id: "", postcode: "--Select--");
     });
     // print("#WIDGET>CONSUMERADDRESS: ${widget.consumerAddress}");
     if (widget.consumerAddress != null) {
@@ -92,39 +90,46 @@ class _UpdateAddressState extends State<UpdateAddress> {
     });
   }
 
-  // Future<void> _fetchConsumerAddress() async {
-  //   final response = await Api.bearerGet('shippingaddress');
-  //   print("#fetchConsumerAddress RESPONSE: $response");
-  //   ShippingAddress? newAddress;
+  Future<void> _fetchLocation() async {
+    await _fetchStates();
+    await _fetchPostcode();
+  }
 
-  //   if (response['data'] != null) {
-  //     var shipAddress =
-  //         (response['data']['addresses'] as List).map((i) => ShippingAddress.fromJson(i)).toList();
+  Future<void> _fetchPostcode() async {
+    final response = await Api.bearerGet('provider/postcode.php', isCms: true);
 
-  //     if (response['data']['address_id'] != null) {
-  //       shipAddress.forEach((elem) {
-  //         if (response['data']['address_id'] == elem.addressId) {
-  //           newAddress = elem;
-  //         }
-  //       });
+    var postcodeList = (response['postcodes'] as List).map((i) => Postcodes.fromJson(i)).toList();
 
-  //       // print('#NEW ADDRESS: ${newAddress.toString()}');
+    var availableStates = states.map((e) => e.stateId).toSet().toList();
+    var availablePostcodes =
+        postcodeList.where((e) => availableStates.contains(e.stateId)).toList();
 
-  //       setState(() {
-  //         consumerAddress = newAddress;
-  //         if (newAddress?.address1 != null) {
-  //           address1CT.text = newAddress!.address1!;
-  //         }
-  //         if (newAddress?.address2 != null) {
-  //           address2CT.text = newAddress!.address2!;
-  //         }
-  //         if (newAddress?.city != null) {
-  //           // city= newAddress!.city!;
-  //         }
-  //       });
-  //     }
-  //   }
-  // }
+    // print('POSTCODES: ${jsonEncode(availablePostcodes)}');
+
+    setState(() {
+      // postcodes = availablePostcodes.map((e) => e.postcode!).toList();
+      postcodes = availablePostcodes;
+      postcode = availablePostcodes[0];
+    });
+  }
+
+  Future<void> onSelectPostcode(postcode) async {
+    // print('#POSTCODE1: ${jsonEncode(postcode)}');
+    var selectedPostcode = postcodes.where((e) => e.postcode == postcode?.postcode).first;
+
+    // print('#POSTCODE2: ${jsonEncode(selectedPostcode)}');
+
+    await _fetchCities(selectedPostcode.stateId!);
+    var selectedCity = cities.where((e) => e.cityId == selectedPostcode.cityId).first;
+
+    var selectedState =
+        states.where((element) => element.stateId == selectedPostcode.stateId).first;
+
+    setState(() {
+      city = selectedCity;
+      state = selectedState;
+    });
+  }
 
   Future<void> _fetchStates() async {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
@@ -164,8 +169,6 @@ class _UpdateAddressState extends State<UpdateAddress> {
     setState(() {
       cities = tempCities;
       city = tempCities[0];
-      postcodes = newPostcodes;
-      postcode = newPostcodes[0];
     });
   }
 
@@ -217,7 +220,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
           'address_line_2': address2CT.text,
           'zone_id': state.stateId,
           'city_id': city.cityId,
-          'postcode_id': postcode.id,
+          'postcode_id': postcode.postcodeId,
           'email': widget.user?.email,
           'token': token
         };
@@ -396,16 +399,19 @@ class _UpdateAddressState extends State<UpdateAddress> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          child: Text('State', style: TextStyles.textDefault),
+                          // padding: EdgeInsets.only(top: 15),
+                          // width: width * 0.30,
+                          child: Text('Postcode', style: TextStyles.textDefault),
                         ),
                         // SizedBox(height: 5),
                         Container(
-                          child: DropdownButton<States>(
-                            // underline: SizedBox(),
-                            items: states.map<DropdownMenuItem<States>>((e) {
-                              return DropdownMenuItem<States>(
+                          // padding: EdgeInsets.only(left: 10),
+                          width: width * 0.25,
+                          child: DropdownButton<Postcodes>(
+                            items: postcodes.map<DropdownMenuItem<Postcodes>>((e) {
+                              return DropdownMenuItem<Postcodes>(
                                 child: Text(
-                                  e.state!,
+                                  e.postcode as String,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
                                 ),
@@ -413,27 +419,13 @@ class _UpdateAddressState extends State<UpdateAddress> {
                               );
                             }).toList(),
                             isExpanded: true,
-                            value: state,
+                            value: postcode,
                             onChanged: (value) {
-                              if (value != null && value.stateId != "") {
-                                // print("STATE: $value");
-                                setState(() {
-                                  cities = [];
-                                  postcodes = [];
-                                  state = value;
-                                  city = new City(
-                                      stateId: "",
-                                      city: "All",
-                                      cityId: "",
-                                      postcodeId: "",
-                                      postcode: "");
-                                  // postcode = new Postcode(id: "", postcode: "");
-                                  _fetchCities(value.stateId!);
-                                });
-                              } else {
-                                postcodes = [];
-                                cities = [];
-                              }
+                              setState(() {
+                                postcode = value!;
+                                this.onSelectPostcode(value);
+                                // this.onSelectCity(value.postcode!);
+                              });
                             },
                           ),
                         ),
@@ -479,48 +471,44 @@ class _UpdateAddressState extends State<UpdateAddress> {
                               ),
                             ],
                           ))
-                      : Container(),
-                  postcodes.length > 0 ? SizedBox(width: 10) : Container(),
-                  postcodes.length > 0
-                      ? Container(
-                          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                // padding: EdgeInsets.only(top: 15),
-                                // width: width * 0.30,
-                                child: Text('Postcode', style: TextStyles.textDefault),
-                              ),
-                              // SizedBox(height: 5),
-                              Container(
-                                // padding: EdgeInsets.only(left: 10),
-                                width: width * 0.25,
-                                child: DropdownButton<Postcode>(
-                                  items: postcodes.map<DropdownMenuItem<Postcode>>((e) {
-                                    return DropdownMenuItem<Postcode>(
-                                      child: Text(
-                                        e.postcode as String,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                      ),
-                                      value: e,
-                                    );
-                                  }).toList(),
-                                  isExpanded: true,
-                                  value: postcode,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      postcode = value!;
-                                      // this.onSelectCity(value.postcode!);
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          ))
-                      : Container(),
+                      : Container()
                 ]),
+                states.length > 0 ? SizedBox(height: 10) : Container(),
+                states.length > 0
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Text('State', style: TextStyles.textDefault),
+                            ),
+                            // SizedBox(height: 5),
+                            Container(
+                              child: DropdownButton<States>(
+                                // underline: SizedBox(),
+                                items: states.map<DropdownMenuItem<States>>((e) {
+                                  return DropdownMenuItem<States>(
+                                    child: Text(
+                                      e.state!,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                    value: e,
+                                  );
+                                }).toList(),
+                                isExpanded: true,
+                                value: state,
+                                onChanged: (value) {
+                                  setState(() {
+                                    state = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ))
+                    : Container(),
                 SizedBox(height: 10),
                 errors.length > 0
                     ? Container(
