@@ -148,7 +148,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                         alignment: Alignment.center,
                         width: width,
                         padding: const EdgeInsets.only(bottom: 10, top: 15),
-                        child: Text("CHANGE PASSWORD", style: TextStyles.textSecondaryBold))),
+                        child: Text("CHANGE PASSWORD", style: TextStyles.textPrimaryBold))),
                 Divider(color: Colors.grey[300]),
                 Container(
                     padding: const EdgeInsets.symmetric(horizontal: horContentPad),
@@ -283,21 +283,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 errors.map((e) => Text(e, style: TextStyles.textWarning)).toList()))
                     : Container(),
                 SizedBox(height: 10),
-                Container(
-                    alignment: Alignment.center,
-                    width: width,
-                    padding: const EdgeInsets.only(bottom: 10, top: 15),
-                    decoration: BoxDecoration(
-                        color: AppColors.secondary,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
-                    child: InkWell(
-                        // onTap: () => _handleUpdate(),
-                        onTap: () => _handleUpdate(),
+                InkWell(
+                    onTap: () => _handleUpdate(),
+                    child: Container(
+                        alignment: Alignment.center,
+                        width: width,
+                        padding: const EdgeInsets.only(bottom: 10, top: 15),
+                        decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
                         child: Container(
                             decoration: BoxDecoration(
-                                color: AppColors.secondary,
-                                borderRadius: BorderRadius.circular(10)),
+                                color: AppColors.primary, borderRadius: BorderRadius.circular(10)),
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             child: Text("Update", style: TextStyles.textWhiteBold))))
               ])

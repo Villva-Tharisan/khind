@@ -32,7 +32,7 @@ class ShippingAddress {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data["address_id"] = this.addressId;
     data["address_1"] = this.address1;
-    data["address_1"] = this.address2;
+    data["address_2"] = this.address2;
     data["city"] = this.city;
     data["postcode"] = this.postcode;
     data["state"] = this.state;
@@ -42,6 +42,6 @@ class ShippingAddress {
 
   @override
   String toString() {
-    return "{Address Id: $addressId | Address 1: $address1 | Address 2: $address2}";
+    return "{Address Id: $addressId | Address 1: $address1 | Address 2: $address2 | Postcode: $postcode | City: $city";
   }
 }

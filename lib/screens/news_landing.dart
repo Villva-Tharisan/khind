@@ -120,35 +120,6 @@ class _NewsLandingState extends State<NewsLanding> {
                             borderRadius: BorderRadius.circular(5),
                             child: Image.network(elem.imageUrl as String)))))
                 .toList()));
-    // return CarouselSlider(
-    //   options: CarouselOptions(
-    //     height: 150,
-    //     // aspectRatio: 16 / 9,
-    //     // viewportFraction: 0,
-    //     initialPage: 0,
-    //     // enableInfiniteScroll: true,
-    //     reverse: false,
-    //     autoPlay: false,
-    //     disableCenter: true,
-    //     // autoPlayInterval: Duration(seconds: 3),
-    //     // autoPlayAnimationDuration: Duration(milliseconds: 800),
-    //     // autoPlayCurve: Curves.fastOutSlowIn,
-    //     enlargeCenterPage: true,
-    //     // onPageChanged: callbackFunction,
-    //     scrollDirection: Axis.horizontal,
-    //   ),
-    //   items: _banners.map((i) {
-    //     return Builder(
-    //       builder: (BuildContext context) {
-    //         return Container(
-    //             width: MediaQuery.of(context).size.width,
-    //             margin: EdgeInsets.symmetric(horizontal: 5.0),
-    //             decoration: BoxDecoration(color: Colors.amber),
-    //             child: Image.network(i.imageUrl as String));
-    //       },
-    //     );
-    //   }).toList(),
-    // );
   }
 
   @override

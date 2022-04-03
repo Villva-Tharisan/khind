@@ -68,16 +68,12 @@ class _UpdateAddressState extends State<UpdateAddress> {
       );
       state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
     });
-    // print("#WIDGET>CONSUMERADDRESS: ${widget.consumerAddress}");
     if (widget.consumerAddress != null) {
       if (widget.consumerAddress?.address1 != null) {
         address1CT.text = widget.consumerAddress!.address1!;
       }
       if (widget.consumerAddress?.address2 != null) {
         address2CT.text = widget.consumerAddress!.address2!;
-      }
-      if (widget.consumerAddress?.city != null) {
-        // city= newAddress!.city!;
       }
     }
   }
@@ -99,25 +95,22 @@ class _UpdateAddressState extends State<UpdateAddress> {
     final response = await Api.bearerGet('provider/postcode.php', isCms: true);
 
     var postcodeList = (response['postcodes'] as List).map((i) => Postcodes.fromJson(i)).toList();
-
     var availableStates = states.map((e) => e.stateId).toSet().toList();
+    var postcodeSet = Set<String>();
+    List<Postcodes> tempPostcodes =
+        postcodeList.where((e) => postcodeSet.add(e.postcode!)).toList();
     var availablePostcodes =
-        postcodeList.where((e) => availableStates.contains(e.stateId)).toList();
-
-    // print('POSTCODES: ${jsonEncode(availablePostcodes)}');
+        tempPostcodes.where((e) => availableStates.contains(e.stateId)).toList();
+    availablePostcodes.insert(0, new Postcodes(postcodeId: "", postcode: "--Select--"));
 
     setState(() {
-      // postcodes = availablePostcodes.map((e) => e.postcode!).toList();
       postcodes = availablePostcodes;
       postcode = availablePostcodes[0];
     });
   }
 
   Future<void> onSelectPostcode(postcode) async {
-    // print('#POSTCODE1: ${jsonEncode(postcode)}');
     var selectedPostcode = postcodes.where((e) => e.postcode == postcode?.postcode).first;
-
-    // print('#POSTCODE2: ${jsonEncode(selectedPostcode)}');
 
     await _fetchCities(selectedPostcode.stateId!);
     var selectedCity = cities.where((e) => e.cityId == selectedPostcode.cityId).first;
@@ -185,6 +178,17 @@ class _UpdateAddressState extends State<UpdateAddress> {
   }
 
   void _handleUpdate() async {
+    if (Helpers.isEmpty(address1CT.text) ||
+        Helpers.isEmpty(postcode.postcode) ||
+        Helpers.isEmpty(city.city) ||
+        Helpers.isEmpty(state.state)) {
+      return setState(() {
+        isLoading = false;
+        errors.add("Please key in mandatory field");
+      });
+    }
+    // print("#BYPASS");
+
     Helpers.showAlert(context);
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> mapO2O = {
@@ -204,7 +208,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
           }
         ]
       };
-      // print("#MAPO20: $mapO2O | USER: ${widget.user?.id}");
+      print("#MAPO20: $mapO2O | USER: ${widget.user?.id}");
       final respO2O = await Api.customPut('customers/${widget.user?.id}',
           headers: <String, String>{
             'Content-Type': 'application/json',
@@ -315,7 +319,7 @@ class _UpdateAddressState extends State<UpdateAddress> {
                         alignment: Alignment.center,
                         width: width,
                         padding: const EdgeInsets.only(bottom: 10, top: 15),
-                        child: Text("UPDATE ADDRESS", style: TextStyles.textSecondaryBold))),
+                        child: Text("UPDATE ADDRESS", style: TextStyles.textPrimaryBold))),
                 Divider(color: Colors.grey[300]),
                 SizedBox(height: 10),
                 Container(
@@ -393,44 +397,46 @@ class _UpdateAddressState extends State<UpdateAddress> {
                       ],
                     )),
                 SizedBox(height: 10),
-                Container(
-                    padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          // padding: EdgeInsets.only(top: 15),
-                          // width: width * 0.30,
-                          child: Text('Postcode', style: TextStyles.textDefault),
-                        ),
-                        // SizedBox(height: 5),
-                        Container(
-                          // padding: EdgeInsets.only(left: 10),
-                          width: width * 0.25,
-                          child: DropdownButton<Postcodes>(
-                            items: postcodes.map<DropdownMenuItem<Postcodes>>((e) {
-                              return DropdownMenuItem<Postcodes>(
-                                child: Text(
-                                  e.postcode as String,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                ),
-                                value: e,
-                              );
-                            }).toList(),
-                            isExpanded: true,
-                            value: postcode,
-                            onChanged: (value) {
-                              setState(() {
-                                postcode = value!;
-                                this.onSelectPostcode(value);
-                                // this.onSelectCity(value.postcode!);
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    )),
+                postcodes.length > 0
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(horizontal: horContentPad),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              // padding: EdgeInsets.only(top: 15),
+                              // width: width * 0.30,
+                              child: Text('Postcode', style: TextStyles.textDefault),
+                            ),
+                            // SizedBox(height: 5),
+                            Container(
+                              // padding: EdgeInsets.only(left: 10),
+                              // width: width * 0.25,
+                              child: DropdownButton<Postcodes>(
+                                items: postcodes.map<DropdownMenuItem<Postcodes>>((e) {
+                                  return DropdownMenuItem<Postcodes>(
+                                    child: Text(
+                                      e.postcode as String,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                    value: e,
+                                  );
+                                }).toList(),
+                                isExpanded: true,
+                                value: postcode,
+                                onChanged: (value) {
+                                  setState(() {
+                                    postcode = value!;
+                                    this.onSelectPostcode(value);
+                                    // this.onSelectCity(value.postcode!);
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ))
+                    : Container(),
                 cities.length > 0 ? SizedBox(height: 10) : Container(),
                 Row(children: [
                   cities.length > 0
@@ -518,21 +524,18 @@ class _UpdateAddressState extends State<UpdateAddress> {
                                 errors.map((e) => Text(e, style: TextStyles.textWarning)).toList()))
                     : Container(),
                 SizedBox(height: 10),
-                Container(
-                    alignment: Alignment.center,
-                    width: width,
-                    padding: const EdgeInsets.only(bottom: 10, top: 15),
-                    decoration: BoxDecoration(
-                        color: AppColors.secondary,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
-                    child: InkWell(
-                        // onTap: () => _handleUpdate(),
-                        onTap: () => _handleUpdate(),
+                InkWell(
+                    onTap: () => _handleUpdate(),
+                    child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.only(bottom: 10, top: 15),
+                        decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
                         child: Container(
                             decoration: BoxDecoration(
-                                color: AppColors.secondary,
-                                borderRadius: BorderRadius.circular(10)),
+                                color: AppColors.primary, borderRadius: BorderRadius.circular(10)),
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             child: Text("Update", style: TextStyles.textWhiteBold))))
               ])

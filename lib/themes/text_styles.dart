@@ -34,6 +34,8 @@ class TextStyles {
       TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blue);
   static TextStyle textInfo = TextStyle(fontSize: 12, color: Colors.yellow[800]);
   static TextStyle textWarning = TextStyle(fontSize: 12, color: Colors.red);
+  static TextStyle textWarningMd = TextStyle(fontSize: 14, color: Colors.red);
+  static TextStyle textWarningLg = TextStyle(fontSize: 16, color: Colors.red);
   static TextStyle textWarningSm = TextStyle(fontSize: 10, color: Colors.red);
   static TextStyle textWarningBold =
       TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:khind/util/helpers.dart';
 
 class Mall extends StatefulWidget {
   const Mall({Key? key}) : super(key: key);
@@ -9,12 +10,15 @@ class Mall extends StatefulWidget {
 }
 
 class _MallState extends State<Mall> {
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "Mall"),
       body: SafeArea(
         child: Container(
-            height: MediaQuery.of(context).size.height * 0.85,
+            height: MediaQuery.of(context).size.height * 0.8,
             child: Column(
               children: <Widget>[
                 Expanded(

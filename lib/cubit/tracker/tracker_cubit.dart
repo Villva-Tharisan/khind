@@ -24,16 +24,14 @@ class TrackerCubit extends Cubit<TrackerState> {
     //pending collection
     if (sort == 'All') {
       for (var i = 0; i < serviceProduct.data!.length; i++) {
-        if (serviceProduct.data![i]['service_request_status'] ==
-            'Pending Collection') {
+        if (serviceProduct.data![i]['service_request_status'] == 'Pending Collection') {
           serviceProductSorted.data!.add(serviceProduct.data![i]);
         }
       }
 
       //not started
       for (var i = 0; i < serviceProduct.data!.length; i++) {
-        if (serviceProduct.data![i]['service_request_status'] ==
-            'Not Started') {
+        if (serviceProduct.data![i]['service_request_status'] == 'Not Started') {
           serviceProductSorted.data!.add(serviceProduct.data![i]);
         }
       }
@@ -53,15 +51,13 @@ class TrackerCubit extends Cubit<TrackerState> {
       }
     } else if (sort == 'Pending Collection') {
       for (var i = 0; i < serviceProduct.data!.length; i++) {
-        if (serviceProduct.data![i]['service_request_status'] ==
-            'Pending Collection') {
+        if (serviceProduct.data![i]['service_request_status'] == 'Pending Collection') {
           serviceProductSorted.data!.add(serviceProduct.data![i]);
         }
       }
     } else if (sort == 'Not Started') {
       for (var i = 0; i < serviceProduct.data!.length; i++) {
-        if (serviceProduct.data![i]['service_request_status'] ==
-            'Not Started') {
+        if (serviceProduct.data![i]['service_request_status'] == 'Not Started') {
           serviceProductSorted.data!.add(serviceProduct.data![i]);
         }
       }
@@ -99,8 +95,6 @@ class TrackerCubit extends Cubit<TrackerState> {
     // productWarranty.shuffle();
 
     // print(productWarranty[0].data![0].productDescription);
-
-    print('masuk sini');
 
     emit(TrackerLoaded(
       serviceProduct: serviceProductSorted,

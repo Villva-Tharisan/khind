@@ -167,6 +167,10 @@ class Helpers {
     }
   }
 
+  static bool isEmpty(field) {
+    return ["", null, false, 0, '--Select--'].contains(field);
+  }
+
   static bool? fromSignIn = false;
 
   //service tracker global var

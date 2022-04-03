@@ -79,12 +79,14 @@ class _ProfileState extends State<Profile> {
 
   Future<void> _fetchConsumerAddress() async {
     final response = await Api.bearerGet('shippingaddress');
-    // print("#fetchConsumerAddress RESPONSE: $response");
+    print("#fetchConsumerAddress RESPONSE: $response");
     ShippingAddress? newAddress;
 
     if (response['data'] != null) {
       var shipAddress =
           (response['data']['addresses'] as List).map((i) => ShippingAddress.fromJson(i)).toList();
+
+      // print("CONSUMER ADDRESS: ${response['data']}");
 
       if (response['data']['address_id'] != null) {
         shipAddress.forEach((elem) {
@@ -92,6 +94,8 @@ class _ProfileState extends State<Profile> {
             newAddress = elem;
           }
         });
+
+        // print("CONSUMER ADDRESS: ${newAddress}");
 
         setState(() {
           consumerAddress = newAddress;
@@ -173,39 +177,50 @@ class _ProfileState extends State<Profile> {
     if (field == 'Name') {
       if (nameCT.text.contains(" ")) {
         mapName = {
-          'firstname': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
-          'lastname': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length),
-          'first_name': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
-          'last_name': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length)
+          "o2o": {
+            'firstname': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
+            'lastname': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length),
+          },
+          "rest": {
+            'first_name': nameCT.text.substring(0, nameCT.text.indexOf(" ")),
+            'last_name': nameCT.text.substring(nameCT.text.indexOf(" ") + 1, nameCT.text.length)
+          }
         };
       } else {
-        mapName = {'firstname': nameCT.text, 'first_name': nameCT.text};
+        mapName = {
+          "o2o": {'firstname': nameCT.text},
+          "rest": {'first_name': nameCT.text}
+        };
       }
     } else {
       mapName = {
-        'firstname': user?.firstname,
-        'lastname': user?.lastname,
-        'first_name': user?.firstname,
-        'last_name': user?.lastname,
+        "o2o": {
+          'firstname': user?.firstname,
+          'lastname': user?.lastname,
+        },
+        "rest": {'first_name': user?.firstname, 'last_name': user?.lastname}
       };
     }
 
     final Map<String, dynamic> mapO2O = {
-      ...mapName,
+      ...mapName['o2o'],
       'telephone': mobileNoCT.text,
       'dob': dobCT.text,
       'email': user?.email
     };
 
     final Map<String, dynamic> map = {
-      ...mapName,
+      ...mapName['rest'],
       'telephone': mobileNoCT.text,
       'email': user?.email,
       'date_of_birth': dobCT.text,
-      // 'postcode_id': '',
+      'dob': dobCT.text,
+      // 'address_line_1': consumerAddress?.address1,
+      // 'address_line_2': consumerAddress?.address2,
+      // 'city_id': consumerAddress?.city,
+      // 'postcode_id': consumerAddress?.postcode,
       'token': token,
-      'platform': Platform.isAndroid ? 'Android' : 'iOS',
-      // 'device_token': ''
+      'platform': Platform.isAndroid ? 'Android' : 'iOS'
     };
 
     print("#MAP: $map | #MAPO2O  :$mapO2O | USER: ${jsonEncode(user)}");
@@ -224,7 +239,7 @@ class _ProfileState extends State<Profile> {
       errors = [];
     });
     Navigator.pop(context);
-    // print("#RESP: ${jsonEncode(response)}");
+    // print("#RESPO2O: ${jsonEncode(respO2O)}");
     if (respO2O != null && respO2O['success']) {
       final respRest =
           await Api.bearerPost('provider/register_user.php', queryParams: map, isCms: true);
@@ -313,7 +328,7 @@ class _ProfileState extends State<Profile> {
         }
 
         selectedDob = picked;
-        dobCT.text = '$fd/$fm/${picked.year}';
+        dobCT.text = '$fm/$fd/${picked.year}';
       });
     }
   }
@@ -354,6 +369,7 @@ class _ProfileState extends State<Profile> {
     // print("#USER: ${user}");
 
     double fieldSize = MediaQuery.of(context).size.width * 0.5;
+    double screenSize = MediaQuery.of(context).size.width;
 
     return Form(
         key: _formKey,
@@ -557,49 +573,50 @@ class _ProfileState extends State<Profile> {
                     _renderDivider(),
                     SizedBox(height: 20),
                     _renderItemContainer(
-                        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          InkWell(
-                              onTap: () => {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext ctx) {
-                                          return Dialog(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(20)),
-                                              child: UpdateAddress(user: user));
-                                        })
-                                  },
-                              child: CustomCard(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.blue[700],
-                                  child: _renderLabel("Update Address",
-                                      textAlign: TextAlign.center,
-                                      textStyle: TextStyles.textWhite
-                                          .copyWith(fontWeight: FontWeight.w500, fontSize: 12)))),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                          Container(
+                              width: screenSize * 0.4,
+                              child: InkWell(
+                                  onTap: () => {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext ctx) {
+                                              return Dialog(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(20)),
+                                                  child: UpdateAddress(
+                                                      user: user,
+                                                      consumerAddress: consumerAddress));
+                                            })
+                                      },
+                                  child: CustomCard(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.primary,
+                                      child: Text("Update Address",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyles.textWhite.copyWith(
+                                              fontWeight: FontWeight.w500, fontSize: 12))))),
                           SizedBox(width: 10),
-                          InkWell(
-                              onTap: () => {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext ctx) {
-                                          return Dialog(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(20)),
-                                              child: ChangePassword(user: user));
-                                        })
-                                  },
-                              child: CustomCard(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.blue[700],
-                                  child: _renderLabel("Change Password",
-                                      textAlign: TextAlign.center,
-                                      textStyle: TextStyles.textWhite
-                                          .copyWith(fontWeight: FontWeight.w500, fontSize: 12)))),
-                          // child: _renderLabel("Change Password",
-                          //     width: MediaQuery.of(context).size.width * 0.4,
-                          //     padding: EdgeInsets.only(top: 10),
-                          //     textStyle: TextStyles.textSecondary
-                          //         .copyWith(fontWeight: FontWeight.w500)))
+                          Container(
+                              width: screenSize * 0.4,
+                              child: InkWell(
+                                  onTap: () => {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext ctx) {
+                                              return Dialog(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(20)),
+                                                  child: ChangePassword(user: user));
+                                            })
+                                      },
+                                  child: CustomCard(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.primary,
+                                      child: Text("Change Password",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyles.textWhite.copyWith(
+                                              fontWeight: FontWeight.w500, fontSize: 12))))),
                         ]),
                         padding: const EdgeInsets.all(0)),
                     SizedBox(height: 20),

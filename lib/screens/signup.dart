@@ -62,22 +62,21 @@ class _SignUpState extends State<SignUp> {
   late List<City> cities = [];
   Postcodes postcode = new Postcodes(postcodeId: "", postcode: "--Select--");
   List<Postcodes> postcodes = [];
-  // List<Postcodes> postcodeModels = [];
   City? city;
   States? state;
   String? token;
 
   @override
   void initState() {
-    // firstNameCT.text = "test36";
-    // lastNameCT.text = "khind";
-    // mobileNoCT.text = "0156663229";
-    // emailCT.text = "test36@gmail.com";
-    // dobCT.text = "20/01/1990";
-    // address1CT.text = "No 44 Taman Murni";
-    // address2CT.text = "Taman Murni";
-    // confirmPasswordCT.text = "p455word";
-    // passwordCT.text = "p455word";
+    firstNameCT.text = "test37";
+    lastNameCT.text = "khind";
+    mobileNoCT.text = "0156663229";
+    emailCT.text = "test37@gmail.com";
+    dobCT.text = "01/20/1990";
+    address1CT.text = "No 44 Taman Murni";
+    address2CT.text = "Taman Murni";
+    confirmPasswordCT.text = "p455word";
+    passwordCT.text = "p455word";
     _init();
     _loadToken();
     _fetchLocation();
@@ -93,7 +92,6 @@ class _SignUpState extends State<SignUp> {
       postcode: "",
     );
     state = new States(countryId: "", state: "--Select State--", stateId: "", stateCode: "");
-    // postcode = new Postcodes(postcodeId: "", postcode: "--Select--");
   }
 
   @override
@@ -127,13 +125,14 @@ class _SignUpState extends State<SignUp> {
     var postcodeList = (response['postcodes'] as List).map((i) => Postcodes.fromJson(i)).toList();
 
     var availableStates = states.map((e) => e.stateId).toSet().toList();
+    var postcodeSet = Set<String>();
+    List<Postcodes> tempPostcodes =
+        postcodeList.where((e) => postcodeSet.add(e.postcode!)).toList();
     var availablePostcodes =
-        postcodeList.where((e) => availableStates.contains(e.stateId)).toList();
-
-    // print('POSTCODES: ${jsonEncode(availablePostcodes)}');
+        tempPostcodes.where((e) => availableStates.contains(e.stateId)).toList();
+    availablePostcodes.insert(0, new Postcodes(postcodeId: "", postcode: "--Select--"));
 
     setState(() {
-      // postcodes = availablePostcodes.map((e) => e.postcode!).toList();
       postcodes = availablePostcodes;
       postcode = availablePostcodes[0];
     });
@@ -164,26 +163,12 @@ class _SignUpState extends State<SignUp> {
 
     newCities.insert(
         0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
-    // print("#CITIES: $cities");
     var citySet = Set<String>();
     List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
-
-    // var postcodeSet = Set<String>();
-    // List<Postcode> tempPostcodes = [];
-    // tempPostcodes.insert(0, new Postcode(id: "", postcode: "--Select--"));
-    // newCities.forEach((elem) {
-    //   if (elem.postcode != null && elem.postcode != "") {
-    //     tempPostcodes
-    //         .add(Postcode.fromJson({'postcode_id': elem.postcodeId, 'postcode': elem.postcode}));
-    //   }
-    // });
-    // List<Postcode> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e.postcode!)).toList();
-    // log('#newPostcodes:  ${jsonEncode(newPostcodes)}');
+    ;
     setState(() {
       cities = tempCities;
       city = tempCities[0];
-      // postcodes = newPostcodes;
-      // postcode = newPostcodes[0];
     });
   }
 
@@ -226,7 +211,7 @@ class _SignUpState extends State<SignUp> {
       }
       setState(() {
         selectedDob = picked;
-        dobCT.text = '$fd/$fm/${picked.year}/';
+        dobCT.text = '$fm/$fd/${picked.year}';
       });
     }
   }
@@ -258,7 +243,6 @@ class _SignUpState extends State<SignUp> {
 
   void _handleSignUp() async {
     Helpers.showAlert(context);
-    // if (_formKey.currentState!.validate()) {
     final Map<String, dynamic> map = {
       'email': emailCT.text,
       'firstname': firstNameCT.text,
@@ -295,10 +279,11 @@ class _SignUpState extends State<SignUp> {
         'first_name': firstNameCT.text,
         'last_name': lastNameCT.text,
         'email': emailCT.text,
-        'date_of_birth': dobCT.text,
+        // 'date_of_birth': dobCT.text,
+        'dob': dobCT.text,
         'telephone': mobileNoCT.text,
-        'address_line1': address1CT.text,
-        'address_line2': address2CT.text,
+        'address_line_1': address1CT.text,
+        'address_line_2': address2CT.text,
         'zone_id': state?.stateId,
         'city_id': city?.cityId,
         'postcode_id': postcode.postcodeId,
@@ -352,9 +337,6 @@ class _SignUpState extends State<SignUp> {
         });
       }
     }
-    // } else {
-    //   Navigator.pop(context);
-    // }
   }
 
   Widget _renderProfileForm() {
@@ -508,7 +490,7 @@ class _SignUpState extends State<SignUp> {
                   keyboardType: TextInputType.text,
                   validator: (value) {
                     RegExp regExp = new RegExp(
-                        r'^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$');
+                        r'^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d$');
                     if (value!.isEmpty) {
                       return 'Please enter date of birth';
                     } else if (!regExp.hasMatch(value)) {
@@ -604,9 +586,9 @@ class _SignUpState extends State<SignUp> {
                       borderSide: BorderSide(
                           color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
                     ),
-                    hintText: 'Address 1',
+                    hintText: 'Address 1 *',
                     hintStyle:
-                        focusAddress1.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                        focusAddress1.hasFocus ? TextStyles.textWarning : TextStyles.textWarning,
                     contentPadding: const EdgeInsets.symmetric(vertical: 5),
                     border: UnderlineInputBorder(
                         borderSide: BorderSide(
@@ -629,7 +611,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                     hintText: 'Address 2',
                     hintStyle:
-                        focusAddress2.hasFocus ? TextStyles.textPrimary : TextStyles.textGreyDark,
+                        focusAddress2.hasFocus ? TextStyles.textGreyDark : TextStyles.textGreyDark,
                     contentPadding: const EdgeInsets.symmetric(vertical: 5),
                     border: UnderlineInputBorder(
                         borderSide: BorderSide(
@@ -640,7 +622,8 @@ class _SignUpState extends State<SignUp> {
                 focusNode: focusPostcode,
                 style: TextStyles.textDefault,
                 decoration: InputDecoration(
-                  labelText: 'Postcode',
+                  labelText: 'Postcode *',
+                  labelStyle: TextStyles.textWarningLg,
                   focusedBorder: UnderlineInputBorder(
                     borderSide:
                         BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
@@ -673,7 +656,8 @@ class _SignUpState extends State<SignUp> {
                       focusNode: focusCity,
                       style: TextStyles.textDefault,
                       decoration: InputDecoration(
-                        labelText: 'City',
+                        labelText: 'City *',
+                        labelStyle: TextStyles.textWarningLg,
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: AppColors.primary, width: 2, style: BorderStyle.solid),
@@ -690,10 +674,6 @@ class _SignUpState extends State<SignUp> {
                       onChanged: (val) {
                         setState(() {
                           city = (val as City);
-                          // if (val.postcode != null) {
-                          //   postcodeCT.text = val.postcode!;
-                          //   postcode = val.postcode!;
-                          // }
                         });
                       },
                       items: cities
@@ -705,12 +685,10 @@ class _SignUpState extends State<SignUp> {
               states.length > 0
                   ? DropdownButtonFormField(
                       focusNode: focusState,
-                      // onTap: () {
-                      //   FocusScope.of(context).requestFocus(focusState);
-                      // },
                       style: TextStyles.textDefault,
                       decoration: InputDecoration(
-                        labelText: 'State',
+                        labelText: 'State *',
+                        labelStyle: TextStyles.textWarningLg,
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: AppColors.primary, width: 2, style: BorderStyle.solid),
@@ -727,13 +705,7 @@ class _SignUpState extends State<SignUp> {
                       value: state != null ? state : null,
                       onChanged: (val) {
                         setState(() {
-                          // cities = [];
-                          // postcodes = [];
-                          // city = new City(
-                          //     stateId: "", city: "All", cityId: "", postcodeId: "", postcode: "");
-                          // // postcode = "";
                           state = (val as States);
-                          // _fetchCities(val.stateId);
                         });
                       },
                       items: states
@@ -747,10 +719,19 @@ class _SignUpState extends State<SignUp> {
                   icon: Icons.arrow_right_alt_rounded,
                   onPressed: () {
                     if (_addressFormKey.currentState!.validate()) {
-                      setState(() {
-                        showPwdForm = true;
-                        showAddressForm = false;
-                      });
+                      if (Helpers.isEmpty(postcode.postcode) ||
+                          Helpers.isEmpty(city) ||
+                          Helpers.isEmpty(state)) {
+                        return setState(() {
+                          isLoading = false;
+                          errors.add("Please key in mandatory field");
+                        });
+                      } else {
+                        setState(() {
+                          showPwdForm = true;
+                          showAddressForm = false;
+                        });
+                      }
                     }
                   })
             ])));
