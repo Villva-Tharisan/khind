@@ -666,12 +666,14 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                                   }).toList(),
                                   isExpanded: true,
                                   value: city,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      city = value!;
-                                      // this.onSelectCity(value.postcode!);
-                                    });
-                                  },
+                                  onChanged: city.cityId == ""
+                                      ? (value) {
+                                          setState(() {
+                                            city = value!;
+                                            // this.onSelectCity(value.postcode!);
+                                          });
+                                        }
+                                      : null,
                                   validator: (value) {
                                     if (value!.cityId! == "") return "Please enter city";
                                     return null;
@@ -699,12 +701,14 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                             isExpanded: true,
                             hint: Text('State'),
                             value: state,
-                            onChanged: (newValue) {
-                              setState(() {
-                                state = newValue!;
-                                // this.fetchCities(newValue.stateId!);
-                              });
-                            },
+                            onChanged: state.stateId == ""
+                                ? (newValue) {
+                                    setState(() {
+                                      state = newValue!;
+                                      // this.fetchCities(newValue.stateId!);
+                                    });
+                                  }
+                                : null,
                             items: _states.map((item) {
                               return DropdownMenuItem(
                                 child: new Text(item.state!),

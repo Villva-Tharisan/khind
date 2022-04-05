@@ -80,6 +80,8 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
       postcode: "",
     );
 
+    _cities = [city];
+
     var date = new DateTime.now();
     var firstDayMonth = new DateTime(date.year, date.month, 0);
     _maxDate = Jiffy(date).add(months: 1).dateTime;
@@ -946,12 +948,14 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                           }).toList(),
                           isExpanded: true,
                           value: city,
-                          onChanged: (value) {
-                            setState(() {
-                              city = value!;
-                              // this.onSelectCity(value.postcode!);
-                            });
-                          },
+                          onChanged: city.cityId == ""
+                              ? (value) {
+                                  setState(() {
+                                    city = value!;
+                                    // this.onSelectCity(value.postcode!);
+                                  });
+                                }
+                              : null,
                           validator: (value) {
                             if (value!.cityId! == "") return "Please enter city";
                             return null;
@@ -979,12 +983,14 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
                     isExpanded: true,
                     hint: Text('State'),
                     value: state,
-                    onChanged: (newValue) {
-                      setState(() {
-                        state = newValue!;
-                        // this.fetchCities(newValue.stateId!);
-                      });
-                    },
+                    onChanged: state.stateId == ""
+                        ? (newValue) {
+                            setState(() {
+                              state = newValue!;
+                              // this.fetchCities(newValue.stateId!);
+                            });
+                          }
+                        : null,
                     items: _states.map((item) {
                       return DropdownMenuItem(
                         child: new Text(item.state!),
