@@ -247,7 +247,8 @@ class _ProfileState extends State<Profile> {
       final respRest =
           await Api.bearerPost('provider/register_user.php', queryParams: map, isCms: true);
       print("#RESP: $respRest");
-      if (respRest != null && respRest['success']) {
+      // if (respRest != null && respRest['success']) {
+      if (respRest != null) {
         Helpers.showAlert(context, title: '$field successfully updated', hasAction: true,
             onPressed: () async {
           // _clearTextField();
