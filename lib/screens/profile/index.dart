@@ -427,7 +427,7 @@ class _ProfileState extends State<Profile> {
                                         color: AppColors.secondary,
                                         borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    child: Text("Edit", style: TextStyles.textWhiteSm)))
+                                    child: Text("Edit", style: TextStyles.textDefaultSm)))
                       ]))
                     ])),
                     SizedBox(height: 5),
@@ -480,7 +480,7 @@ class _ProfileState extends State<Profile> {
                                         color: AppColors.secondary,
                                         borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    child: Text("Edit", style: TextStyles.textWhiteSm)))
+                                    child: Text("Edit", style: TextStyles.textDefaultSm)))
                       ]))
                     ])),
                     SizedBox(height: 5),
@@ -565,7 +565,7 @@ class _ProfileState extends State<Profile> {
                                               borderRadius: BorderRadius.circular(10)),
                                           padding:
                                               EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                          child: Text("Edit", style: TextStyles.textWhiteSm)))
+                                          child: Text("Edit", style: TextStyles.textDefaultSm)))
                             ]))
                       ]))
                     ])),

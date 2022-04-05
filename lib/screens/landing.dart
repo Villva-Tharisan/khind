@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:khind/themes/app_colors.dart';
+import 'package:khind/themes/text_styles.dart';
 
 class Landing extends StatefulWidget {
   int? data = 0;
@@ -61,7 +62,7 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
       // leftCornerRadius: 32,
       // rightCornerRadius: 32,
       tabBuilder: (int index, bool isActive) {
-        final color = isActive ? AppColors.secondary : AppColors.tertiery;
+        final color = isActive ? AppColors.tertiery : AppColors.tertiery;
         return Container(
             child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -87,7 +88,8 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
         ));
       },
       gapWidth: 50,
-      backgroundColor: AppColors.primary,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
       gapLocation: GapLocation.center,
       notchSmoothness: NotchSmoothness.defaultEdge,
       activeIndex: tabIdx,
@@ -159,22 +161,22 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
           body: _renderBody(),
           floatingActionButton: ScaleTransition(
             scale: animation,
-            child: FloatingActionButton(
-              // clipBehavior: Clip.hardEdge,
-              elevation: 8,
-              backgroundColor: AppColors.primary,
-              child: Container(
+            child: Container(
+              height: 70.0,
+              width: 70.0,
+              child: FittedBox(
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.all(2),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Icon(Icons.add, size: 50),
-                  ])),
-              onPressed: () {
-                // Navigator.pushNamed(context, 'EwarrantyProductManual', arguments: true);
-                Navigator.pushNamed(context, 'signin', arguments: 4);
-                // _animationController.reset();
-                // _animationController.forward();
-              },
+                  child: FloatingActionButton(
+                      backgroundColor: AppColors.primary,
+                      onPressed: () {
+                        Navigator.pushNamed(context, 'signin', arguments: 4);
+                      },
+                      child: Container(
+                        child: Text("Register Product",
+                            textAlign: TextAlign.center,
+                            style: TextStyles.textDefaultBold
+                                .copyWith(fontSize: 8, fontWeight: FontWeight.w700)),
+                      ))),
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

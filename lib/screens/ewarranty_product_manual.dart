@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/components/round_button.dart';
 import 'package:khind/cubit/product_group/product_group_cubit.dart';
 import 'package:khind/cubit/product_model/product_model_cubit.dart';
 import 'package:khind/cubit/store/store_cubit.dart';
@@ -21,6 +22,7 @@ import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/user.dart';
 import 'package:khind/services/repositories.dart';
 import 'package:khind/themes/app_colors.dart';
+import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/helpers.dart';
 import 'package:khind/util/key.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -106,13 +108,11 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
       },
       child: Scaffold(
         // resizeToAvoidBottomInset: false,
-        appBar: Helpers.customAppBar(
-          context,
-          _scaffoldKey,
-          title: "Register New Product",
-          hasActions: false,
-          isBack: widget.isFromWarranty ? true : false,
-        ),
+        appBar: Helpers.customAppBar(context, _scaffoldKey,
+            title: "Register New Product",
+            hasActions: false,
+            isBack: widget.isFromWarranty ? true : false,
+            isPrimary: true),
         body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -136,10 +136,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       color: Colors.white,
                       border: Border.all(width: 0.1),
                       boxShadow: [
-                        BoxShadow(
-                            blurRadius: 5,
-                            color: Colors.grey[200]!,
-                            offset: Offset(0, 10)),
+                        BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                       ],
                       borderRadius: BorderRadius.circular(7.5),
                     ),
@@ -154,52 +151,42 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             ),
                             SizedBox(width: 10),
                             Expanded(
-                              child: BlocBuilder<ProductGroupCubit,
-                                  ProductGroupState>(
+                              child: BlocBuilder<ProductGroupCubit, ProductGroupState>(
                                 builder: (context, state) {
                                   if (state is ProductGroupLoaded) {
                                     return TypeAheadField(
                                       hideSuggestionsOnKeyboardHide: false,
-                                      textFieldConfiguration:
-                                          TextFieldConfiguration(
+                                      textFieldConfiguration: TextFieldConfiguration(
                                         controller: productGroup,
                                         autofocus: false,
                                         style: DefaultTextStyle.of(context)
                                             .style
-                                            .copyWith(
-                                                fontStyle: FontStyle.italic),
+                                            .copyWith(fontStyle: FontStyle.italic),
                                         decoration: InputDecoration(
                                           border: OutlineInputBorder(),
                                         ),
                                       ),
                                       suggestionsCallback: (pattern) async {
-                                        return await Repositories
-                                            .getProductModelList(
-                                                state.productModel, pattern);
+                                        return await Repositories.getProductModelList(
+                                            state.productModel, pattern);
                                       },
                                       itemBuilder: (context, suggestion) {
                                         // return Text(suggestion.toString());
                                         return ListTile(
                                           leading: Icon(Icons.shopping_cart),
-                                          title: Text(suggestion
-                                              .toString()
-                                              .toUpperCase()),
+                                          title: Text(suggestion.toString().toUpperCase()),
                                           // subtitle: Text(
                                         );
                                       },
                                       onSuggestionSelected: (suggestion) async {
-                                        productGroup.text =
-                                            suggestion.toString();
+                                        productGroup.text = suggestion.toString();
                                         setState(() {
-                                          chosenProductGroup =
-                                              suggestion.toString();
+                                          chosenProductGroup = suggestion.toString();
                                           chosenProductModel = null;
                                         });
                                         context
                                             .read<ProductModelCubit>()
-                                            .getProductModel(
-                                                productGroup:
-                                                    suggestion.toString());
+                                            .getProductModel(productGroup: suggestion.toString());
                                         product.text = '';
                                       },
                                     );
@@ -278,71 +265,54 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                       Expanded(
                                         child: TypeAheadField(
                                           hideSuggestionsOnKeyboardHide: false,
-                                          textFieldConfiguration:
-                                              TextFieldConfiguration(
+                                          textFieldConfiguration: TextFieldConfiguration(
                                             controller: product,
                                             autofocus: true,
                                             style: DefaultTextStyle.of(context)
                                                 .style
-                                                .copyWith(
-                                                    fontStyle:
-                                                        FontStyle.italic),
+                                                .copyWith(fontStyle: FontStyle.italic),
                                             decoration: InputDecoration(
                                               border: OutlineInputBorder(),
                                             ),
                                           ),
                                           suggestionsCallback: (pattern) async {
-                                            print(
-                                                "#PRODUCTNAME: ${state.productName}");
-                                            return await Repositories
-                                                .getProductModelList(
-                                                    state.productName, pattern);
+                                            print("#PRODUCTNAME: ${state.productName}");
+                                            return await Repositories.getProductModelList(
+                                                state.productName, pattern);
                                             // return await BackendService
                                             //     .getSuggestions(pattern);
                                           },
                                           itemBuilder: (context, suggestion) {
                                             // return Text(suggestion.toString());
                                             return ListTile(
-                                              leading:
-                                                  Icon(Icons.shopping_cart),
-                                              title: Text(suggestion
-                                                  .toString()
-                                                  .toUpperCase()),
+                                              leading: Icon(Icons.shopping_cart),
+                                              title: Text(suggestion.toString().toUpperCase()),
                                               // subtitle: Text(
                                               //   '\$${suggestion['price']}',
                                               // ),
                                             );
                                           },
-                                          onSuggestionSelected:
-                                              (suggestion) async {
-                                            product.text =
-                                                suggestion.toString();
+                                          onSuggestionSelected: (suggestion) async {
+                                            product.text = suggestion.toString();
                                             print(suggestion.toString());
 
                                             setState(() {
-                                              chosenProductModel =
-                                                  suggestion.toString();
-                                              index = state.productName
-                                                  .indexOf(chosenProductModel!);
+                                              chosenProductModel = suggestion.toString();
+                                              index =
+                                                  state.productName.indexOf(chosenProductModel!);
 
-                                              productModel =
-                                                  state.productModel[index!];
+                                              productModel = state.productModel[index!];
 
                                               // print(productModel);
                                             });
 
-                                            Helpers.productWarranty =
-                                                productWarrantyFromJson(
-                                                    await Repositories
-                                                        .getProduct(
-                                                            productModel:
-                                                                productModel!));
+                                            Helpers.productWarranty = productWarrantyFromJson(
+                                                await Repositories.getProduct(
+                                                    productModel: productModel!));
 
                                             setState(() {
                                               monthsWarranty = int.parse(Helpers
-                                                  .productWarranty!
-                                                  .data![0]
-                                                  .warrantyMonths!);
+                                                  .productWarranty!.data![0].warrantyMonths!);
                                             });
                                           },
                                         ),
@@ -384,8 +354,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   index != null
                                       ? Text(
                                           state.modelDescription[index!],
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(fontWeight: FontWeight.bold),
                                         )
                                       : Container(),
                                 ],
@@ -530,10 +499,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                     color: Colors.white,
                     border: Border.all(width: 0.1),
                     boxShadow: [
-                      BoxShadow(
-                          blurRadius: 5,
-                          color: Colors.grey[200]!,
-                          offset: Offset(0, 10)),
+                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -547,8 +513,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             child: Text('Purchase Date '),
                           ),
                           Text(
-                            formatDate(
-                                choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                            formatDate(choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(width: 10),
@@ -559,8 +524,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   initialDate: DateTime.now(),
                                   firstDate: DateTime(2000, 1),
                                   lastDate: DateTime.now(),
-                                  initialEntryMode:
-                                      DatePickerEntryMode.calendar,
+                                  initialEntryMode: DatePickerEntryMode.calendar,
                                 );
 
                                 if (chosen != null) {
@@ -569,8 +533,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   });
                                 }
                               },
-                              icon: Icon(Icons.date_range,
-                                  size: 20, color: Colors.black)),
+                              icon: Icon(Icons.date_range, size: 20, color: Colors.black)),
                           // ElevatedButton(
                           //   style: ElevatedButton.styleFrom(
                           //     primary: Colors.blue,
@@ -641,8 +604,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                               child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
-                                    final dynamic _toolTip =
-                                        toolTipKey.currentState;
+                                    final dynamic _toolTip = toolTipKey.currentState;
                                     _toolTip.ensureTooltipVisible();
                                   },
                                   child: Icon(
@@ -678,10 +640,11 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: AppColors.primary),
+                                primary: AppColors.primary,
+                                shape: new RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10))),
                             onPressed: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles(
+                              FilePickerResult? result = await FilePicker.platform.pickFiles(
                                 type: FileType.custom,
                                 allowedExtensions: [
                                   'jpg',
@@ -714,7 +677,7 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                 // User canceled the picker
                               }
                             },
-                            child: Text('Upload Receipt'),
+                            child: Text('Upload Receipt', style: TextStyles.textDefaultBoldMd),
                           ),
                           // GestureDetector(
                           //   onTap: () async {
@@ -770,76 +733,134 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                   ),
                 ),
                 SizedBox(height: 30),
-                GradientButton(
-                  height: 40,
-                  child: Text(
-                    "Register Product",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  gradient: LinearGradient(
-                      colors: <Color>[Colors.white, Colors.grey[400]!],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      String email = '';
-                      if (emailTEC.text == '') {
-                        email = user!.email!.toLowerCase();
-                      } else {
-                        email = emailTEC.text;
+                RoundButton(
+                    // color: AppColors.tertiery,
+                    // height: 40,
+                    // titleStyles: TextStyles.textDefault,
+                    title: 'Register Product',
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        String email = '';
+                        if (emailTEC.text == '') {
+                          email = user!.email!.toLowerCase();
+                        } else {
+                          email = emailTEC.text;
+                        }
+
+                        bool response = await Repositories.registerEwarranty(
+                            email: email,
+                            productModel: productModel!,
+                            quantity: '$quantity',
+                            purchaseDate: formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                            referralCode: ref.text,
+                            receiptFile: receiptFile,
+                            store: chosenStore != null ? chosenStore! : "");
+
+                        // print(ref.text);
+                        // FormData formData = new FormData.from({
+                        //   "name": "wendux",
+                        //   "file1": new UploadFileInfo(
+                        //       new File("./upload.jpg"), "upload1.jpg")
+                        // });
+                        // response = await dio.post("/info", data: formData);
+
+                        if (response) {
+                          Alert(
+                            context: context,
+                            // type: AlertType.info,
+                            title: "Register Product",
+                            desc: "Your product is registered",
+                            buttons: [
+                              DialogButton(
+                                child: Text(
+                                  "Okay",
+                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                ),
+                                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                                  'home',
+                                  (route) => false,
+                                  arguments: 2,
+                                ),
+                                width: 120,
+                              )
+                            ],
+                          ).show();
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: 'Something went wrong, please try again',
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                          );
+                        }
                       }
+                    }),
+                // GradientButton(
+                //   height: 40,
+                //   child: Text(
+                //     "Register Product",
+                //     style: TextStyle(fontWeight: FontWeight.bold),
+                //   ),
+                //   gradient: LinearGradient(
+                //       colors: <Color>[Colors.white, Colors.grey[400]!],
+                //       begin: Alignment.topCenter,
+                //       end: Alignment.bottomCenter),
+                //   onPressed: () async {
+                //     if (_formKey.currentState!.validate()) {
+                //       String email = '';
+                //       if (emailTEC.text == '') {
+                //         email = user!.email!.toLowerCase();
+                //       } else {
+                //         email = emailTEC.text;
+                //       }
 
-                      bool response = await Repositories.registerEwarranty(
-                          email: email,
-                          productModel: productModel!,
-                          quantity: '$quantity',
-                          purchaseDate: formatDate(
-                              choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
-                          referralCode: ref.text,
-                          receiptFile: receiptFile,
-                          store: chosenStore != null ? chosenStore! : "");
+                //       bool response = await Repositories.registerEwarranty(
+                //           email: email,
+                //           productModel: productModel!,
+                //           quantity: '$quantity',
+                //           purchaseDate: formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                //           referralCode: ref.text,
+                //           receiptFile: receiptFile,
+                //           store: chosenStore != null ? chosenStore! : "");
 
-                      // print(ref.text);
-                      // FormData formData = new FormData.from({
-                      //   "name": "wendux",
-                      //   "file1": new UploadFileInfo(
-                      //       new File("./upload.jpg"), "upload1.jpg")
-                      // });
-                      // response = await dio.post("/info", data: formData);
+                //       // print(ref.text);
+                //       // FormData formData = new FormData.from({
+                //       //   "name": "wendux",
+                //       //   "file1": new UploadFileInfo(
+                //       //       new File("./upload.jpg"), "upload1.jpg")
+                //       // });
+                //       // response = await dio.post("/info", data: formData);
 
-                      if (response) {
-                        Alert(
-                          context: context,
-                          // type: AlertType.info,
-                          title: "Register Product",
-                          desc: "Your product is registered",
-                          buttons: [
-                            DialogButton(
-                              child: Text(
-                                "Okay",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                              onPressed: () =>
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                'home',
-                                (route) => false,
-                                arguments: 2,
-                              ),
-                              width: 120,
-                            )
-                          ],
-                        ).show();
-                      } else {
-                        Fluttertoast.showToast(
-                          msg: 'Something went wrong, please try again',
-                          toastLength: Toast.LENGTH_LONG,
-                          gravity: ToastGravity.BOTTOM,
-                        );
-                      }
-                    }
-                  },
-                ),
+                //       if (response) {
+                //         Alert(
+                //           context: context,
+                //           // type: AlertType.info,
+                //           title: "Register Product",
+                //           desc: "Your product is registered",
+                //           buttons: [
+                //             DialogButton(
+                //               child: Text(
+                //                 "Okay",
+                //                 style: TextStyle(color: Colors.white, fontSize: 20),
+                //               ),
+                //               onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                //                 'home',
+                //                 (route) => false,
+                //                 arguments: 2,
+                //               ),
+                //               width: 120,
+                //             )
+                //           ],
+                //         ).show();
+                //       } else {
+                //         Fluttertoast.showToast(
+                //           msg: 'Something went wrong, please try again',
+                //           toastLength: Toast.LENGTH_LONG,
+                //           gravity: ToastGravity.BOTTOM,
+                //         );
+                //       }
+                //     }
+                // },
+                // ),
               ],
             ),
           ),

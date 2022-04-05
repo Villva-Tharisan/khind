@@ -117,6 +117,8 @@ flutter:
     - family: Avant
       fonts:
         - asset: assets/fonts/ITC-Avant-Garde-Gothic-Std-Book.ttf
+        - asset: assets/fonts/ITC-Avant-Garde-Gothic-Std-Book-Bold.otf
+          weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

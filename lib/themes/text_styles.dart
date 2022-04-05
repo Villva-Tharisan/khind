@@ -5,12 +5,15 @@ class TextStyles {
   static TextStyle textW500 = TextStyle(fontWeight: FontWeight.w500);
   static TextStyle textSm = TextStyle(fontSize: 12);
   static TextStyle textDefault = TextStyle(fontSize: 12, color: Colors.black);
+  static TextStyle textDefaultMd = TextStyle(fontSize: 14, color: Colors.black);
   static TextStyle textDefaultLg = TextStyle(fontSize: 18, color: Colors.black);
   static TextStyle textDefaultSm = TextStyle(fontSize: 12, color: Colors.black);
   static TextStyle textDefaultBold =
       TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black);
   static TextStyle textDefaultBoldSm =
       TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black);
+  static TextStyle textDefaultBoldMd =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black);
   static TextStyle textDefaultW500 =
       TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black);
   static TextStyle textTitle =
@@ -39,4 +42,5 @@ class TextStyles {
   static TextStyle textWarningSm = TextStyle(fontSize: 10, color: Colors.red);
   static TextStyle textWarningBold =
       TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red);
+  static TextStyle textJeanBlue = TextStyle(fontSize: 12, color: AppColors.jeanBlue);
 }

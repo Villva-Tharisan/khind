@@ -34,8 +34,8 @@ class _ProductModelState extends State<ProductModel> {
   @override
   void initState() {
     // TODO: implement initState
-    var formattedDate = DateFormat('dd-MM-yyyy')
-        .format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
+    var formattedDate =
+        DateFormat('dd-MM-yyyy').format(DateFormat('yyyy-MM-dd').parse(widget.data!.purchaseDate!));
 
     setState(() {
       purchase = widget.data;
@@ -45,9 +45,7 @@ class _ProductModelState extends State<ProductModel> {
       purchaseDate = formattedDate;
     });
 
-    if (purchase!.dropIn == '0' &&
-        purchase!.homeVisit == '0' &&
-        purchase!.pickUp == '0') {
+    if (purchase!.dropIn == '0' && purchase!.homeVisit == '0' && purchase!.pickUp == '0') {
       setState(() {
         canRequestRepair = false;
       });
@@ -71,9 +69,8 @@ class _ProductModelState extends State<ProductModel> {
     var queryParams =
         '?email=$email&warranty_registration_id=${purchase!.warrantyRegistrationId}&serial_no=${serialNoCT.text}';
 
-    final response = await Api.bearerPost(
-        'provider/create_serial_number.php$queryParams',
-        isCms: true);
+    final response =
+        await Api.bearerPost('provider/create_serial_number.php$queryParams', isCms: true);
 
     if (response['success']) {
       setState(() {
@@ -81,25 +78,20 @@ class _ProductModelState extends State<ProductModel> {
       });
 
       Helpers.showAlert(context,
-          title: 'You have successfully updated serial number',
-          hasAction: true, onPressed: () {
+          title: 'You have successfully updated serial number', hasAction: true, onPressed: () {
         Navigator.pop(context);
       });
     }
   }
 
   void _handleDeletePurchase() async {
-    var queryParams =
-        "?warranty_registration_id=${purchase!.warrantyRegistrationId}";
+    var queryParams = "?warranty_registration_id=${purchase!.warrantyRegistrationId}";
 
     // if (purchase?.iDontHaveThisAnymore)
-    final response = await Api.bearerPost(
-        'provider/rm_my_purchase.php$queryParams',
-        isCms: true);
+    final response = await Api.bearerPost('provider/rm_my_purchase.php$queryParams', isCms: true);
     if (response['success']) {
       Helpers.showAlert(context,
-          title: 'You have successfully removed this purchase',
-          hasAction: true, onPressed: () {
+          title: 'You have successfully removed this purchase', hasAction: true, onPressed: () {
         Navigator.pop(context);
         Navigator.pushReplacementNamed(context, 'home', arguments: 2);
       });
@@ -114,12 +106,10 @@ class _ProductModelState extends State<ProductModel> {
     // String queryString = Uri(queryParameters: queryParameters).query;
 
     final response = await Api.bearerGet('provider/store.php', isCms: true);
-    var stores =
-        (response['data'] as List).map((i) => Datum.fromJson(i)).toList();
+    var stores = (response['data'] as List).map((i) => Datum.fromJson(i)).toList();
 
     if (purchase!.storeName != null) {
-      var storeName =
-          stores.where((element) => element.storeId == purchase!.storeName);
+      var storeName = stores.where((element) => element.storeId == purchase!.storeName);
 
       if (storeName.length > 0) {
         setState(() {
@@ -166,10 +156,7 @@ class _ProductModelState extends State<ProductModel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
-                      BoxShadow(
-                          blurRadius: 5,
-                          color: Colors.grey[200]!,
-                          offset: Offset(0, 10)),
+                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -210,10 +197,7 @@ class _ProductModelState extends State<ProductModel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
-                      BoxShadow(
-                          blurRadius: 5,
-                          color: Colors.grey[200]!,
-                          offset: Offset(0, 10)),
+                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                     ],
                     borderRadius: BorderRadius.circular(7.5),
                   ),
@@ -233,8 +217,7 @@ class _ProductModelState extends State<ProductModel> {
                         Text("Purchase Date :", style: TextStyles.textDefault),
                         SizedBox(width: 5),
                         purchaseDate != "" && purchaseDate != "-"
-                            ? Text(purchaseDate!,
-                                style: TextStyles.textDefaultBold)
+                            ? Text(purchaseDate!, style: TextStyles.textDefaultBold)
                             : Text("-")
                       ]),
                       // Text("Purchase Date: ${purchaseDate!}"),
@@ -243,11 +226,9 @@ class _ProductModelState extends State<ProductModel> {
                       ),
                       purchase?.warrantyPeriod != null
                           ? Row(children: [
-                              Text("Warranty Valid until :",
-                                  style: TextStyles.textDefault),
+                              Text("Warranty Valid until :", style: TextStyles.textDefault),
                               SizedBox(width: 5),
-                              Text('${purchase?.warrantyDate}',
-                                  style: TextStyles.textDefaultBold),
+                              Text('${purchase?.warrantyDate}', style: TextStyles.textDefaultBold),
                               // CustomCard(
                               //     borderRadius: BorderRadius.circular(5),
                               //     label: purchase?.warrantyDate,
@@ -266,26 +247,9 @@ class _ProductModelState extends State<ProductModel> {
                           //         fontWeight: FontWeight.w400),
                           //   )
                           : Container(),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 5,
-                          color: Colors.grey[200]!,
-                          offset: Offset(0, 10)),
-                    ],
-                    borderRadius: BorderRadius.circular(7.5),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
                       Row(children: [
                         Text(
                           "Serial No. : ",
@@ -299,22 +263,54 @@ class _ProductModelState extends State<ProductModel> {
                                 label: serialNoCT.text,
                                 textStyle: TextStyles.textDefaultBold,
                                 color: Colors.grey[200],
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 2, horizontal: 5))
+                                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5))
                             : Text("-"),
                       ]),
-                      // Text(
-                      //   "Serial Number: ${serialNoCT.text}",
-                      // ),
-                      // SizedBox(height: 20),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.end,
-                      //   children: [
-                      //   ],
-                      // )
                     ],
                   ),
                 ),
+                // SizedBox(height: 10),
+                // Container(
+                //   width: double.infinity,
+                //   padding: EdgeInsets.all(15),
+                //   decoration: BoxDecoration(
+                //     color: Colors.white,
+                //     boxShadow: [
+                //       BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                //     ],
+                //     borderRadius: BorderRadius.circular(7.5),
+                //   ),
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       Row(children: [
+                //         Text(
+                //           "Serial No. : ",
+                //           overflow: TextOverflow.visible,
+                //           style: TextStyles.textDefault,
+                //         ),
+                //         SizedBox(width: 2),
+                //         serialNoCT.text != "" && serialNoCT.text != "-"
+                //             ? CustomCard(
+                //                 borderRadius: BorderRadius.circular(5),
+                //                 label: serialNoCT.text,
+                //                 textStyle: TextStyles.textDefaultBold,
+                //                 color: Colors.grey[200],
+                //                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5))
+                //             : Text("-"),
+                //       ]),
+                //       // Text(
+                //       //   "Serial Number: ${serialNoCT.text}",
+                //       // ),
+                //       // SizedBox(height: 20),
+                //       // Row(
+                //       //   mainAxisAlignment: MainAxisAlignment.end,
+                //       //   children: [
+                //       //   ],
+                //       // )
+                //     ],
+                //   ),
+                // ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.05,
                 ),
@@ -324,24 +320,11 @@ class _ProductModelState extends State<ProductModel> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       canRequestRepair
-                          ? GradientButton(
-                              height: 40,
-                              hideShadow: true,
-                              child: Text(
-                                "Request Repair",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              gradient: LinearGradient(
-                                  colors: <Color>[
-                                    Colors.white,
-                                    Colors.grey[400]!
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter),
+                          ? RoundButton(
+                              title: 'Request Repair',
                               onPressed: () {
                                 Navigator.pushNamed(context, 'serviceType',
-                                    arguments:
-                                        purchase != null ? purchase : null);
+                                    arguments: purchase != null ? purchase : null);
                               },
                             )
                           : GradientButton(
@@ -349,15 +332,10 @@ class _ProductModelState extends State<ProductModel> {
                               height: 40,
                               child: Text(
                                 "Request Repair",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                               gradient: LinearGradient(
-                                  colors: <Color>[
-                                    Colors.grey[300]!,
-                                    Colors.grey[300]!
-                                  ],
+                                  colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter),
                               onPressed: () {},
@@ -387,20 +365,10 @@ class _ProductModelState extends State<ProductModel> {
                       if (purchase?.extendedEwarrantyCost != "0" ||
                           purchase?.extendedEwarrantyCost != "null" ||
                           purchase?.extendedEwarrantyCost != null ||
-                          purchase?.warranty!.substring(0, 1).toLowerCase() ==
-                              'E' ||
-                          purchase?.warranty!.substring(0, 1).toLowerCase() ==
-                              'w00')
-                        GradientButton(
-                          height: 40,
-                          child: Text(
-                            "Extend Warranty",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          gradient: LinearGradient(
-                              colors: <Color>[Colors.white, Colors.grey[400]!],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter),
+                          purchase?.warranty!.substring(0, 1).toLowerCase() == 'E' ||
+                          purchase?.warranty!.substring(0, 1).toLowerCase() == 'w00')
+                        RoundButton(
+                          title: 'Extend Warranty',
                           onPressed: () {
                             Navigator.of(context).pushNamed('ExtendWarranty');
                           },
@@ -411,15 +379,10 @@ class _ProductModelState extends State<ProductModel> {
                           height: 40,
                           child: Text(
                             "Extend Warranty",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                           gradient: LinearGradient(
-                              colors: <Color>[
-                                Colors.grey[300]!,
-                                Colors.grey[300]!
-                              ],
+                              colors: <Color>[Colors.grey[300]!, Colors.grey[300]!],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter),
                           onPressed: () {},
@@ -456,27 +419,15 @@ class _ProductModelState extends State<ProductModel> {
                           ? Container()
                           : Container(
                               // width: 128,
-                              child: GradientButton(
-                                height: 40,
-                                child: Text(
-                                  "I don't have this anymore",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                gradient: LinearGradient(
-                                    colors: <Color>[
-                                      Colors.white,
-                                      Colors.grey[400]!
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter),
+                              child: RoundButton(
+                                title: "I dont't have this anymore",
                                 onPressed: () {
                                   Helpers.showAlert(
                                     context,
                                     okTitle: "Yes",
                                     noTitle: "No",
                                     // title: "Sign out confirmation",
-                                    desc:
-                                        "Do you want to remove this product from 'My Purchase'",
+                                    desc: "Do you want to remove this product from 'My Purchase'",
                                     hasAction: true,
                                     hasCancel: true,
                                     onPressed: () async {

@@ -16,6 +16,7 @@ import 'package:khind/screens/mypurchases.dart';
 import 'package:khind/screens/news_landing.dart';
 import 'package:khind/themes/app_colors.dart';
 import 'package:khind/screens/service_tracker.dart';
+import 'package:khind/themes/text_styles.dart';
 
 class Home extends StatefulWidget {
   int? data = 0;
@@ -126,7 +127,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       // rightCornerRadius: 32,
       tabBuilder: (int index, bool isActive) {
         // print("IDX: $index |${widget.data}");
-        final color = isActive && isTabPress ? AppColors.secondary : AppColors.tertiery;
+        final color = isActive && isTabPress ? AppColors.primary : AppColors.tertiery;
         return Container(
             child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -152,7 +153,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ));
       },
       gapWidth: 60,
-      backgroundColor: AppColors.primary,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
       gapLocation: GapLocation.center,
       notchSmoothness: NotchSmoothness.defaultEdge,
       activeIndex: tabIdx,
@@ -191,28 +193,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           body: IndexedStack(children: _tabs, index: page),
           floatingActionButton: ScaleTransition(
             scale: animation,
-            child: FloatingActionButton(
-              // clipBehavior: Clip.hardEdge,
-              elevation: 8,
-              backgroundColor: AppColors.primary,
-              child: Container(
+            child: Container(
+              height: 70.0,
+              width: 70.0,
+              child: FittedBox(
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.all(2),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    // SizedBox(height: 5),
-                    // Image(image: AssetImage('assets/images/logo_sm.png')),
-                    Icon(Icons.add, size: 50),
-                    // SizedBox(height: 2),
-                    // Text("E-Warranty", style: TextStyle(fontSize: 6))
-                  ])),
-              onPressed: () {
-                setState(() {
-                  isTabPress = true;
-                  page = 2;
-                });
-                _animationController.reset();
-                _animationController.forward();
-              },
+                  child: FloatingActionButton(
+                      backgroundColor: AppColors.primary,
+                      onPressed: () {
+                        setState(() {
+                          isTabPress = true;
+                          page = 2;
+                        });
+                        _animationController.reset();
+                        _animationController.forward();
+                      },
+                      child: Container(
+                        child: Text("Register Product",
+                            textAlign: TextAlign.center,
+                            style: TextStyles.textDefaultBold
+                                .copyWith(fontSize: 8, fontWeight: FontWeight.w700)),
+                      ))),
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

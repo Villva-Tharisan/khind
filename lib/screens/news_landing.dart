@@ -126,7 +126,7 @@ class _NewsLandingState extends State<NewsLanding> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        appBar: Helpers.customAppBar(context, _scaffoldKey, title: "News"),
+        appBar: Helpers.customAppBar(context, _scaffoldKey, title: "News", isPrimary: true),
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: SizedBox(height: 10)),

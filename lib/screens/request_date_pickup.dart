@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:khind/components/custom_card.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/components/round_button.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:khind/models/address.dart';
 import 'package:khind/models/city.dart';
@@ -9,6 +10,7 @@ import 'package:khind/models/request_service_arguments.dart';
 import 'package:khind/models/service_problem.dart';
 import 'package:khind/models/shipping_address.dart';
 import 'package:khind/models/states.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
@@ -59,8 +61,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   void initState() {
     // address1CT.text = 'address 1';
     // address2CT.text = 'address 2';
-    state = new States(
-        countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
     city = new City(
       stateId: "",
       city: "--Select--",
@@ -89,9 +90,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   Future<void> fetchPostcode() async {
     final response = await Api.bearerGet('provider/postcode.php', isCms: true);
 
-    var postcodeList = (response['postcodes'] as List)
-        .map((i) => Postcodes.fromJson(i))
-        .toList();
+    var postcodeList = (response['postcodes'] as List).map((i) => Postcodes.fromJson(i)).toList();
 
     var availableStates = _states.map((e) => e.stateId).toSet().toList();
     var availablePostcodes =
@@ -104,16 +103,13 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   }
 
   Future<void> onSelectPostcode(postcode) async {
-    var selectedPostcode =
-        postcodeModels.where((e) => e.postcode == postcode).first;
+    var selectedPostcode = postcodeModels.where((e) => e.postcode == postcode).first;
 
     await this.fetchCities(selectedPostcode.stateId!);
-    var selectedCity =
-        _cities.where((e) => e.cityId == selectedPostcode.cityId).first;
+    var selectedCity = _cities.where((e) => e.cityId == selectedPostcode.cityId).first;
 
-    var selectedState = _states
-        .where((element) => element.stateId == selectedPostcode.stateId)
-        .first;
+    var selectedState =
+        _states.where((element) => element.stateId == selectedPostcode.stateId).first;
 
     setState(() {
       city = selectedCity;
@@ -126,17 +122,11 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
 
     var allowedStates = ['WP PUTRAJAYA', 'WP KUALA LUMPUR', 'SELANGOR'];
 
-    var states =
-        (response['states'] as List).map((i) => States.fromJson(i)).toList();
+    var states = (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-    states = states
-        .where((element) => allowedStates.contains(element.state))
-        .toList();
+    states = states.where((element) => allowedStates.contains(element.state)).toList();
 
-    states.insert(
-        0,
-        new States(
-            countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+    states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
     setState(() {
       _states = states;
@@ -151,49 +141,38 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
     ShippingAddress? newAddress;
     if (response['data'] != null) {
       var addressId = response['data']['address_id'] as String;
-      var shipAddress = (response['data']['addresses'] as List)
-          .map((i) => ShippingAddress.fromJson(i))
-          .toList();
+      var shipAddress =
+          (response['data']['addresses'] as List).map((i) => ShippingAddress.fromJson(i)).toList();
 
       if (addressId != null) {
-        newAddress =
-            shipAddress.where((e) => e.addressId == addressId).toList().first;
+        newAddress = shipAddress.where((e) => e.addressId == addressId).toList().first;
         if (_states == null ||
             _states
                     .where((element) =>
-                        element.state!.toLowerCase() ==
-                        newAddress!.state!.toLowerCase())
+                        element.state!.toLowerCase() == newAddress!.state!.toLowerCase())
                     .toList()
                     .length ==
                 0) {
           return;
         }
         var currentState = _states
-            .where((element) =>
-                element.state!.toLowerCase() ==
-                newAddress!.state!.toLowerCase())
+            .where((element) => element.state!.toLowerCase() == newAddress!.state!.toLowerCase())
             .toList()
             .first;
 
         await this.fetchCities(currentState.stateId!);
         if (_cities == null ||
-            _cities
-                    .where((element) => element.city == newAddress!.city)
-                    .toList()
-                    .length ==
-                0) {
+            _cities.where((element) => element.city == newAddress!.city).toList().length == 0) {
           return;
         }
 
         var currentCity = _cities
-            .where((element) =>
-                element.city!.toLowerCase() == newAddress!.city!.toLowerCase())
+            .where((element) => element.city!.toLowerCase() == newAddress!.city!.toLowerCase())
             .toList()
             .first;
 
-        var currentPostcode = postcodes
-            .where((element) => element == newAddress!.postcode)
-            .toList();
+        var currentPostcode =
+            postcodes.where((element) => element == newAddress!.postcode).toList();
         var selectedPostcode = "";
         if (currentPostcode.length == 0) {
           selectedPostcode = newAddress.postcode!;
@@ -223,20 +202,12 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   }
 
   Future<void> fetchCities(String stateId) async {
-    final response =
-        await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
+    final response = await Api.bearerGet('provider/city.php?state_id=$stateId', isCms: true);
 
-    var cities =
-        (response['city'] as List).map((i) => City.fromJson(i)).toList();
+    var cities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
     cities.insert(
-        0,
-        new City(
-            stateId: "",
-            city: "--Select--",
-            cityId: "",
-            postcodeId: "",
-            postcode: ""));
+        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
 
     var citySet = Set<String>();
 
@@ -252,9 +223,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   Future<void> fetchProblems() async {
     final response = await Api.bearerGet('provider/problems.php', isCms: true);
 
-    var problems = (response['data'] as List)
-        .map((i) => ServiceProblem.fromJson(i))
-        .toList();
+    var problems = (response['data'] as List).map((i) => ServiceProblem.fromJson(i)).toList();
 
     setState(() {
       _problems = problems;
@@ -278,11 +247,11 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
             Text("Request Date", style: TextStyles.textDefaultLg),
             SizedBox(width: 10),
             CustomCard(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(10),
                 label: "Pick Up",
                 textStyle: TextStyles.textWhiteSm,
-                color: Colors.green[400],
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5))
+                color: AppColors.warmGrey,
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 7))
           ]),
           hasActions: false,
           isBack: true),
@@ -322,17 +291,15 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
               minDate: DateTime.now().add(Duration(days: 2)),
               maxDate: _maxDate,
               selectableDayPredicate: (DateTime date) {
-                if (date.weekday == DateTime.saturday ||
-                    date.weekday == DateTime.sunday) {
+                if (date.weekday == DateTime.saturday || date.weekday == DateTime.sunday) {
                   return false;
                 }
                 return true;
               },
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
-                  _selectedDate = DateFormat('yyyy-MM-dd').format(
-                      DateFormat('yyyy-MM-dd hh:mm:ss')
-                          .parse(args.value.toString()));
+                  _selectedDate = DateFormat('yyyy-MM-dd')
+                      .format(DateFormat('yyyy-MM-dd hh:mm:ss').parse(args.value.toString()));
                 });
               },
               selectionMode: DateRangePickerSelectionMode.single,
@@ -347,10 +314,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                 color: Colors.grey.withOpacity(0.5),
               ),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
               borderRadius: BorderRadius.circular(7.5),
             ),
@@ -393,10 +357,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -418,8 +379,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                         width: width * 0.45,
                         child: !_problems.isEmpty
                             ? DropdownButton<ServiceProblem>(
-                                items: _problems
-                                    .map<DropdownMenuItem<ServiceProblem>>((e) {
+                                items: _problems.map<DropdownMenuItem<ServiceProblem>>((e) {
                                   return DropdownMenuItem<ServiceProblem>(
                                     child: Text(
                                       e.problem!,
@@ -461,13 +421,12 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                               },
                               controller: remarkCT,
                               onFieldSubmitted: (val) {
-                                FocusScope.of(context)
-                                    .requestFocus(new FocusNode());
+                                FocusScope.of(context).requestFocus(new FocusNode());
                               },
                               decoration: InputDecoration(
                                 hintText: '',
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 5),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                               ),
                             ),
                           ],
@@ -498,10 +457,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
             ),
             child: Column(
@@ -521,8 +477,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                         width: width * 0.45,
                         child: !_deliveryOptions.isEmpty
                             ? DropdownButton<String>(
-                                items: _deliveryOptions
-                                    .map<DropdownMenuItem<String>>((e) {
+                                items: _deliveryOptions.map<DropdownMenuItem<String>>((e) {
                                   return DropdownMenuItem<String>(
                                     child: Text(
                                       e,
@@ -548,8 +503,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                 SizedBox(height: 5),
                 Text(
                     "* Courier fee of RM 15.00 will be charged if delivery service after repair is needed",
-                    style: TextStyles.textWarning
-                        .copyWith(fontStyle: FontStyle.italic),
+                    style: TextStyles.textWarning.copyWith(fontStyle: FontStyle.italic),
                     textAlign: TextAlign.start)
               ],
             ),
@@ -578,10 +532,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
               ),
               borderRadius: BorderRadius.circular(7.5),
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 5,
-                    color: Colors.grey[200]!,
-                    offset: Offset(0, 10)),
+                BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
               ],
             ),
             child: Form(
@@ -608,14 +559,12 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                           },
                           controller: address1CT,
                           onFieldSubmitted: (val) {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
+                            FocusScope.of(context).requestFocus(new FocusNode());
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'eg: No 78 Jalan Mawar',
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 5),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                           ),
                         ),
                       ),
@@ -638,14 +587,12 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                           },
                           controller: address2CT,
                           onFieldSubmitted: (val) {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
+                            FocusScope.of(context).requestFocus(new FocusNode());
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'eg: Puchong Perdana',
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 5),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                           ),
                         ),
                       ),
@@ -707,8 +654,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                                 padding: EdgeInsets.only(left: 10),
                                 width: width * 0.45,
                                 child: DropdownButtonFormField<City>(
-                                  items:
-                                      _cities.map<DropdownMenuItem<City>>((e) {
+                                  items: _cities.map<DropdownMenuItem<City>>((e) {
                                     return DropdownMenuItem<City>(
                                       child: Text(
                                         e.city!,
@@ -727,8 +673,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                                     });
                                   },
                                   validator: (value) {
-                                    if (value!.cityId! == "")
-                                      return "Please enter city";
+                                    if (value!.cityId! == "") return "Please enter city";
                                     return null;
                                   },
                                 ),
@@ -767,8 +712,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                               );
                             }).toList(),
                             validator: (value) {
-                              if (value!.stateId! == "")
-                                return "Please enter state";
+                              if (value!.stateId! == "") return "Please enter state";
                               return null;
                             },
                           ),
@@ -800,16 +744,8 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: GradientButton(
-                height: 40,
-                child: Text(
-                  "Book",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                gradient: LinearGradient(
-                    colors: <Color>[Colors.white, Colors.grey[400]!],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
+              child: RoundButton(
+                title: 'Book',
                 onPressed: () {
                   setState(() {
                     dateError = false;
@@ -844,9 +780,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                     Navigator.pushNamed(
                       context,
                       'reviewPickup',
-                      arguments: requestServiceArgs != null
-                          ? requestServiceArgs
-                          : null,
+                      arguments: requestServiceArgs != null ? requestServiceArgs : null,
                     );
                   }
                 },

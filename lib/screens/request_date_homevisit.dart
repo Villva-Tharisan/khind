@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:khind/components/custom_card.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/components/round_button.dart';
 import 'package:khind/models/Purchase.dart';
 import 'package:khind/models/address.dart';
 import 'package:khind/models/city.dart';
@@ -9,6 +10,7 @@ import 'package:khind/models/request_service_arguments.dart';
 import 'package:khind/models/service_problem.dart';
 import 'package:khind/models/shipping_address.dart';
 import 'package:khind/models/states.dart';
+import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
 import 'package:khind/util/api.dart';
 import 'package:khind/util/helpers.dart';
@@ -243,11 +245,11 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
             Text("Request Date", style: TextStyles.textDefaultLg),
             SizedBox(width: 10),
             CustomCard(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(10),
                 label: "Homevisit",
                 textStyle: TextStyles.textWhiteSm,
-                color: Colors.green[400],
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5))
+                color: AppColors.warmGrey,
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 7))
           ]),
           hasActions: false,
           isBack: true),
@@ -745,16 +747,8 @@ class _RequestDateHomeVisitState extends State<RequestDateHomeVisit> {
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: GradientButton(
-                height: 40,
-                child: Text(
-                  "Book",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                gradient: LinearGradient(
-                    colors: <Color>[Colors.white, Colors.grey[400]!],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
+              child: RoundButton(
+                title: 'Book',
                 onPressed: () {
                   setState(() {
                     dateError = false;

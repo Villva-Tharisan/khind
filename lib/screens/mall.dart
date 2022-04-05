@@ -15,7 +15,7 @@ class _MallState extends State<Mall> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "Mall"),
+      appBar: Helpers.customAppBar(context, _scaffoldKey, title: "Mall", isPrimary: true),
       body: SafeArea(
         child: Container(
             height: MediaQuery.of(context).size.height * 0.8,

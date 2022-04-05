@@ -61,7 +61,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
         context,
         _scaffoldKey,
         title: "Service Tracker",
-        // hasActions: false,
+        isPrimary: true
       ),
       body: Column(
         children: [

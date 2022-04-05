@@ -47,15 +47,11 @@ class RoundButton extends StatelessWidget {
                 alignment: Alignment.center,
                 padding: padding != null ? padding : EdgeInsets.zero,
                 decoration: BoxDecoration(
-                  color: color != null ? color : AppColors.primary,
-                  borderRadius: borderRadius != null ? borderRadius : BorderRadius.circular(10),
-                  border: customBorder != null
-                      ? customBorder
-                      : Border.all(color: Colors.grey[400]!, width: 0.5),
-                  // boxShadow: [
-                  //   BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
-                  // ],
-                ),
+                    color: color != null ? color : AppColors.primary,
+                    borderRadius: borderRadius != null ? borderRadius : BorderRadius.circular(10),
+                    border: customBorder != null
+                        ? customBorder
+                        : Border.all(color: Colors.grey[400]!, width: 0.5)),
                 child: Material(
                     color: Colors.transparent,
                     child: icon != null
@@ -74,7 +70,7 @@ class RoundButton extends StatelessWidget {
                                 textAlign: TextAlign.center,
                                 style: titleStyles != null
                                     ? titleStyles
-                                    : TextStyles.textW500.copyWith(color: Colors.white)),
+                                    : TextStyles.textDefaultBoldMd),
                           ))));
   }
 }

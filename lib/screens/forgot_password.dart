@@ -87,8 +87,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         child: Form(
             key: _formKey,
             child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Text("Enter your email", style: TextStyle(fontWeight: FontWeight.w500)),
-              Text("address", style: TextStyle(fontWeight: FontWeight.w500)),
+              Text("Don't worry! Let us know where to send the login information.",
+                  textAlign: TextAlign.center, style: TextStyles.textDefaultBold),
+              // Text("address", style: TextStyle(fontWeight: FontWeight.w500)),
               SizedBox(height: 20),
               TextFormField(
                 focusNode: focusEmail,
@@ -123,8 +124,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
               SizedBox(height: 40),
               RoundButton(
+                  // color: AppColors.tertiery,
                   // height: 40,
-                  title: 'Send me my new password',
+                  titleStyles: TextStyles.textDefault,
+                  title: 'Submit',
                   onPressed: () => _handleUpdate()),
               SizedBox(height: 10),
               RoundButton(
@@ -134,17 +137,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   onPressed: () => Navigator.pop(context)),
             ])));
   }
-
-  // _renderSuccess() {
-  //   return Container(
-  //       alignment: Alignment.center,
-  //       child: Container(
-  //           child: Text(
-  //         "Check out your new password at your email",
-  //         style: TextStyle(fontSize: 14, color: Colors.green, fontWeight: FontWeight.w500),
-  //         textAlign: TextAlign.center,
-  //       )));
-  // }
 
   _renderError() {
     return Column(
@@ -165,7 +157,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "Forgot Password", isBack: true, hasActions: false),
+          title: "Forget Password", isBack: true, isBackPrimary: true, hasActions: false),
       body: CustomPaint(
           painter: BgPainter(),
           child: Container(

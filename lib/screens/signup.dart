@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' show Platform;
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:khind/components/bg_painter.dart';
@@ -77,7 +78,7 @@ class _SignUpState extends State<SignUp> {
     address2CT.text = "Taman Murni";
     confirmPasswordCT.text = "p455word";
     passwordCT.text = "p455word";
-    _init();
+    // _init();
     _loadToken();
     _fetchLocation();
     super.initState();
@@ -161,14 +162,13 @@ class _SignUpState extends State<SignUp> {
 
     var newCities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
-    newCities.insert(
-        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
+    // newCities.insert(
+    //     0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
     var citySet = Set<String>();
     List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
-    ;
     setState(() {
       cities = tempCities;
-      city = tempCities[0];
+      // city = tempCities[0];
     });
   }
 
@@ -176,11 +176,11 @@ class _SignUpState extends State<SignUp> {
     final response = await Api.bearerGet('provider/state.php', isCms: true);
     var newStates = (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-    newStates.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+    // newStates.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
     setState(() {
       states = newStates;
-      state = newStates[0];
+      // state = newStates[0];
     });
   }
 
@@ -301,8 +301,10 @@ class _SignUpState extends State<SignUp> {
       if (respRest['success']) {
         await storage.write(key: IS_AUTH, value: "1");
         await storage.write(key: USER, value: jsonEncode(response['data']));
-        Helpers.showAlert(context, title: 'You have successfully sign up', hasAction: true,
-            onPressed: () async {
+        Helpers.showAlert(context,
+            title: 'Welcome to Khind Family!',
+            okTitle: 'Start Exploring',
+            hasAction: true, onPressed: () async {
           _clearTextField();
           setState(() {
             errors = [];
@@ -346,9 +348,10 @@ class _SignUpState extends State<SignUp> {
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
         child: Form(
             key: _basicFormKey,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Text("Step 1 : Fill in your information", style: TextStyles.textSecondaryBold),
-              SizedBox(height: 20),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text("We'd like to get to know you better!", style: TextStyles.textDefaultBoldMd),
+              Text("Tell us your : ", style: TextStyles.textDefaultBold),
+              SizedBox(height: 10),
               TextFormField(
                 focusNode: focusEmail,
                 keyboardType: TextInputType.text,
@@ -549,23 +552,22 @@ class _SignUpState extends State<SignUp> {
         child: Form(
             key: _addressFormKey,
             child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Row(children: [
-                InkWell(
-                    onTap: () => setState(() {
-                          showAddressForm = false;
-                          showPwdForm = false;
-                        }),
-                    child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: Icon(Icons.arrow_back, color: AppColors.tertiery),
-                        decoration: BoxDecoration(
-                            color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
-                SizedBox(width: 20),
-                Flexible(
-                    child:
-                        Text("Step 2 : Fill in your address", style: TextStyles.textSecondaryBold))
-              ]),
-              SizedBox(height: 20),
+              // Row(children: [
+              //   InkWell(
+              //       onTap: () => setState(() {
+              //             showAddressForm = false;
+              //             showPwdForm = false;
+              //           }),
+              //       child: Container(
+              //           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              //           child: Icon(Icons.arrow_back, color: AppColors.tertiery),
+              //           decoration: BoxDecoration(
+              //               color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
+              //   SizedBox(width: 20),
+              //   Flexible(
+              //       child: Text("Fill in your address : ", style: TextStyles.textSecondaryBold))
+              // ]),
+              // SizedBox(height: 20),
               TextFormField(
                 focusNode: focusAddress1,
                 keyboardType: TextInputType.text,
@@ -617,123 +619,194 @@ class _SignUpState extends State<SignUp> {
                         borderSide: BorderSide(
                             color: AppColors.greyLight, width: 1, style: BorderStyle.solid))),
               ),
-              SizedBox(height: 5),
-              DropdownButtonFormField(
-                focusNode: focusPostcode,
-                style: TextStyles.textDefault,
-                decoration: InputDecoration(
-                  labelText: 'Postcode *',
-                  labelStyle: TextStyles.textWarningLg,
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+              SizedBox(height: 20),
+              // DropdownButtonFormField(
+              //   focusNode: focusPostcode,
+              //   style: TextStyles.textDefault,
+              //   decoration: InputDecoration(
+              //     labelText: 'Postcode *',
+              //     labelStyle: TextStyles.textWarningLg,
+              //     focusedBorder: UnderlineInputBorder(
+              //       borderSide:
+              //           BorderSide(color: AppColors.primary, width: 2, style: BorderStyle.solid),
+              //     ),
+              //     enabledBorder: UnderlineInputBorder(
+              //       borderSide:
+              //           BorderSide(color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+              //     ),
+              //     border: UnderlineInputBorder(
+              //         borderSide: BorderSide(
+              //             color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
+              //   ),
+              //   value: postcode != null ? postcode : null,
+              //   items: postcodes
+              //       .map((e) => DropdownMenuItem(
+              //           child: Text(e.postcode as String),
+              //           value: e,
+              //           key: Key(e.postcodeId as String)))
+              //       .toList(),
+              //   onChanged: (val) {
+              //     setState(() {
+              //       postcode = val as Postcodes;
+              //       this.onSelectPostcode(val);
+              //     });
+              //   },
+              // ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: Text('Postcode *', style: TextStyles.textWarning),
                   ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
-                  ),
-                  border: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
-                ),
-                value: postcode != null ? postcode : null,
-                items: postcodes
-                    .map((e) => DropdownMenuItem(
-                        child: Text(e.postcode as String),
-                        value: e,
-                        key: Key(e.postcodeId as String)))
-                    .toList(),
-                onChanged: (val) {
-                  setState(() {
-                    postcode = val as Postcodes;
-                    this.onSelectPostcode(val);
-                  });
-                },
+                  Container(
+                    child: DropdownSearch<Postcodes>(
+                      mode: Mode.DIALOG,
+                      showSearchBox: true,
+                      // showSelectedItem: true,
+                      items: postcodes,
+                      selectedItem: postcode,
+                      itemAsString: (item) => item!.postcode!,
+                      onChanged: (value) {
+                        setState(() {
+                          postcode = value!;
+                          this.onSelectPostcode(value);
+                        });
+                      },
+                      validator: (value) {
+                        if (value == "") return "Please enter postcode";
+                        return null;
+                      },
+                      dropdownSearchDecoration: InputDecoration(
+                        // labelText: postcode.postcode,
+                        hintText: "Select a postcode",
+                        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.cyan),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
-              SizedBox(height: 5),
-              cities.length > 0
-                  ? DropdownButtonFormField(
-                      focusNode: focusCity,
-                      style: TextStyles.textDefault,
-                      decoration: InputDecoration(
-                        labelText: 'City *',
-                        labelStyle: TextStyles.textWarningLg,
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.primary, width: 2, style: BorderStyle.solid),
+              SizedBox(height: 20),
+              city != null
+                  ? Container(
+                      alignment: Alignment.centerLeft,
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Container(
+                          child: Text('City *', style: TextStyles.textWarning),
                         ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
-                        ),
-                        border: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
-                      ),
-                      value: city != null ? city : null,
-                      onChanged: (val) {
-                        setState(() {
-                          city = (val as City);
-                        });
-                      },
-                      items: cities
-                          .map((e) => DropdownMenuItem(
-                              child: Text(e.city!), value: e, key: Key(jsonEncode(e))))
-                          .toList())
+                        SizedBox(height: 10.0),
+                        Text(city!.city!, style: TextStyles.textDefault)
+                      ]))
                   : Container(),
-              SizedBox(height: 5),
-              states.length > 0
-                  ? DropdownButtonFormField(
-                      focusNode: focusState,
-                      style: TextStyles.textDefault,
-                      decoration: InputDecoration(
-                        labelText: 'State *',
-                        labelStyle: TextStyles.textWarningLg,
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.primary, width: 2, style: BorderStyle.solid),
+              // cities.length > 0
+              //     ? DropdownButtonFormField(
+              //         focusNode: focusCity,
+              //         style: TextStyles.textDefault,
+              //         decoration: InputDecoration(
+              //           labelText: 'City *',
+              //           labelStyle: TextStyles.textWarningLg,
+              //           focusedBorder: UnderlineInputBorder(
+              //             borderSide: BorderSide(
+              //                 color: AppColors.primary, width: 2, style: BorderStyle.solid),
+              //           ),
+              //           enabledBorder: UnderlineInputBorder(
+              //             borderSide: BorderSide(
+              //                 color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+              //           ),
+              //           border: UnderlineInputBorder(
+              //               borderSide: BorderSide(
+              //                   color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
+              //         ),
+              //         value: city != null ? city : null,
+              //         onChanged: (val) {
+              //           setState(() {
+              //             city = (val as City);
+              //           });
+              //         },
+              //         items: cities
+              //             .map((e) => DropdownMenuItem(
+              //                 child: Text(e.city!), value: e, key: Key(jsonEncode(e))))
+              //             .toList())
+              //     : Container(),
+              SizedBox(height: 20),
+              state != null
+                  ? Container(
+                      alignment: Alignment.centerLeft,
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Container(
+                          child: Text('State *', style: TextStyles.textWarning),
                         ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
-                        ),
-                        border: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
-                      ),
-                      // dropdownColor: Colors.blueAccent,
-                      value: state != null ? state : null,
-                      onChanged: (val) {
-                        setState(() {
-                          state = (val as States);
-                        });
-                      },
-                      items: states
-                          .map((e) => DropdownMenuItem(
-                              child: Text(e.state!), value: e, key: Key(jsonEncode(e))))
-                          .toList())
+                        SizedBox(height: 10.0),
+                        Text(state!.state!, style: TextStyles.textDefault)
+                      ]))
                   : Container(),
+              // states.length > 0
+              //     ? DropdownButtonFormField(
+              //         focusNode: focusState,
+              //         style: TextStyles.textDefault,
+              //         decoration: InputDecoration(
+              //           labelText: 'State *',
+              //           labelStyle: TextStyles.textWarningLg,
+              //           focusedBorder: UnderlineInputBorder(
+              //             borderSide: BorderSide(
+              //                 color: AppColors.primary, width: 2, style: BorderStyle.solid),
+              //           ),
+              //           enabledBorder: UnderlineInputBorder(
+              //             borderSide: BorderSide(
+              //                 color: AppColors.greyLight, width: 1, style: BorderStyle.solid),
+              //           ),
+              //           border: UnderlineInputBorder(
+              //               borderSide: BorderSide(
+              //                   color: AppColors.greyLight, width: 1, style: BorderStyle.solid)),
+              //         ),
+              //         // dropdownColor: Colors.blueAccent,
+              //         value: state != null ? state : null,
+              //         onChanged: (val) {
+              //           setState(() {
+              //             state = (val as States);
+              //           });
+              //         },
+              //         items: states
+              //             .map((e) => DropdownMenuItem(
+              //                 child: Text(e.state!), value: e, key: Key(jsonEncode(e))))
+              //             .toList())
+              //     : Container(),
               SizedBox(height: 30),
-              RoundButton(
-                  title: "Next",
-                  icon: Icons.arrow_right_alt_rounded,
-                  onPressed: () {
-                    if (_addressFormKey.currentState!.validate()) {
-                      if (Helpers.isEmpty(postcode.postcode) ||
-                          Helpers.isEmpty(city) ||
-                          Helpers.isEmpty(state)) {
-                        return setState(() {
-                          isLoading = false;
-                          errors.add("Please key in mandatory field");
-                        });
-                      } else {
-                        setState(() {
-                          showPwdForm = true;
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                InkWell(
+                    onTap: () => setState(() {
                           showAddressForm = false;
-                        });
+                          showPwdForm = false;
+                        }),
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: Icon(Icons.arrow_back, color: AppColors.tertiery),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
+                SizedBox(width: 10),
+                RoundButton(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    title: "Next",
+                    onPressed: () {
+                      if (_addressFormKey.currentState!.validate()) {
+                        if (Helpers.isEmpty(postcode.postcode) ||
+                            Helpers.isEmpty(city) ||
+                            Helpers.isEmpty(state)) {
+                          return setState(() {
+                            isLoading = false;
+                            errors.add("Please key in mandatory field");
+                          });
+                        } else {
+                          setState(() {
+                            showPwdForm = true;
+                            showAddressForm = false;
+                          });
+                        }
                       }
-                    }
-                  })
+                    })
+              ])
             ])));
   }
 
@@ -745,22 +818,6 @@ class _SignUpState extends State<SignUp> {
         child: Form(
             key: _pwdFormKey,
             child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Row(children: [
-                InkWell(
-                    onTap: () => setState(() {
-                          showPwdForm = false;
-                          showAddressForm = true;
-                        }),
-                    child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: Icon(Icons.arrow_back, color: AppColors.tertiery),
-                        decoration: BoxDecoration(
-                            color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
-                SizedBox(width: 20),
-                Flexible(
-                    child: Text("Step 3 : Create password", style: TextStyles.textSecondaryBold))
-              ]),
-              SizedBox(height: 20),
               Stack(children: [
                 TextFormField(
                   focusNode: focusPwd,
@@ -899,20 +956,34 @@ class _SignUpState extends State<SignUp> {
                             ])))
                       ]))),
               SizedBox(height: 30),
-              RoundButton(
-                  title: "Sign Up",
-                  onPressed: () {
-                    print("AGREE TERM: $agreeTerm");
-                    if (!agreeTerm) {
-                      Helpers.showAlert(context,
-                          onPressed: () => {Navigator.pop(context)},
-                          hasAction: true,
-                          title: "Warning",
-                          desc: "You must agree Term of Use!");
-                    } else if (_pwdFormKey.currentState!.validate()) {
-                      _handleSignUp();
-                    }
-                  })
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                InkWell(
+                    onTap: () => setState(() {
+                          showAddressForm = true;
+                          showPwdForm = false;
+                        }),
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: Icon(Icons.arrow_back, color: AppColors.tertiery),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300], borderRadius: BorderRadius.circular(20)))),
+                SizedBox(width: 10),
+                RoundButton(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    title: "Join Us Now!",
+                    onPressed: () {
+                      print("AGREE TERM: $agreeTerm");
+                      if (!agreeTerm) {
+                        Helpers.showAlert(context,
+                            onPressed: () => {Navigator.pop(context)},
+                            hasAction: true,
+                            title: "Warning",
+                            desc: "You must agree Term of Use!");
+                      } else if (_pwdFormKey.currentState!.validate()) {
+                        _handleSignUp();
+                      }
+                    })
+              ])
             ])));
   }
 
@@ -935,7 +1006,7 @@ class _SignUpState extends State<SignUp> {
       // resizeToAvoidBottomInset: true,
       key: _scaffoldKey,
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "Sign Up", isBack: true, hasActions: false),
+          title: "Sign Up", isBack: true, isBackPrimary: true, hasActions: false),
       body: CustomPaint(
           painter: BgPainter(hasAppBar: true),
           child: SingleChildScrollView(

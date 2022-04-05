@@ -102,12 +102,18 @@ class Helpers {
   }
 
   static AppBar customAppBar(BuildContext ctx, GlobalKey<ScaffoldState> scaffoldKey,
-      {String title = "", Widget? customTitle, bool isBack = false, hasActions = true}) {
+      {String title = "",
+      Widget? customTitle,
+      bool isBack = false,
+      hasActions = true,
+      isPrimary = false,
+      isBackPrimary = false}) {
     return AppBar(
       leadingWidth: isBack ? 50 : 20,
       leading: isBack
           ? IconButton(
-              icon: Icon(Icons.arrow_back_ios_new, color: AppColors.secondary, size: 20),
+              icon: Icon(Icons.arrow_back_ios_new,
+                  color: isBackPrimary ? AppColors.primary : AppColors.tertiery, size: 20),
               onPressed: () {
                 if (!isBack) {
                   scaffoldKey.currentState!.openDrawer();
@@ -116,7 +122,7 @@ class Helpers {
                 }
               })
           : Container(),
-      backgroundColor: AppColors.primary,
+      backgroundColor: isPrimary ? AppColors.primary : Colors.transparent,
       elevation: 0.0,
       titleSpacing: 0,
       centerTitle: false,
@@ -124,20 +130,20 @@ class Helpers {
           ? customTitle
           : Text(
               title,
-              style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.bold),
+              style: TextStyle(color: AppColors.tertiery, fontWeight: FontWeight.bold),
             ),
       actions: hasActions
           ? [
               new InkWell(
                   // color: Colors.transparent,
                   // icon: Image(image: AssetImage('assets/icons/location.png'), height: 22),
-                  child: Icon(Icons.location_pin, size: 27, color: AppColors.secondary),
+                  child: Icon(Icons.location_pin, size: 27, color: AppColors.tertiery),
                   onTap: () {
                     Navigator.pushNamed(ctx, 'service_locator');
                   }),
               SizedBox(width: 5),
               new InkWell(
-                  child: Icon(Icons.account_circle_rounded, size: 27, color: AppColors.secondary),
+                  child: Icon(Icons.account_circle_rounded, size: 27, color: AppColors.tertiery),
                   onTap: () {
                     Navigator.pushNamed(ctx, 'profile');
                   }),
