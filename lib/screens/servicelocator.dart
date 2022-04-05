@@ -164,7 +164,7 @@ class _ServiceLocatorState extends State<ServiceLocator> {
       //   title: Text('Locate a Service Center'),
       // ),
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "Locate a Service Center", isBack: true, hasActions: false),
+          title: "Locate a Service Center", isBack: true, hasActions: false, isPrimary: true),
       body: Container(
         // width: double.infinity,
         // height: double.infinity,

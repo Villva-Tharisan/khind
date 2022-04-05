@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:khind/components/custom_card.dart';
 import 'package:khind/components/gradient_button.dart';
+import 'package:khind/components/round_button.dart';
 import 'package:khind/models/product_warranty.dart';
 import 'package:khind/models/service_product.dart';
 import 'package:khind/models/shipping_address.dart';
@@ -45,13 +46,8 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: Helpers.customAppBar(
-        context,
-        _scaffoldKey,
-        title: "Product Name",
-        hasActions: false,
-        isBack: true,
-      ),
+      appBar: Helpers.customAppBar(context, _scaffoldKey,
+          title: "Product Name", hasActions: false, isBack: true, isPrimary: true),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -65,14 +61,11 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                   Text('Status :'),
                   SizedBox(width: 5),
                   CustomCard(
-                      color: getColor(serviceProduct.data![index]
-                          ['service_request_status']!),
-                      borderRadius: BorderRadius.circular(5),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 10),
+                      color: getColor(serviceProduct.data![index]['service_request_status']!),
+                      borderRadius: BorderRadius.circular(2),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                       textStyle: TextStyles.textWhiteSm,
-                      label: serviceProduct.data![index]
-                          ['service_request_status']!),
+                      label: serviceProduct.data![index]['service_request_status']!),
                   // Container(
                   //   padding: EdgeInsets.all(10),
                   //   decoration: BoxDecoration(
@@ -107,10 +100,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                     color: Colors.grey.withOpacity(0.5),
                   ),
                   boxShadow: [
-                    BoxShadow(
-                        blurRadius: 5,
-                        color: Colors.grey[200]!,
-                        offset: Offset(0, 10)),
+                    BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
                   ],
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -131,11 +121,9 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         serviceProduct.data![index]['serial_no'] != null &&
-                                serviceProduct.data![index]['serial_no'] !=
-                                    "null"
+                                serviceProduct.data![index]['serial_no'] != "null"
                             ? Expanded(
-                                child: Text(
-                                    serviceProduct.data![index]['serial_no']!),
+                                child: Text(serviceProduct.data![index]['serial_no']!),
                               )
                             : Text("-")
                       ],
@@ -151,8 +139,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         ),
                         SizedBox(width: 30),
                         Expanded(
-                          child: Text(
-                              serviceProduct.data![index]['service_type']!),
+                          child: Text(serviceProduct.data![index]['service_type']!),
                         )
                       ],
                     ),
@@ -197,8 +184,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                         SizedBox(width: 30),
                         serviceProduct.data![index]['problem'] != null
                             ? Expanded(
-                                child: Text(
-                                    serviceProduct.data![index]['problem']!),
+                                child: Text(serviceProduct.data![index]['problem']!),
                               )
                             : Text("-")
                       ],
@@ -220,9 +206,7 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                               // borderRadius: BorderRadius.circular(5),
                               border: Border.all(color: Colors.grey[300]!),
                             ),
-                            child: Text(serviceProduct.data![index]
-                                    ['remarks'] ??
-                                'null'),
+                            child: Text(serviceProduct.data![index]['remarks'] ?? 'null'),
                           ),
                         )
                       ],
@@ -232,22 +216,13 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
               ),
               SizedBox(height: 15),
 
-              if (serviceProduct.data![index]['service_request_status']! ==
-                  'Pending Collection')
+              if (serviceProduct.data![index]['service_request_status']! == 'Pending Collection')
                 //     'Collected')
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GradientButton(
-                    height: 40,
-                    child: Text(
-                      "Request For Delivery",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    gradient: LinearGradient(
-                        colors: <Color>[Colors.white, Colors.grey[400]!],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter),
+                  child: RoundButton(
+                    title: 'Request For Delivery',
                     onPressed: () async {
                       //call api addres
 
@@ -256,15 +231,13 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                       ShippingAddress? newAddress;
 
                       if (response['data'] != null) {
-                        var shipAddress =
-                            (response['data']['addresses'] as List)
-                                .map((i) => ShippingAddress.fromJson(i))
-                                .toList();
+                        var shipAddress = (response['data']['addresses'] as List)
+                            .map((i) => ShippingAddress.fromJson(i))
+                            .toList();
 
                         if (response['data']['address_id'] != null) {
                           shipAddress.forEach((elem) {
-                            if (response['data']['address_id'] ==
-                                elem.addressId) {
+                            if (response['data']['address_id'] == elem.addressId) {
                               newAddress = elem;
                             }
                           });
@@ -279,30 +252,19 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
 
               SizedBox(height: 15),
 
-              if (serviceProduct.data![index]['service_request_status']! ==
-                      'Pending Collection' ||
-                  serviceProduct.data![index]['service_request_status']! ==
-                      'Collected')
+              if (serviceProduct.data![index]['service_request_status']! == 'Pending Collection' ||
+                  serviceProduct.data![index]['service_request_status']! == 'Collected')
                 //     'Collected')
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GradientButton(
-                    height: 40,
-                    child: Text(
-                      "View Invoice",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    gradient: LinearGradient(
-                        colors: <Color>[Colors.white, Colors.grey[400]!],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter),
+                  child: RoundButton(
+                    title: 'View Invoice',
                     onPressed: () => Navigator.pushNamed(context, 'invoice'),
                   ),
                 ),
 
-              if (serviceProduct.data![index]['service_request_status']! ==
-                      'Collected' ||
+              if (serviceProduct.data![index]['service_request_status']! == 'Collected' ||
                   serviceProduct.data![index]['service_type_id']! == '2')
                 Column(
                   children: [
@@ -380,6 +342,14 @@ class _ServiceTrackerDetailsState extends State<ServiceTrackerDetails> {
                     ),
                   ],
                 ),
+
+              Column(
+                children: [
+                  Text('KHIND Customer Careline : ', style: TextStyles.textDefaultBoldLg),
+                  SizedBox(height: 5),
+                  Text('1800880032 ', style: TextStyles.textDefaultBoldLg)
+                ],
+              ),
               // if (serviceProduct.data![index]['service_request_status']! !=
               //     'Collected')
               //   Padding(

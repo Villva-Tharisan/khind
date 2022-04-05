@@ -14,6 +14,8 @@ class TextStyles {
       TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black);
   static TextStyle textDefaultBoldMd =
       TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black);
+  static TextStyle textDefaultBoldLg =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black);
   static TextStyle textDefaultW500 =
       TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black);
   static TextStyle textTitle =

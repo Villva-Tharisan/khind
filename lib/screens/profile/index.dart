@@ -157,6 +157,9 @@ class _ProfileState extends State<Profile> {
     mobileNoCT.dispose();
     address1CT.dispose();
     address2CT.dispose();
+    focusName.dispose();
+    focusMobile.dispose();
+    focusDob.dispose();
     super.dispose();
   }
 
@@ -328,7 +331,7 @@ class _ProfileState extends State<Profile> {
         }
 
         selectedDob = picked;
-        dobCT.text = '$fm/$fd/${picked.year}';
+        dobCT.text = '$fd/$fm/${picked.year}';
       });
     }
   }
@@ -388,7 +391,7 @@ class _ProfileState extends State<Profile> {
                         Container(
                             width: fieldSize,
                             child: TextFormField(
-                                autofocus: true,
+                                // autofocus: true,
                                 focusNode: focusName,
                                 enabled: canEditName,
                                 keyboardType: TextInputType.text,
@@ -409,13 +412,13 @@ class _ProfileState extends State<Profile> {
                               setState(() {
                                 canEditName = !this.canEditName;
                               });
-                              // print(canEditMobile);
+                              print('#canEditName: $canEditName');
                               if (!canEditName) {
                                 _handleUpdate(field: 'Name');
                               } else {
-                                // focusName.unfocus();
-                                await Future<void>.delayed(Duration(milliseconds: 3));
-                                focusName.requestFocus();
+                                focusName.unfocus();
+                                await Future<void>.delayed(Duration(milliseconds: 1));
+                                FocusScope.of(context).requestFocus(focusName);
                               }
                             },
                             child: canEditName
@@ -424,7 +427,7 @@ class _ProfileState extends State<Profile> {
                                     child: Icon(Icons.check, color: Colors.green))
                                 : Container(
                                     decoration: BoxDecoration(
-                                        color: AppColors.secondary,
+                                        color: AppColors.primary,
                                         borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                     child: Text("Edit", style: TextStyles.textDefaultSm)))
@@ -460,14 +463,16 @@ class _ProfileState extends State<Profile> {
                                 ))),
                         Spacer(),
                         InkWell(
-                            onTap: () {
+                            onTap: () async {
                               setState(() {
                                 canEditMobile = !this.canEditMobile;
                               });
-                              // print(canEditMobile);
+                              print(canEditMobile);
                               if (!canEditMobile) {
                                 _handleUpdate(field: 'Mobile');
                               } else {
+                                focusMobile.unfocus();
+                                await Future<void>.delayed(Duration(milliseconds: 1));
                                 FocusScope.of(context).requestFocus(focusMobile);
                               }
                             },
@@ -477,7 +482,7 @@ class _ProfileState extends State<Profile> {
                                     child: Icon(Icons.check, color: Colors.green))
                                 : Container(
                                     decoration: BoxDecoration(
-                                        color: AppColors.secondary,
+                                        color: AppColors.primary,
                                         borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                     child: Text("Edit", style: TextStyles.textDefaultSm)))
@@ -546,12 +551,16 @@ class _ProfileState extends State<Profile> {
                             child: Row(children: [
                               _renderIcon(Icons.date_range, onPressed: () => _selectDob(context)),
                               InkWell(
-                                  onTap: () {
+                                  onTap: () async {
                                     setState(() {
                                       canEditDob = !this.canEditDob;
                                     });
                                     if (!canEditDob) {
                                       _handleUpdate(field: 'D.O.B');
+                                    } else {
+                                      focusDob.unfocus();
+                                      await Future<void>.delayed(Duration(milliseconds: 1));
+                                      FocusScope.of(context).requestFocus(focusDob);
                                     }
                                   },
                                   child: canEditDob
@@ -561,7 +570,7 @@ class _ProfileState extends State<Profile> {
                                           child: Icon(Icons.check, color: Colors.green))
                                       : Container(
                                           decoration: BoxDecoration(
-                                              color: AppColors.secondary,
+                                              color: AppColors.primary,
                                               borderRadius: BorderRadius.circular(10)),
                                           padding:
                                               EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -576,6 +585,7 @@ class _ProfileState extends State<Profile> {
                         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                           Container(
                               width: screenSize * 0.4,
+                              height: 40,
                               child: InkWell(
                                   onTap: () => {
                                         showDialog(
@@ -590,15 +600,14 @@ class _ProfileState extends State<Profile> {
                                             })
                                       },
                                   child: CustomCard(
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(10),
                                       color: AppColors.primary,
                                       child: Text("Update Address",
                                           textAlign: TextAlign.center,
-                                          style: TextStyles.textWhite.copyWith(
-                                              fontWeight: FontWeight.w500, fontSize: 12))))),
-                          SizedBox(width: 10),
+                                          style: TextStyles.textDefaultBoldSm)))),
                           Container(
                               width: screenSize * 0.4,
+                              height: 40,
                               child: InkWell(
                                   onTap: () => {
                                         showDialog(
@@ -611,12 +620,11 @@ class _ProfileState extends State<Profile> {
                                             })
                                       },
                                   child: CustomCard(
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(10),
                                       color: AppColors.primary,
                                       child: Text("Change Password",
                                           textAlign: TextAlign.center,
-                                          style: TextStyles.textWhite.copyWith(
-                                              fontWeight: FontWeight.w500, fontSize: 12))))),
+                                          style: TextStyles.textDefaultBoldSm)))),
                         ]),
                         padding: const EdgeInsets.all(0)),
                     SizedBox(height: 20),

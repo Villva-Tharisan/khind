@@ -211,7 +211,7 @@ class _SignUpState extends State<SignUp> {
       }
       setState(() {
         selectedDob = picked;
-        dobCT.text = '$fm/$fd/${picked.year}';
+        dobCT.text = '$fd/$fm/${picked.year}';
       });
     }
   }

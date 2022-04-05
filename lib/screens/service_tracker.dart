@@ -41,13 +41,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
 
   String selectedStatus = "All";
 
-  List<String> _status = [
-    'All',
-    'Pending Collection',
-    'Not Started',
-    'Repairing',
-    'Collected'
-  ];
+  List<String> _status = ['All', 'Pending Collection', 'Not Started', 'Repairing', 'Collected'];
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +51,8 @@ class _ServiceTrackerState extends State<ServiceTracker> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: Helpers.customAppBar(
-        context,
-        _scaffoldKey,
-        title: "Service Tracker",
-        isPrimary: true
-      ),
+      appBar:
+          Helpers.customAppBar(context, _scaffoldKey, title: "Service Tracker", isPrimary: true),
       body: Column(
         children: [
           Align(
@@ -108,8 +98,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                     ),
                     child: state.serviceProduct.data!.length == 0
                         ? Center(
-                            child: Text('There is nothing to track',
-                                style: TextStyles.textDefault),
+                            child: Text('There is nothing to track', style: TextStyles.textDefault),
                           )
                         : Column(
                             children: [
@@ -123,28 +112,20 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                         GestureDetector(
                                           onTap: () async {
                                             Helpers.productIndex = index;
-                                            Helpers.serviceProduct =
-                                                state.serviceProduct;
+                                            Helpers.serviceProduct = state.serviceProduct;
 
-                                            Helpers.productWarranty =
-                                                productWarrantyFromJson(
-                                                    await Repositories.getProduct(
-                                                        productModel: state
-                                                                .serviceProduct
-                                                                .data![index][
-                                                            'product_model']!));
+                                            Helpers.productWarranty = productWarrantyFromJson(
+                                                await Repositories.getProduct(
+                                                    productModel: state.serviceProduct.data![index]
+                                                        ['product_model']!));
 
-                                            if (Helpers.productWarranty!.data!
-                                                    .length !=
-                                                0) {
+                                            if (Helpers.productWarranty!.data!.length != 0) {
                                               Navigator.of(context).pushNamed(
                                                   'ServiceTrackerDetails',
-                                                  arguments:
-                                                      state.serviceProduct);
+                                                  arguments: state.serviceProduct);
                                             } else {
                                               Fluttertoast.showToast(
-                                                msg:
-                                                    'Something went wrong, please try again',
+                                                msg: 'Something went wrong, please try again',
                                                 toastLength: Toast.LENGTH_LONG,
                                                 gravity: ToastGravity.BOTTOM,
                                               );
@@ -161,131 +142,102 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                     color: Colors.grey[200]!,
                                                     offset: Offset(0, 10)),
                                               ],
-                                              borderRadius:
-                                                  BorderRadius.circular(7.5),
+                                              borderRadius: BorderRadius.circular(7.5),
                                             ),
                                             child: Row(
                                               children: [
                                                 Expanded(
                                                   flex: 15,
                                                   child: Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
+                                                    padding: EdgeInsets.symmetric(
                                                       horizontal: 20,
                                                       // vertical: 10,
                                                     ),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: Text(
-                                                            state.serviceProduct
-                                                                        .data![
-                                                                    index][
-                                                                'model_description']!,
-                                                            style: TextStyles
-                                                                .textDefaultBold,
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 5),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: Text(
-                                                            state.serviceProduct
-                                                                            .data![index]
-                                                                        [
-                                                                        'product_model'] !=
-                                                                    null
-                                                                ? state.serviceProduct
-                                                                            .data![
-                                                                        index][
-                                                                    'product_model']!
-                                                                : "",
-                                                            style: TextStyles
-                                                                .textDefaultBold,
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 10),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: Row(children: [
-                                                            Text(
-                                                                "Ticket No. : "),
-                                                            Text(
-                                                              state.serviceProduct
-                                                                          .data![
-                                                                      index][
-                                                                  'ticket_no']!,
-                                                              style: TextStyles
-                                                                  .textDefault,
-                                                            )
-                                                          ]),
-                                                        ),
-                                                        SizedBox(height: 10),
-                                                        Row(
+                                                    child: Row(children: [
+                                                      Expanded(
+                                                          flex: 1,
+                                                          child: Column(
                                                             mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
+                                                                MainAxisAlignment.center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
                                                             children: [
-                                                              Text(
-                                                                  "Service Status :",
-                                                                  style: TextStyles
-                                                                      .textDefault),
-                                                              SizedBox(
-                                                                  width: 5),
-                                                              CustomCard(
-                                                                  color: getColor(state
-                                                                          .serviceProduct
-                                                                          .data![index][
-                                                                      'service_request_status']!),
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          5),
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      vertical:
-                                                                          2,
-                                                                      horizontal:
-                                                                          5),
-                                                                  textStyle:
-                                                                      TextStyles
-                                                                          .textWhiteSm,
-                                                                  label: state
-                                                                          .serviceProduct
-                                                                          .data![index]
-                                                                      [
-                                                                      'service_request_status']!),
-                                                            ]),
-                                                      ],
-                                                    ),
+                                                              Align(
+                                                                alignment: Alignment.centerLeft,
+                                                                child: Text(
+                                                                  state.serviceProduct.data![index]
+                                                                      ['model_description']!,
+                                                                  style: TextStyles.textDefaultBold,
+                                                                ),
+                                                              ),
+                                                              SizedBox(height: 5),
+                                                              Align(
+                                                                alignment: Alignment.centerLeft,
+                                                                child: Text(
+                                                                  state.serviceProduct.data![index]
+                                                                              ['product_model'] !=
+                                                                          null
+                                                                      ? state.serviceProduct
+                                                                              .data![index]
+                                                                          ['product_model']!
+                                                                      : "",
+                                                                  style: TextStyles.textDefaultBold,
+                                                                ),
+                                                              ),
+                                                              SizedBox(height: 10),
+                                                              Align(
+                                                                alignment: Alignment.centerLeft,
+                                                                child: Row(children: [
+                                                                  Text("Ticket No. : "),
+                                                                  Text(
+                                                                    state.serviceProduct
+                                                                        .data![index]['ticket_no']!,
+                                                                    style: TextStyles.textDefault,
+                                                                  )
+                                                                ]),
+                                                              )
+                                                            ],
+                                                          )),
+                                                      Expanded(
+                                                          flex: 1,
+                                                          child: Container(
+                                                              height: 25,
+                                                              child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment.end,
+                                                                  children: [
+                                                                    CustomCard(
+                                                                        color: getColor(state
+                                                                                .serviceProduct
+                                                                                .data![index][
+                                                                            'service_request_status']!),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                2),
+                                                                        padding: const EdgeInsets
+                                                                                .symmetric(
+                                                                            vertical: 2,
+                                                                            horizontal: 5),
+                                                                        textStyle:
+                                                                            TextStyles.textWhiteXs,
+                                                                        label:
+                                                                            '${state.serviceProduct.data![index]['service_request_status']!}'),
+                                                                  ]))),
+                                                    ]),
                                                   ),
                                                 ),
                                                 Expanded(
                                                   child: Container(
                                                     height: double.infinity,
                                                     decoration: BoxDecoration(
-                                                      color: state.serviceProduct
-                                                                          .data![
-                                                                      index][
-                                                                  'service_request_status'] ==
+                                                      color: state.serviceProduct.data![index]
+                                                                  ['service_request_status'] ==
                                                               'Pending Collection'
                                                           ? Colors.green
                                                           : Colors.grey,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topRight:
-                                                            Radius.circular(10),
-                                                        bottomRight:
-                                                            Radius.circular(10),
+                                                      borderRadius: BorderRadius.only(
+                                                        topRight: Radius.circular(10),
+                                                        bottomRight: Radius.circular(10),
                                                       ),
                                                       boxShadow: [
                                                         BoxShadow(
@@ -295,8 +247,7 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                                                         ),
                                                       ],
                                                     ),
-                                                    child: Icon(
-                                                        Icons.chevron_right,
+                                                    child: Icon(Icons.chevron_right,
                                                         color: Colors.white),
                                                   ),
                                                 ),
