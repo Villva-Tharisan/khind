@@ -48,6 +48,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
   String? productModel;
 
   DateTime choosenDate = DateTime.now();
+  DateTime? endWarranty;
+
   int? monthsWarranty;
 
   final storage = new FlutterSecureStorage();
@@ -96,6 +98,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool checkForm = false;
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -121,22 +125,25 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
               vertical: 20,
               horizontal: 15,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Please provide us with your product information'),
-                SizedBox(height: 20),
-                Form(
-                  key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Container(
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Please provide us with your product information'),
+                  SizedBox(height: 20),
+                  Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(width: 0.1),
                       boxShadow: [
-                        BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
+                        BoxShadow(
+                            blurRadius: 5,
+                            color: Colors.grey[200]!,
+                            offset: Offset(0, 10)),
                       ],
                       borderRadius: BorderRadius.circular(7.5),
                     ),
@@ -151,42 +158,52 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                             ),
                             SizedBox(width: 10),
                             Expanded(
-                              child: BlocBuilder<ProductGroupCubit, ProductGroupState>(
+                              child: BlocBuilder<ProductGroupCubit,
+                                  ProductGroupState>(
                                 builder: (context, state) {
                                   if (state is ProductGroupLoaded) {
                                     return TypeAheadField(
                                       hideSuggestionsOnKeyboardHide: false,
-                                      textFieldConfiguration: TextFieldConfiguration(
+                                      textFieldConfiguration:
+                                          TextFieldConfiguration(
                                         controller: productGroup,
                                         autofocus: false,
                                         style: DefaultTextStyle.of(context)
                                             .style
-                                            .copyWith(fontStyle: FontStyle.italic),
+                                            .copyWith(
+                                                fontStyle: FontStyle.italic),
                                         decoration: InputDecoration(
                                           border: OutlineInputBorder(),
                                         ),
                                       ),
                                       suggestionsCallback: (pattern) async {
-                                        return await Repositories.getProductModelList(
-                                            state.productModel, pattern);
+                                        return await Repositories
+                                            .getProductModelList(
+                                                state.productModel, pattern);
                                       },
                                       itemBuilder: (context, suggestion) {
                                         // return Text(suggestion.toString());
                                         return ListTile(
                                           leading: Icon(Icons.shopping_cart),
-                                          title: Text(suggestion.toString().toUpperCase()),
+                                          title: Text(suggestion
+                                              .toString()
+                                              .toUpperCase()),
                                           // subtitle: Text(
                                         );
                                       },
                                       onSuggestionSelected: (suggestion) async {
-                                        productGroup.text = suggestion.toString();
+                                        productGroup.text =
+                                            suggestion.toString();
                                         setState(() {
-                                          chosenProductGroup = suggestion.toString();
+                                          chosenProductGroup =
+                                              suggestion.toString();
                                           chosenProductModel = null;
                                         });
                                         context
                                             .read<ProductModelCubit>()
-                                            .getProductModel(productGroup: suggestion.toString());
+                                            .getProductModel(
+                                                productGroup:
+                                                    suggestion.toString());
                                         product.text = '';
                                       },
                                     );
@@ -265,54 +282,71 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                       Expanded(
                                         child: TypeAheadField(
                                           hideSuggestionsOnKeyboardHide: false,
-                                          textFieldConfiguration: TextFieldConfiguration(
+                                          textFieldConfiguration:
+                                              TextFieldConfiguration(
                                             controller: product,
                                             autofocus: true,
                                             style: DefaultTextStyle.of(context)
                                                 .style
-                                                .copyWith(fontStyle: FontStyle.italic),
+                                                .copyWith(
+                                                    fontStyle:
+                                                        FontStyle.italic),
                                             decoration: InputDecoration(
                                               border: OutlineInputBorder(),
                                             ),
                                           ),
                                           suggestionsCallback: (pattern) async {
-                                            print("#PRODUCTNAME: ${state.productName}");
-                                            return await Repositories.getProductModelList(
-                                                state.productName, pattern);
+                                            print(
+                                                "#PRODUCTNAME: ${state.productName}");
+                                            return await Repositories
+                                                .getProductModelList(
+                                                    state.productName, pattern);
                                             // return await BackendService
                                             //     .getSuggestions(pattern);
                                           },
                                           itemBuilder: (context, suggestion) {
                                             // return Text(suggestion.toString());
                                             return ListTile(
-                                              leading: Icon(Icons.shopping_cart),
-                                              title: Text(suggestion.toString().toUpperCase()),
+                                              leading:
+                                                  Icon(Icons.shopping_cart),
+                                              title: Text(suggestion
+                                                  .toString()
+                                                  .toUpperCase()),
                                               // subtitle: Text(
                                               //   '\$${suggestion['price']}',
                                               // ),
                                             );
                                           },
-                                          onSuggestionSelected: (suggestion) async {
-                                            product.text = suggestion.toString();
+                                          onSuggestionSelected:
+                                              (suggestion) async {
+                                            product.text =
+                                                suggestion.toString();
                                             print(suggestion.toString());
 
                                             setState(() {
-                                              chosenProductModel = suggestion.toString();
-                                              index =
-                                                  state.productName.indexOf(chosenProductModel!);
+                                              chosenProductModel =
+                                                  suggestion.toString();
+                                              index = state.productName
+                                                  .indexOf(chosenProductModel!);
 
-                                              productModel = state.productModel[index!];
+                                              productModel =
+                                                  state.productModel[index!];
 
                                               // print(productModel);
                                             });
 
-                                            Helpers.productWarranty = productWarrantyFromJson(
-                                                await Repositories.getProduct(
-                                                    productModel: productModel!));
+                                            Helpers.productWarranty =
+                                                productWarrantyFromJson(
+                                                    await Repositories
+                                                        .getProduct(
+                                                            productModel:
+                                                                productModel!));
 
                                             setState(() {
                                               monthsWarranty = int.parse(Helpers
-                                                  .productWarranty!.data![0].warrantyMonths!);
+                                                  .productWarranty!
+                                                  .data![0]
+                                                  .warrantyMonths!);
                                             });
                                           },
                                         ),
@@ -354,7 +388,8 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                                   index != null
                                       ? Text(
                                           state.modelDescription[index!],
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         )
                                       : Container(),
                                 ],
@@ -490,378 +525,435 @@ class _EwarrantyProductManualState extends State<EwarrantyProductManual> {
                       ],
                     ),
                   ),
-                ),
-                SizedBox(height: 15),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(width: 0.1),
-                    boxShadow: [
-                      BoxShadow(blurRadius: 5, color: Colors.grey[200]!, offset: Offset(0, 10)),
-                    ],
-                    borderRadius: BorderRadius.circular(7.5),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: width * 0.3,
-                            child: Text('Purchase Date '),
-                          ),
-                          Text(
-                            formatDate(choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(width: 10),
-                          IconButton(
+                  SizedBox(height: 15),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(width: 0.1),
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 5,
+                            color: Colors.grey[200]!,
+                            offset: Offset(0, 10)),
+                      ],
+                      borderRadius: BorderRadius.circular(7.5),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: width * 0.3,
+                              child: Text('Purchase Date '),
+                            ),
+                            Text(
+                              formatDate(
+                                  choosenDate, ['dd', '-', 'mm', '-', 'yyyy']),
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(width: 10),
+                            IconButton(
                               onPressed: () async {
                                 DateTime? chosen = await showDatePicker(
                                   context: context,
                                   initialDate: DateTime.now(),
                                   firstDate: DateTime(2000, 1),
                                   lastDate: DateTime.now(),
-                                  initialEntryMode: DatePickerEntryMode.calendar,
+                                  initialEntryMode:
+                                      DatePickerEntryMode.calendar,
                                 );
 
                                 if (chosen != null) {
                                   setState(() {
                                     choosenDate = chosen;
+                                    endWarranty = Jiffy(choosenDate)
+                                        .add(months: monthsWarranty!)
+                                        .dateTime
+                                        .subtract(Duration(days: 1));
                                   });
                                 }
                               },
-                              icon: Icon(Icons.date_range, size: 20, color: Colors.black)),
-                          // ElevatedButton(
-                          //   style: ElevatedButton.styleFrom(
-                          //     primary: Colors.blue,
-                          //   ),
-                          //   child: Text('Change Date'),
-                          //   onPressed: () async {
-                          //     DateTime? chosen = await showDatePicker(
-                          //       context: context,
-                          //       initialDate: DateTime.now(),
-                          //       firstDate: DateTime.now().subtract(Duration(days: 30)),
-                          //       lastDate: DateTime.now(),
-                          //       initialEntryMode: DatePickerEntryMode.calendar,
-                          //     );
+                              icon: Icon(Icons.date_range,
+                                  size: 20, color: Colors.black),
+                            ),
 
-                          //     if (chosen != null) {
-                          //       setState(() {
-                          //         choosenDate = chosen;
-                          //       });
-                          //     }
-                          //   },
-                          // ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Text('Warranty Period : '),
-                          if (monthsWarranty != null)
-                            Text(
-                              '${formatDate(choosenDate, [
-                                    'dd',
-                                    '-',
-                                    'mm',
-                                    '-',
-                                    'yyyy'
-                                  ])} to ${formatDate(Jiffy(choosenDate).add(months: monthsWarranty!).dateTime.subtract(Duration(days: 1)), [
-                                    'dd',
-                                    '-',
-                                    'mm',
-                                    '-',
-                                    'yyyy'
-                                  ])}',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Container(
-                            width: width * 0.3,
-                            child: Text('Referral Code'),
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: ref,
-                              onChanged: (value) {},
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Tooltip(
-                              key: toolTipKey,
-                              padding: EdgeInsets.all(10),
-                              margin: EdgeInsets.all(10),
-                              // triggerMode: TooltipTriggerMode.tap,
-                              message:
-                                  'Please insert any promo or referral codes obtain you obtain from KHIND promotional material or Authorized Khind Dealers',
-                              child: GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onTap: () {
-                                    final dynamic _toolTip = toolTipKey.currentState;
-                                    _toolTip.ensureTooltipVisible();
-                                  },
-                                  child: Icon(
-                                    FontAwesomeIcons.infoCircle,
-                                    color: Colors.grey,
-                                    size: 20,
-                                  ))
-                              // child: Icon(
-                              //   FontAwesomeIcons.infoCircle,
-                              //   color: Colors.green,
-                              // ),
+                            if (checkForm && endWarranty == null) ...[
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  'Please select purchase date',
+                                  style: TextStyle(color: Colors.red),
+                                ),
                               ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      if (Helpers.fromSignIn!)
+                            ]
+
+                            // ElevatedButton(
+                            //   style: ElevatedButton.styleFrom(
+                            //     primary: Colors.blue,
+                            //   ),
+                            //   child: Text('Change Date'),
+                            //   onPressed: () async {
+                            //     DateTime? chosen = await showDatePicker(
+                            //       context: context,
+                            //       initialDate: DateTime.now(),
+                            //       firstDate: DateTime.now().subtract(Duration(days: 30)),
+                            //       lastDate: DateTime.now(),
+                            //       initialEntryMode: DatePickerEntryMode.calendar,
+                            //     );
+
+                            //     if (chosen != null) {
+                            //       setState(() {
+                            //         choosenDate = chosen;
+                            //       });
+                            //     }
+                            //   },
+                            // ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Text('Warranty Period : '),
+                            if (monthsWarranty != null && endWarranty != null)
+                              Text(
+                                '${formatDate(choosenDate, [
+                                      'dd',
+                                      '-',
+                                      'mm',
+                                      '-',
+                                      'yyyy'
+                                    ])} to ${formatDate(endWarranty!, [
+                                      'dd',
+                                      '-',
+                                      'mm',
+                                      '-',
+                                      'yyyy'
+                                    ])}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
                         Row(
                           children: [
                             Container(
                               width: width * 0.3,
-                              child: Text('Email Address'),
+                              child: Text('Referral Code'),
                             ),
                             Expanded(
                               child: TextField(
-                                controller: emailTEC,
+                                controller: ref,
                                 onChanged: (value) {},
                               ),
                             ),
+                            SizedBox(width: 5),
+                            Tooltip(
+                                key: toolTipKey,
+                                padding: EdgeInsets.all(10),
+                                margin: EdgeInsets.all(10),
+                                // triggerMode: TooltipTriggerMode.tap,
+                                message:
+                                    'Please insert any promo or referral codes obtain you obtain from KHIND promotional material or Authorized Khind Dealers',
+                                child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () {
+                                      final dynamic _toolTip =
+                                          toolTipKey.currentState;
+                                      _toolTip.ensureTooltipVisible();
+                                    },
+                                    child: Icon(
+                                      FontAwesomeIcons.infoCircle,
+                                      color: Colors.grey,
+                                      size: 20,
+                                    ))
+                                // child: Icon(
+                                //   FontAwesomeIcons.infoCircle,
+                                //   color: Colors.green,
+                                // ),
+                                ),
                           ],
                         ),
-                      SizedBox(height: 15),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: AppColors.primary,
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10))),
-                            onPressed: () async {
-                              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                                type: FileType.custom,
-                                allowedExtensions: [
-                                  'jpg',
-                                  'JPG',
-                                  'jpeg',
-                                  'JPEG',
-                                  'png',
-                                  'PNG',
-                                  'heic',
-                                  'HEIC',
-                                  'pdf',
-                                  'PDF',
-                                ],
-                              );
-
-                              if (result != null) {
-                                PlatformFile file = result.files.first;
-
-                                setState(() {
-                                  fileName = file.name;
-                                  receiptFile = File(file.path!);
-                                });
-
-                                print(file.name);
-                                print(file.bytes);
-                                print(file.size);
-                                print(file.extension);
-                                print(file.path);
-                              } else {
-                                // User canceled the picker
-                              }
-                            },
-                            child: Text('Upload Receipt', style: TextStyles.textDefaultBoldMd),
-                          ),
-                          // GestureDetector(
-                          //   onTap: () async {
-                          //     FilePickerResult? result =
-                          //         await FilePicker.platform.pickFiles(
-                          //       type: FileType.custom,
-                          //       allowedExtensions: [
-                          //         'jpg',
-                          //         'JPG',
-                          //         'jpeg',
-                          //         'JPEG',
-                          //         'png',
-                          //         'PNG',
-                          //         'heic',
-                          //         'HEIC',
-                          //         'pdf',
-                          //         'PDF',
-                          //       ],
-                          //     );
-
-                          //     if (result != null) {
-                          //       PlatformFile file = result.files.first;
-
-                          //       setState(() {
-                          //         fileName = file.name;
-                          //         receiptFile = File(file.path!);
-                          //       });
-
-                          //       print(file.name);
-                          //       print(file.bytes);
-                          //       print(file.size);
-                          //       print(file.extension);
-                          //       print(file.path);
-                          //     } else {
-                          //       // User canceled the picker
-                          //     }
-                          //   },
-                          //   child: Container(
-                          //     padding: EdgeInsets.all(5),
-                          //     decoration: BoxDecoration(
-                          //       // color: Color(0xFFEFF0EF),
-                          //       color: Colors.grey.withOpacity(0.5),
-                          //       borderRadius: BorderRadius.circular(7.5),
-                          //     ),
-                          //     child: Text('Upload Receipt'),
-                          //   ),
-                          // ),
-                          SizedBox(width: 20),
-                          Expanded(child: Text(fileName)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 30),
-                RoundButton(
-                    // color: AppColors.tertiery,
-                    // height: 40,
-                    // titleStyles: TextStyles.textDefault,
-                    title: 'Register Product',
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        String email = '';
-                        if (emailTEC.text == '') {
-                          email = user!.email!.toLowerCase();
-                        } else {
-                          email = emailTEC.text;
-                        }
-
-                        bool response = await Repositories.registerEwarranty(
-                            email: email,
-                            productModel: productModel!,
-                            quantity: '$quantity',
-                            purchaseDate: formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
-                            referralCode: ref.text,
-                            receiptFile: receiptFile,
-                            store: chosenStore != null ? chosenStore! : "");
-
-                        // print(ref.text);
-                        // FormData formData = new FormData.from({
-                        //   "name": "wendux",
-                        //   "file1": new UploadFileInfo(
-                        //       new File("./upload.jpg"), "upload1.jpg")
-                        // });
-                        // response = await dio.post("/info", data: formData);
-
-                        if (response) {
-                          Alert(
-                            context: context,
-                            // type: AlertType.info,
-                            title: "Register Product",
-                            desc: "Your product is registered",
-                            buttons: [
-                              DialogButton(
-                                child: Text(
-                                  "Okay",
-                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                        SizedBox(height: 10),
+                        if (Helpers.fromSignIn!)
+                          Row(
+                            children: [
+                              Container(
+                                width: width * 0.3,
+                                child: Text('Email Address'),
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  validator: (value) {
+                                    if (value == '' || value == null) {
+                                      return 'Please fill in the email address';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  controller: emailTEC,
+                                  onChanged: (value) {},
                                 ),
-                                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                                  'home',
-                                  (route) => false,
-                                  arguments: 2,
-                                ),
-                                width: 120,
-                              )
+                              ),
                             ],
-                          ).show();
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: 'Something went wrong, please try again',
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.BOTTOM,
-                          );
+                          ),
+                        SizedBox(height: 15),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  primary: endWarranty != null &&
+                                          endWarranty!.isAfter(DateTime.now())
+                                      ? AppColors.primary
+                                      : AppColors.grey,
+                                  shape: new RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10))),
+                              onPressed: () async {
+                                print(endWarranty.toString());
+                                if (endWarranty != null &&
+                                    endWarranty!.isAfter(DateTime.now())) {
+                                  FilePickerResult? result =
+                                      await FilePicker.platform.pickFiles(
+                                    type: FileType.custom,
+                                    allowedExtensions: [
+                                      'jpg',
+                                      'JPG',
+                                      'jpeg',
+                                      'JPEG',
+                                      'png',
+                                      'PNG',
+                                      'heic',
+                                      'HEIC',
+                                      'pdf',
+                                      'PDF',
+                                    ],
+                                  );
+
+                                  if (result != null) {
+                                    PlatformFile file = result.files.first;
+
+                                    setState(() {
+                                      fileName = file.name;
+                                      receiptFile = File(file.path!);
+                                    });
+
+                                    print(file.name);
+                                    print(file.bytes);
+                                    print(file.size);
+                                    print(file.extension);
+                                    print(file.path);
+                                  } else {
+                                    // User canceled the picker
+                                  }
+                                }
+                              },
+                              child: Text(
+                                'Upload Receipt',
+                                style: TextStyles.textDefaultBoldMd,
+                              ),
+                            ),
+                            // GestureDetector(
+                            //   onTap: () async {
+                            //     FilePickerResult? result =
+                            //         await FilePicker.platform.pickFiles(
+                            //       type: FileType.custom,
+                            //       allowedExtensions: [
+                            //         'jpg',
+                            //         'JPG',
+                            //         'jpeg',
+                            //         'JPEG',
+                            //         'png',
+                            //         'PNG',
+                            //         'heic',
+                            //         'HEIC',
+                            //         'pdf',
+                            //         'PDF',
+                            //       ],
+                            //     );
+
+                            //     if (result != null) {
+                            //       PlatformFile file = result.files.first;
+
+                            //       setState(() {
+                            //         fileName = file.name;
+                            //         receiptFile = File(file.path!);
+                            //       });
+
+                            //       print(file.name);
+                            //       print(file.bytes);
+                            //       print(file.size);
+                            //       print(file.extension);
+                            //       print(file.path);
+                            //     } else {
+                            //       // User canceled the picker
+                            //     }
+                            //   },
+                            //   child: Container(
+                            //     padding: EdgeInsets.all(5),
+                            //     decoration: BoxDecoration(
+                            //       // color: Color(0xFFEFF0EF),
+                            //       color: Colors.grey.withOpacity(0.5),
+                            //       borderRadius: BorderRadius.circular(7.5),
+                            //     ),
+                            //     child: Text('Upload Receipt'),
+                            //   ),
+                            // ),
+                            SizedBox(width: 20),
+                            if (checkForm &&
+                                fileName == '' &&
+                                endWarranty != null &&
+                                endWarranty!.isAfter(DateTime.now()))
+                              Expanded(
+                                child: Text(
+                                  'Please upload the receipt',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            Expanded(child: Text(fileName)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  RoundButton(
+                      // color: AppColors.tertiery,
+                      // height: 40,
+                      // titleStyles: TextStyles.textDefault,
+                      title: 'Register Product',
+                      onPressed: () async {
+                        setState(() {
+                          checkForm = true;
+                        });
+                        if (_formKey.currentState!.validate()) {
+                          String email = '';
+                          if (emailTEC.text == '') {
+                            email = user!.email!.toLowerCase();
+                          } else {
+                            email = emailTEC.text;
+                          }
+
+                          bool response = await Repositories.registerEwarranty(
+                              email: email,
+                              productModel: productModel!,
+                              quantity: '$quantity',
+                              purchaseDate: formatDate(
+                                  choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                              referralCode: ref.text,
+                              receiptFile: receiptFile,
+                              store: chosenStore != null ? chosenStore! : "");
+
+                          // print(ref.text);
+                          // FormData formData = new FormData.from({
+                          //   "name": "wendux",
+                          //   "file1": new UploadFileInfo(
+                          //       new File("./upload.jpg"), "upload1.jpg")
+                          // });
+                          // response = await dio.post("/info", data: formData);
+
+                          if (response) {
+                            Alert(
+                              context: context,
+                              // type: AlertType.info,
+                              title: "Register Product",
+                              desc: "Your product is registered",
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "Okay",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context)
+                                      .pushNamedAndRemoveUntil(
+                                    'home',
+                                    (route) => false,
+                                    arguments: 2,
+                                  ),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: 'Something went wrong, please try again',
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.BOTTOM,
+                            );
+                          }
                         }
-                      }
-                    }),
-                // GradientButton(
-                //   height: 40,
-                //   child: Text(
-                //     "Register Product",
-                //     style: TextStyle(fontWeight: FontWeight.bold),
-                //   ),
-                //   gradient: LinearGradient(
-                //       colors: <Color>[Colors.white, Colors.grey[400]!],
-                //       begin: Alignment.topCenter,
-                //       end: Alignment.bottomCenter),
-                //   onPressed: () async {
-                //     if (_formKey.currentState!.validate()) {
-                //       String email = '';
-                //       if (emailTEC.text == '') {
-                //         email = user!.email!.toLowerCase();
-                //       } else {
-                //         email = emailTEC.text;
-                //       }
+                      }),
+                  // GradientButton(
+                  //   height: 40,
+                  //   child: Text(
+                  //     "Register Product",
+                  //     style: TextStyle(fontWeight: FontWeight.bold),
+                  //   ),
+                  //   gradient: LinearGradient(
+                  //       colors: <Color>[Colors.white, Colors.grey[400]!],
+                  //       begin: Alignment.topCenter,
+                  //       end: Alignment.bottomCenter),
+                  //   onPressed: () async {
+                  //     if (_formKey.currentState!.validate()) {
+                  //       String email = '';
+                  //       if (emailTEC.text == '') {
+                  //         email = user!.email!.toLowerCase();
+                  //       } else {
+                  //         email = emailTEC.text;
+                  //       }
 
-                //       bool response = await Repositories.registerEwarranty(
-                //           email: email,
-                //           productModel: productModel!,
-                //           quantity: '$quantity',
-                //           purchaseDate: formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
-                //           referralCode: ref.text,
-                //           receiptFile: receiptFile,
-                //           store: chosenStore != null ? chosenStore! : "");
+                  //       bool response = await Repositories.registerEwarranty(
+                  //           email: email,
+                  //           productModel: productModel!,
+                  //           quantity: '$quantity',
+                  //           purchaseDate: formatDate(choosenDate, ['yyyy', '-', 'mm', '-', 'dd']),
+                  //           referralCode: ref.text,
+                  //           receiptFile: receiptFile,
+                  //           store: chosenStore != null ? chosenStore! : "");
 
-                //       // print(ref.text);
-                //       // FormData formData = new FormData.from({
-                //       //   "name": "wendux",
-                //       //   "file1": new UploadFileInfo(
-                //       //       new File("./upload.jpg"), "upload1.jpg")
-                //       // });
-                //       // response = await dio.post("/info", data: formData);
+                  //       // print(ref.text);
+                  //       // FormData formData = new FormData.from({
+                  //       //   "name": "wendux",
+                  //       //   "file1": new UploadFileInfo(
+                  //       //       new File("./upload.jpg"), "upload1.jpg")
+                  //       // });
+                  //       // response = await dio.post("/info", data: formData);
 
-                //       if (response) {
-                //         Alert(
-                //           context: context,
-                //           // type: AlertType.info,
-                //           title: "Register Product",
-                //           desc: "Your product is registered",
-                //           buttons: [
-                //             DialogButton(
-                //               child: Text(
-                //                 "Okay",
-                //                 style: TextStyle(color: Colors.white, fontSize: 20),
-                //               ),
-                //               onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                //                 'home',
-                //                 (route) => false,
-                //                 arguments: 2,
-                //               ),
-                //               width: 120,
-                //             )
-                //           ],
-                //         ).show();
-                //       } else {
-                //         Fluttertoast.showToast(
-                //           msg: 'Something went wrong, please try again',
-                //           toastLength: Toast.LENGTH_LONG,
-                //           gravity: ToastGravity.BOTTOM,
-                //         );
-                //       }
-                //     }
-                // },
-                // ),
-              ],
+                  //       if (response) {
+                  //         Alert(
+                  //           context: context,
+                  //           // type: AlertType.info,
+                  //           title: "Register Product",
+                  //           desc: "Your product is registered",
+                  //           buttons: [
+                  //             DialogButton(
+                  //               child: Text(
+                  //                 "Okay",
+                  //                 style: TextStyle(color: Colors.white, fontSize: 20),
+                  //               ),
+                  //               onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                  //                 'home',
+                  //                 (route) => false,
+                  //                 arguments: 2,
+                  //               ),
+                  //               width: 120,
+                  //             )
+                  //           ],
+                  //         ).show();
+                  //       } else {
+                  //         Fluttertoast.showToast(
+                  //           msg: 'Something went wrong, please try again',
+                  //           toastLength: Toast.LENGTH_LONG,
+                  //           gravity: ToastGravity.BOTTOM,
+                  //         );
+                  //       }
+                  //     }
+                  // },
+                  // ),
+                ],
+              ),
             ),
           ),
         ),
