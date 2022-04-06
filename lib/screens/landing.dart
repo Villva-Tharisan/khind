@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:khind/themes/app_colors.dart';
 import 'package:khind/themes/text_styles.dart';
+import 'package:khind/util/helpers.dart';
 
 class Landing extends StatefulWidget {
   int? data = 0;
@@ -16,6 +17,7 @@ class Landing extends StatefulWidget {
 
 class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
   final autoSizeGroup = AutoSizeGroup();
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int page = 0;
   int tabIdx = 0;
   double size = 20.0;
@@ -158,6 +160,13 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
+          key: _scaffoldKey,
+          appBar: Helpers.customAppBar(context, _scaffoldKey, title: "Mall", isPrimary: true,
+              handleLocatorPressed: () {
+            Navigator.pushNamed(context, 'signin', arguments: 7);
+          }, handleProfilePressed: () {
+            Navigator.pushNamed(context, 'signin', arguments: 8);
+          }),
           body: _renderBody(),
           floatingActionButton: ScaleTransition(
             scale: animation,

@@ -114,8 +114,6 @@ class _SignInState extends State<SignIn> {
           var newResp = response['data'];
           newResp['email'] = emailCT.text;
 
-          // // print('#NEWRESP: ${jsonEncode(newResp)}');
-
           final Map<String, dynamic> mapRest = {
             'first_name': newResp['firstname'] != null ? newResp['firstname'] : "",
             'last_name': newResp['lastname'] != null ? newResp['lastname'] : "",
@@ -129,21 +127,17 @@ class _SignInState extends State<SignIn> {
           final respRest =
               await Api.bearerPost('provider/register_user.php', isCms: true, queryParams: mapRest);
 
-          // print("##RESP REST: ${jsonEncode(respRest)}");
-
-          // if (respRest['success'] != null) {
           await storage.write(key: USER, value: jsonEncode(newResp));
           Navigator.pop(context);
-          // print('#PAGEINDEX:${widget.data}');
-          Navigator.pushReplacementNamed(context, 'home',
-              arguments: widget.data != null ? widget.data : 0);
-          // } else {
-          //   setState(() {
-          //     isLoading = false;
-          //     errorMsg = "Either server error or incorrect credentials";
-          //     Navigator.pop(context);
-          //   });
-          // }
+
+          if (widget.data == 7) {
+            Navigator.pushReplacementNamed(context, 'service_locator', arguments: 1);
+          } else if (widget.data == 8) {
+            Navigator.pushReplacementNamed(context, 'profile', arguments: 1);
+          } else {
+            Navigator.pushReplacementNamed(context, 'home',
+                arguments: widget.data != null ? widget.data : 0);
+          }
         }
       } else {
         setState(() {

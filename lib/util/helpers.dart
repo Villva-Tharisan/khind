@@ -107,7 +107,10 @@ class Helpers {
       bool isBack = false,
       hasActions = true,
       isPrimary = false,
-      isBackPrimary = false}) {
+      isBackPrimary = false,
+      handleLocatorPressed,
+      handleProfilePressed,
+      handleBackPressed}) {
     return AppBar(
       leadingWidth: isBack ? 50 : 20,
       leading: isBack
@@ -115,10 +118,14 @@ class Helpers {
               icon: Icon(Icons.arrow_back_ios_new,
                   color: isBackPrimary ? AppColors.primary : AppColors.tertiery, size: 20),
               onPressed: () {
-                if (!isBack) {
-                  scaffoldKey.currentState!.openDrawer();
+                if (handleBackPressed != null) {
+                  handleBackPressed();
                 } else {
-                  Navigator.of(ctx).pop();
+                  if (!isBack) {
+                    scaffoldKey.currentState!.openDrawer();
+                  } else {
+                    Navigator.of(ctx).pop();
+                  }
                 }
               })
           : Container(),
@@ -139,13 +146,21 @@ class Helpers {
                   // icon: Image(image: AssetImage('assets/icons/location.png'), height: 22),
                   child: Icon(Icons.location_pin, size: 27, color: AppColors.tertiery),
                   onTap: () {
-                    Navigator.pushNamed(ctx, 'service_locator');
+                    if (handleLocatorPressed != null) {
+                      handleLocatorPressed();
+                    } else {
+                      Navigator.pushNamed(ctx, 'service_locator');
+                    }
                   }),
               SizedBox(width: 5),
               new InkWell(
                   child: Icon(Icons.account_circle_rounded, size: 27, color: AppColors.tertiery),
                   onTap: () {
-                    Navigator.pushNamed(ctx, 'profile');
+                    if (handleProfilePressed != null) {
+                      handleProfilePressed();
+                    } else {
+                      Navigator.pushNamed(ctx, 'profile');
+                    }
                   }),
               SizedBox(width: 10)
             ]

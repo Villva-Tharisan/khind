@@ -13,7 +13,8 @@ import 'package:khind/util/helpers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ServiceLocator extends StatefulWidget {
-  const ServiceLocator({Key? key}) : super(key: key);
+  int? data = 0;
+  ServiceLocator({Key? key, this.data}) : super(key: key);
 
   @override
   _ServiceLocatorState createState() => _ServiceLocatorState();
@@ -48,6 +49,8 @@ class _ServiceLocatorState extends State<ServiceLocator> {
     );
 
     _cities = [city];
+
+    print("#DATA: ${widget.data}");
 
     super.initState();
     this.fetchStates();
@@ -160,11 +163,17 @@ class _ServiceLocatorState extends State<ServiceLocator> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Locate a Service Center'),
-      // ),
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "Locate a Service Center", isBack: true, hasActions: false, isPrimary: true),
+          title: "Locate a Service Center",
+          isBack: true,
+          hasActions: false,
+          isPrimary: true, handleBackPressed: () {
+        if (widget.data == 1) {
+          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+        } else {
+          Navigator.pop(context);
+        }
+      }),
       body: Container(
         // width: double.infinity,
         // height: double.infinity,

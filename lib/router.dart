@@ -58,7 +58,8 @@ class AppRouter {
       case 'forgot':
         return MaterialPageRoute(builder: (_) => ForgotPassword());
       case 'profile':
-        return MaterialPageRoute(builder: (_) => Profile());
+        return MaterialPageRoute(
+            builder: (_) => Profile(data: arguments != null ? arguments as int : 0));
       case 'home':
         return MaterialPageRoute(builder: (_) => Home(data: arguments as int));
       case 'news':
@@ -68,7 +69,8 @@ class AppRouter {
       case 'news_detail':
         return MaterialPageRoute(builder: (_) => NewsDetail(data: arguments as News));
       case 'service_locator':
-        return MaterialPageRoute(builder: (_) => ServiceLocator());
+        return MaterialPageRoute(
+            builder: (_) => ServiceLocator(data: arguments != null ? arguments as int : 0));
       case 'ewarranty':
         return MaterialPageRoute(builder: (_) => Ewarranty());
 

@@ -21,6 +21,9 @@ import 'package:khind/util/key.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class Profile extends StatefulWidget {
+  int? data = 0;
+  Profile({this.data});
+
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -731,7 +734,13 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: Helpers.customAppBar(context, _scaffoldKey,
-          title: "My Profile", isBack: true, hasActions: false),
+          title: "My Profile", isBack: true, hasActions: false, handleBackPressed: () {
+        if (widget.data == 1) {
+          Navigator.pushReplacementNamed(context, 'home', arguments: 0);
+        } else {
+          Navigator.pop(context);
+        }
+      }),
       body: CustomScrollView(slivers: [
         SliverFillRemaining(
           hasScrollBody: false,
