@@ -42,8 +42,8 @@ class _UpdateAddressState extends State<UpdateAddress> {
   List<States> states = [];
   Postcodes postcode = new Postcodes(postcodeId: "", postcode: "--Select--");
   List<Postcodes> postcodes = [];
-  late States state;
-  late City city;
+  States? state;
+  City? city;
   String version = "";
   String buildNo = "";
   ShippingAddress? consumerAddress;
@@ -58,16 +58,6 @@ class _UpdateAddressState extends State<UpdateAddress> {
   }
 
   _init() {
-    setState(() {
-      city = new City(
-        stateId: "",
-        city: "--Select--",
-        cityId: "",
-        postcodeId: "",
-        postcode: "",
-      );
-      state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
-    });
     if (widget.consumerAddress != null) {
       if (widget.consumerAddress?.address1 != null) {
         address1CT.text = widget.consumerAddress!.address1!;
@@ -129,11 +119,9 @@ class _UpdateAddressState extends State<UpdateAddress> {
 
     var newStates = (response['states'] as List).map((i) => States.fromJson(i)).toList();
 
-    newStates.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
-
     setState(() {
       states = newStates;
-      state = newStates[0];
+      // state = newStates[0];
     });
   }
 
@@ -142,26 +130,24 @@ class _UpdateAddressState extends State<UpdateAddress> {
 
     var newCities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
-    newCities.insert(
-        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
     // print("#CITIES: $cities");
     var citySet = Set<String>();
     List<City> tempCities = newCities.where((e) => citySet.add(e.city!)).toList();
 
-    var postcodeSet = Set<String>();
-    List<Postcode> tempPostcodes = [];
-    tempPostcodes.insert(0, new Postcode(id: "", postcode: "--Select--"));
-    newCities.forEach((elem) {
-      if (elem.postcode != null && elem.postcode != "") {
-        tempPostcodes
-            .add(Postcode.fromJson({'postcode_id': elem.postcodeId, 'postcode': elem.postcode}));
-      }
-    });
-    List<Postcode> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e.postcode!)).toList();
+    // var postcodeSet = Set<String>();
+    // List<Postcode> tempPostcodes = [];
+    // tempPostcodes.insert(0, new Postcode(id: "", postcode: "--Select--"));
+    // newCities.forEach((elem) {
+    //   if (elem.postcode != null && elem.postcode != "") {
+    //     tempPostcodes
+    //         .add(Postcode.fromJson({'postcode_id': elem.postcodeId, 'postcode': elem.postcode}));
+    //   }
+    // });
+    // List<Postcode> newPostcodes = tempPostcodes.where((e) => postcodeSet.add(e.postcode!)).toList();
     // log('#newPostcodes:  ${jsonEncode(newPostcodes)}');
     setState(() {
       cities = tempCities;
-      city = tempCities[0];
+      // city = tempCities[0];
     });
   }
 
@@ -180,8 +166,8 @@ class _UpdateAddressState extends State<UpdateAddress> {
   void _handleUpdate() async {
     if (Helpers.isEmpty(address1CT.text) ||
         Helpers.isEmpty(postcode.postcode) ||
-        Helpers.isEmpty(city.city) ||
-        Helpers.isEmpty(state.state)) {
+        Helpers.isEmpty(city!.city) ||
+        Helpers.isEmpty(state!.state)) {
       return setState(() {
         isLoading = false;
         errors.add("Please key in mandatory field");
@@ -198,9 +184,9 @@ class _UpdateAddressState extends State<UpdateAddress> {
             'lastname': widget.user?.lastname,
             'address_1': address1CT.text,
             'address_2': address2CT.text,
-            'zone_id': state.stateId,
+            'zone_id': state!.stateId,
             'company': "",
-            'city': city.city,
+            'city': city!.city,
             'postcode': postcode.postcode,
             'country': "Malaysia",
             'country_id': "129",
@@ -222,8 +208,8 @@ class _UpdateAddressState extends State<UpdateAddress> {
         final Map<String, dynamic> map = {
           'address_line_1': address1CT.text,
           'address_line_2': address2CT.text,
-          'zone_id': state.stateId,
-          'city_id': city.cityId,
+          'zone_id': state!.stateId,
+          'city_id': city!.cityId,
           'postcode_id': postcode.postcodeId,
           'email': widget.user?.email,
           'token': token
@@ -437,83 +423,31 @@ class _UpdateAddressState extends State<UpdateAddress> {
                           ],
                         ))
                     : Container(),
-                cities.length > 0 ? SizedBox(height: 10) : Container(),
-                Row(children: [
-                  cities.length > 0
-                      ? Container(
-                          padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                // padding: EdgeInsets.only(top: 15),
-                                // width: width * 0.30,
-                                child: Text('City', style: TextStyles.textDefault),
-                              ),
-                              // SizedBox(height: 10),
-                              Container(
-                                // padding: EdgeInsets.only(left: 10),
-                                width: width * 0.4,
-                                child: DropdownButton<City>(
-                                  items: cities.map<DropdownMenuItem<City>>((e) {
-                                    return DropdownMenuItem<City>(
-                                      child: Text(
-                                        e.city!,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                      ),
-                                      value: e,
-                                    );
-                                  }).toList(),
-                                  isExpanded: true,
-                                  value: city,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      city = value!;
-                                      // this.onSelectCity(value.postcode!);
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          ))
-                      : Container()
-                ]),
-                states.length > 0 ? SizedBox(height: 10) : Container(),
-                states.length > 0
+                SizedBox(height: 20),
+                city != null
                     ? Container(
-                        padding: const EdgeInsets.symmetric(horizontal: horContentPad),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              child: Text('State', style: TextStyles.textDefault),
-                            ),
-                            // SizedBox(height: 5),
-                            Container(
-                              child: DropdownButton<States>(
-                                // underline: SizedBox(),
-                                items: states.map<DropdownMenuItem<States>>((e) {
-                                  return DropdownMenuItem<States>(
-                                    child: Text(
-                                      e.state!,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
-                                    value: e,
-                                  );
-                                }).toList(),
-                                isExpanded: true,
-                                value: state,
-                                onChanged: (value) {
-                                  setState(() {
-                                    state = value!;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ))
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Container(
+                            child: Text('City *', style: TextStyles.textWarning),
+                          ),
+                          SizedBox(height: 10.0),
+                          Text(city!.city!, style: TextStyles.textDefault)
+                        ]))
+                    : Container(),
+                SizedBox(height: 20),
+                state != null
+                    ? Container(
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Container(
+                            child: Text('State *', style: TextStyles.textWarning),
+                          ),
+                          SizedBox(height: 10.0),
+                          Text(state!.state!, style: TextStyles.textDefault)
+                        ]))
                     : Container(),
                 SizedBox(height: 10),
                 errors.length > 0

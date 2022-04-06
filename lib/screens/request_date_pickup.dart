@@ -45,7 +45,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   List<ServiceProblem> _problems = [];
   List<String> _deliveryOptions = ["Yes", "No"];
   String _selectedDate = '';
-  late States state;
+  States? state;
   late Purchase purchase;
   late String postCode = "";
   late ServiceProblem _problem;
@@ -54,23 +54,23 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
   TextEditingController postCodeCT = new TextEditingController();
   TextEditingController address1CT = new TextEditingController();
   TextEditingController address2CT = new TextEditingController();
-  late City city;
+  City? city;
   String fullAddress = "";
   bool dateError = false;
   @override
   void initState() {
     // address1CT.text = 'address 1';
     // address2CT.text = 'address 2';
-    state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
-    city = new City(
-      stateId: "",
-      city: "--Select--",
-      cityId: "",
-      postcodeId: "",
-      postcode: "",
-    );
+    // state = new States(countryId: "", state: "--Select--", stateId: "", stateCode: "");
+    // city = new City(
+    //   stateId: "",
+    //   city: "--Select--",
+    //   cityId: "",
+    //   postcodeId: "",
+    //   postcode: "",
+    // );
 
-    _cities = [city];
+    // _cities = [city];
 
     purchase = widget.data!;
     // _selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -126,11 +126,11 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
 
     states = states.where((element) => allowedStates.contains(element.state)).toList();
 
-    states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
+    // states.insert(0, new States(countryId: "", state: "--Select--", stateId: "", stateCode: ""));
 
     setState(() {
       _states = states;
-      state = states[0];
+      // state = states[0];
     });
 
     await this.fetchConsumerAddress();
@@ -206,8 +206,8 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
 
     var cities = (response['city'] as List).map((i) => City.fromJson(i)).toList();
 
-    cities.insert(
-        0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
+    // cities.insert(
+    //     0, new City(stateId: "", city: "--Select--", cityId: "", postcodeId: "", postcode: ""));
 
     var citySet = Set<String>();
 
@@ -216,7 +216,7 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
 
     setState(() {
       _cities = newCities;
-      city = newCities[0];
+      // city = newCities[0];
     });
   }
 
@@ -639,91 +639,127 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                       )
                     ],
                   ),
-                  _cities.length > 0
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(top: 15),
-                              width: width * 0.30,
-                              child: Text('City'),
-                            ),
-                            SizedBox(width: 15),
-                            Flexible(
+                  SizedBox(height: 30),
+                  city != null
+                      ? Container(
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                          Expanded(
+                              flex: 1,
                               child: Container(
-                                padding: EdgeInsets.only(left: 10),
-                                width: width * 0.45,
-                                child: DropdownButtonFormField<City>(
-                                  items: _cities.map<DropdownMenuItem<City>>((e) {
-                                    return DropdownMenuItem<City>(
-                                      child: Text(
-                                        e.city!,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                      ),
-                                      value: e,
-                                    );
-                                  }).toList(),
-                                  isExpanded: true,
-                                  value: city,
-                                  onChanged: city.cityId == ""
-                                      ? (value) {
-                                          setState(() {
-                                            city = value!;
-                                            // this.onSelectCity(value.postcode!);
-                                          });
-                                        }
-                                      : null,
-                                  validator: (value) {
-                                    if (value!.cityId! == "") return "Please enter city";
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
+                                child: Text('City', style: TextStyles.textDefault),
+                              )),
+                          SizedBox(height: 10.0),
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  padding: const EdgeInsets.only(left: 30),
+                                  // alignment: Alignment.centerRight,
+                                  child: Text(city!.city!, style: TextStyles.textDefault)))
+                        ]))
                       : Container(),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(top: 15),
-                        width: width * 0.30,
-                        child: Text('State'),
-                      ),
-                      SizedBox(width: 15),
-                      Flexible(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 10),
-                          width: width * 0.45,
-                          child: DropdownButtonFormField<States>(
-                            isExpanded: true,
-                            hint: Text('State'),
-                            value: state,
-                            onChanged: state.stateId == ""
-                                ? (newValue) {
-                                    setState(() {
-                                      state = newValue!;
-                                      // this.fetchCities(newValue.stateId!);
-                                    });
-                                  }
-                                : null,
-                            items: _states.map((item) {
-                              return DropdownMenuItem(
-                                child: new Text(item.state!),
-                                value: item,
-                              );
-                            }).toList(),
-                            validator: (value) {
-                              if (value!.stateId! == "") return "Please enter state";
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  SizedBox(height: 30),
+                  state != null
+                      ? Container(
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                child: Text('State', style: TextStyles.textDefault),
+                              )),
+                          SizedBox(height: 10.0),
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  padding: const EdgeInsets.only(left: 30),
+                                  // alignment: Alignment.centerRight,
+                                  child: Text(state!.state!, style: TextStyles.textDefault)))
+                        ]))
+                      : Container(),
+                  // _cities.length > 0
+                  //     ? Row(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Container(
+                  //             padding: EdgeInsets.only(top: 15),
+                  //             width: width * 0.30,
+                  //             child: Text('City'),
+                  //           ),
+                  //           SizedBox(width: 15),
+                  //           Flexible(
+                  //             child: Container(
+                  //               padding: EdgeInsets.only(left: 10),
+                  //               width: width * 0.45,
+                  //               child: DropdownButtonFormField<City>(
+                  //                 items: _cities.map<DropdownMenuItem<City>>((e) {
+                  //                   return DropdownMenuItem<City>(
+                  //                     child: Text(
+                  //                       e.city!,
+                  //                       overflow: TextOverflow.ellipsis,
+                  //                       maxLines: 2,
+                  //                     ),
+                  //                     value: e,
+                  //                   );
+                  //                 }).toList(),
+                  //                 isExpanded: true,
+                  //                 value: city,
+                  //                 onChanged: city.cityId == ""
+                  //                     ? (value) {
+                  //                         setState(() {
+                  //                           city = value!;
+                  //                           // this.onSelectCity(value.postcode!);
+                  //                         });
+                  //                       }
+                  //                     : null,
+                  //                 validator: (value) {
+                  //                   if (value!.cityId! == "") return "Please enter city";
+                  //                   return null;
+                  //                 },
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       )
+                  //     : Container(),
+                  // Row(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Container(
+                  //       padding: EdgeInsets.only(top: 15),
+                  //       width: width * 0.30,
+                  //       child: Text('State'),
+                  //     ),
+                  //     SizedBox(width: 15),
+                  //     Flexible(
+                  //       child: Container(
+                  //         padding: EdgeInsets.only(left: 10),
+                  //         width: width * 0.45,
+                  //         child: DropdownButtonFormField<States>(
+                  //           isExpanded: true,
+                  //           hint: Text('State'),
+                  //           value: state,
+                  //           onChanged: state.stateId == ""
+                  //               ? (newValue) {
+                  //                   setState(() {
+                  //                     state = newValue!;
+                  //                     // this.fetchCities(newValue.stateId!);
+                  //                   });
+                  //                 }
+                  //               : null,
+                  //           items: _states.map((item) {
+                  //             return DropdownMenuItem(
+                  //               child: new Text(item.state!),
+                  //               value: item,
+                  //             );
+                  //           }).toList(),
+                  //           validator: (value) {
+                  //             if (value!.stateId! == "") return "Please enter state";
+                  //             return null;
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ),
@@ -774,11 +810,11 @@ class _RequestDatePickupState extends State<RequestDatePickup> {
                         address: new Address(
                           addressLine1: address1CT.text,
                           addressLine2: address2CT.text,
-                          city: city.city,
-                          cityId: city.cityId,
+                          city: city!.city,
+                          cityId: city!.cityId,
                           postcode: postcode,
-                          stateId: state.stateId,
-                          state: state.state,
+                          stateId: state!.stateId,
+                          state: state!.state,
                         ));
 
                     Navigator.pushNamed(

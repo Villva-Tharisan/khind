@@ -84,16 +84,16 @@ class _SignUpState extends State<SignUp> {
     super.initState();
   }
 
-  _init() {
-    city = new City(
-      stateId: "",
-      city: "--Select City--",
-      cityId: "",
-      postcodeId: "",
-      postcode: "",
-    );
-    state = new States(countryId: "", state: "--Select State--", stateId: "", stateCode: "");
-  }
+  // _init() {
+  //   city = new City(
+  //     stateId: "",
+  //     city: "--Select City--",
+  //     cityId: "",
+  //     postcodeId: "",
+  //     postcode: "",
+  //   );
+  //   state = new States(countryId: "", state: "--Select State--", stateId: "", stateCode: "");
+  // }
 
   @override
   void dispose() {

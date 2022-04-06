@@ -217,6 +217,7 @@ class _ProfileState extends State<Profile> {
 
     final Map<String, dynamic> map = {
       ...mapName['rest'],
+      ...mapName['o2o'],
       'telephone': mobileNoCT.text,
       'email': user?.email,
       'date_of_birth': dobCT.text,
@@ -395,9 +396,8 @@ class _ProfileState extends State<Profile> {
                         Container(
                             width: fieldSize,
                             child: TextFormField(
-                                // autofocus: true,
                                 focusNode: focusName,
-                                enabled: canEditName,
+                                // enabled: canEditName,
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -416,7 +416,7 @@ class _ProfileState extends State<Profile> {
                               setState(() {
                                 canEditName = !this.canEditName;
                               });
-                              print('#canEditName: $canEditName');
+
                               if (!canEditName) {
                                 _handleUpdate(field: 'Name');
                               } else {
@@ -448,7 +448,7 @@ class _ProfileState extends State<Profile> {
                             width: fieldSize,
                             child: TextFormField(
                                 focusNode: focusMobile,
-                                enabled: canEditMobile,
+                                // enabled: canEditMobile,
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
                                   RegExp regExp = new RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
@@ -471,7 +471,6 @@ class _ProfileState extends State<Profile> {
                               setState(() {
                                 canEditMobile = !this.canEditMobile;
                               });
-                              print(canEditMobile);
                               if (!canEditMobile) {
                                 _handleUpdate(field: 'Mobile');
                               } else {
@@ -531,7 +530,7 @@ class _ProfileState extends State<Profile> {
                         TextFormField(
                           focusNode: focusDob,
                           controller: dobCT,
-                          enabled: canEditDob,
+                          // enabled: canEditDob,
                           keyboardType: TextInputType.text,
                           validator: (value) {
                             RegExp regExp = new RegExp(

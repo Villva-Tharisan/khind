@@ -921,91 +921,128 @@ class _RequestDateDropInState extends State<RequestDateDropIn> {
               )
             ],
           ),
-          _cities.length > 0
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(top: 15),
-                      width: width * 0.30,
-                      child: Text('City'),
-                    ),
-                    SizedBox(width: 15),
-                    Flexible(
+          SizedBox(height: 30),
+          city != null
+              ? Container(
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Expanded(
+                      flex: 1,
                       child: Container(
-                        padding: EdgeInsets.only(left: 10),
-                        width: width * 0.45,
-                        child: DropdownButtonFormField<City>(
-                          items: _cities.map<DropdownMenuItem<City>>((e) {
-                            return DropdownMenuItem<City>(
-                              child: Text(
-                                e.city!,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              value: e,
-                            );
-                          }).toList(),
-                          isExpanded: true,
-                          value: city,
-                          onChanged: city.cityId == ""
-                              ? (value) {
-                                  setState(() {
-                                    city = value!;
-                                    // this.onSelectCity(value.postcode!);
-                                  });
-                                }
-                              : null,
-                          validator: (value) {
-                            if (value!.cityId! == "") return "Please enter city";
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+                        child: Text('City', style: TextStyles.textDefault),
+                      )),
+                  SizedBox(height: 10.0),
+                  Expanded(
+                      flex: 1,
+                      child: Container(
+                          padding: const EdgeInsets.only(left: 30),
+                          // alignment: Alignment.centerRight,
+                          child: Text(city.city!, style: TextStyles.textDefault)))
+                ]))
               : Container(),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 15),
-                width: width * 0.30,
-                child: Text('State'),
-              ),
-              SizedBox(width: 15),
-              Flexible(
-                child: Container(
-                  padding: EdgeInsets.only(left: 10),
-                  width: width * 0.45,
-                  child: DropdownButtonFormField<States>(
-                    isExpanded: true,
-                    hint: Text('State'),
-                    value: state,
-                    onChanged: state.stateId == ""
-                        ? (newValue) {
-                            setState(() {
-                              state = newValue!;
-                              // this.fetchCities(newValue.stateId!);
-                            });
-                          }
-                        : null,
-                    items: _states.map((item) {
-                      return DropdownMenuItem(
-                        child: new Text(item.state!),
-                        value: item,
-                      );
-                    }).toList(),
-                    validator: (value) {
-                      if (value!.stateId! == "") return "Please enter state";
-                      return null;
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
+          SizedBox(height: 30),
+          state != null
+              ? Container(
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Expanded(
+                      flex: 1,
+                      child: Container(
+                        child: Text('State', style: TextStyles.textDefault),
+                      )),
+                  SizedBox(height: 10.0),
+                  Expanded(
+                      flex: 1,
+                      child: Container(
+                          padding: const EdgeInsets.only(left: 30),
+                          // alignment: Alignment.centerRight,
+                          child: Text(state.state!, style: TextStyles.textDefault)))
+                ]))
+              : Container(),
+          // SizedBox(height: 20),
+          // _cities.length > 0
+          //     ? Row(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           Container(
+          //             padding: EdgeInsets.only(top: 15),
+          //             width: width * 0.30,
+          //             child: Text('City'),
+          //           ),
+          //           SizedBox(width: 15),
+          //           Flexible(
+          //             child: Container(
+          //               padding: EdgeInsets.only(left: 10),
+          //               width: width * 0.45,
+          //               child: DropdownButtonFormField<City>(
+          //                 items: _cities.map<DropdownMenuItem<City>>((e) {
+          //                   return DropdownMenuItem<City>(
+          //                     child: Text(
+          //                       e.city!,
+          //                       overflow: TextOverflow.ellipsis,
+          //                       maxLines: 2,
+          //                     ),
+          //                     value: e,
+          //                   );
+          //                 }).toList(),
+          //                 isExpanded: true,
+          //                 value: city,
+          //                 onChanged: city.cityId == ""
+          //                     ? (value) {
+          //                         setState(() {
+          //                           city = value!;
+          //                           // this.onSelectCity(value.postcode!);
+          //                         });
+          //                       }
+          //                     : null,
+          //                 validator: (value) {
+          //                   if (value!.cityId! == "") return "Please enter city";
+          //                   return null;
+          //                 },
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       )
+          //     : Container(),
+          // Row(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   children: [
+          //     Container(
+          //       padding: EdgeInsets.only(top: 15),
+          //       width: width * 0.30,
+          //       child: Text('State'),
+          //     ),
+          //     SizedBox(width: 15),
+          //     Flexible(
+          //       child: Container(
+          //         padding: EdgeInsets.only(left: 10),
+          //         width: width * 0.45,
+          //         child: DropdownButtonFormField<States>(
+          //           isExpanded: true,
+          //           hint: Text('State'),
+          //           value: state,
+          //           onChanged: state.stateId == ""
+          //               ? (newValue) {
+          //                   setState(() {
+          //                     state = newValue!;
+          //                     // this.fetchCities(newValue.stateId!);
+          //                   });
+          //                 }
+          //               : null,
+          //           items: _states.map((item) {
+          //             return DropdownMenuItem(
+          //               child: new Text(item.state!),
+          //               value: item,
+          //             );
+          //           }).toList(),
+          //           validator: (value) {
+          //             if (value!.stateId! == "") return "Please enter state";
+          //             return null;
+          //           },
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );
