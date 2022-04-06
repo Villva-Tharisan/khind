@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -390,36 +391,36 @@ class _UpdateAddressState extends State<UpdateAddress> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              // padding: EdgeInsets.only(top: 15),
-                              // width: width * 0.30,
                               child: Text('Postcode', style: TextStyles.textDefault),
                             ),
-                            // SizedBox(height: 5),
                             Container(
-                              // padding: EdgeInsets.only(left: 10),
-                              // width: width * 0.25,
-                              child: DropdownButton<Postcodes>(
-                                items: postcodes.map<DropdownMenuItem<Postcodes>>((e) {
-                                  return DropdownMenuItem<Postcodes>(
-                                    child: Text(
-                                      e.postcode as String,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
-                                    value: e,
-                                  );
-                                }).toList(),
-                                isExpanded: true,
-                                value: postcode,
+                              child: DropdownSearch<Postcodes>(
+                                mode: Mode.DIALOG,
+                                showSearchBox: true,
+                                // showSelectedItem: true,
+                                items: postcodes,
+                                selectedItem: postcode,
+                                itemAsString: (item) => item!.postcode!,
                                 onChanged: (value) {
                                   setState(() {
                                     postcode = value!;
                                     this.onSelectPostcode(value);
-                                    // this.onSelectCity(value.postcode!);
                                   });
                                 },
+                                validator: (value) {
+                                  if (value == "") return "Please enter postcode";
+                                  return null;
+                                },
+                                dropdownSearchDecoration: InputDecoration(
+                                  // labelText: postcode.postcode,
+                                  hintText: "Select a postcode",
+                                  contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.cyan),
+                                  ),
+                                ),
                               ),
-                            ),
+                            )
                           ],
                         ))
                     : Container(),
