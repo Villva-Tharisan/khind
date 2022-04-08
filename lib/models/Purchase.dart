@@ -165,7 +165,7 @@ class Purchase {
     this.updatedBy = json["updated_by"];
     this.adminApprovalStatus = json["admin_approval_status"];
     this.description = json["description"];
-    this.extendedEwarrantyCost = json["extended_ewarranty_cost"];
+    this.extendedEwarrantyCost = json["extended_ewarranty_cost"] ?? '0';
     this.productGroupId = json["product_group_id"];
     this.productModelId = json["product_model_id"];
     this.productCode = json["product_code"];
