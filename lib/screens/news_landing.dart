@@ -29,7 +29,7 @@ class _NewsLandingState extends State<NewsLanding> {
   }
 
   Future<void> fetchNews() async {
-    var url = Uri.parse('http://cm.khind.com.my/api/posts');
+    var url = Uri.parse('https://cm.khind.com.my/api/posts');
     Map<String, String> authHeader = {
       'Content-Type': 'application/json',
       'Authorization': 'Basic a2hpbmRhcGk6S2hpbmQxcWF6MndzeDNlZGM=',
@@ -178,7 +178,7 @@ class NewsCard extends StatelessWidget {
                       topLeft: Radius.circular(7.5),
                     ),
                     child: Image.network(
-                      'http://cm.khind.com.my/${thumbnail!}',
+                      'https://cm.khind.com.my/${thumbnail!}',
                       // height: 75,
                       fit: BoxFit.fill,
                     ),
